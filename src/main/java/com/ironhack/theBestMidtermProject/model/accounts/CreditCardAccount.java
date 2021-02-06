@@ -56,7 +56,13 @@ public class CreditCardAccount extends Account{
         this.creditLimit = creditLimit;
     }
 
-//    Getters and Setters
+    @Override
+    public boolean checkPassword(String password) {
+//        Since a credit card account does not have a password:
+        return false;
+    }
+
+    //    Getters and Setters
 
     public User getSecondaryOwner() {
         return secondaryOwner;

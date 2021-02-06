@@ -77,7 +77,12 @@ public class SavingsAccount extends Account{
         this.interestRate = interestRate;
     }
 
-//    Getters and Setters
+    @Override
+    public boolean checkPassword(String password) {
+        return secretKey.equals(password);
+    }
+
+    //    Getters and Setters
     public String getSecretKey() {
         return secretKey;
     }

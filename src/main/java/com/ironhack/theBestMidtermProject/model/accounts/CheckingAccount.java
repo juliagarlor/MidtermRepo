@@ -27,12 +27,17 @@ public class CheckingAccount extends Account{
     public CheckingAccount() {
     }
 
-//    Constructor with all parameters
+    //    Constructor with all parameters
     public CheckingAccount(Money balance, User primaryOwner, String secretKey, User secondaryOwner, Status status) {
         super(balance, primaryOwner);
         this.secretKey = secretKey;
         this.secondaryOwner = secondaryOwner;
         this.status = status;
+    }
+
+    @Override
+    public boolean checkPassword(String password) {
+        return secretKey.equals(password);
     }
 
 //    Getters and Setters:

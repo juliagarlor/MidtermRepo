@@ -13,7 +13,7 @@ public class Admin extends User{
 
 //    Constructor with all parameters
 
-    public Admin(long id, Name name) {
-        super(id, name);
+    public Admin(long id, Name name, int age) {
+        super(id, name, age);
     }
 }

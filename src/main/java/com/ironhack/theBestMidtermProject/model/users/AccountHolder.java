@@ -18,15 +18,15 @@ public class AccountHolder extends User{
     }
 
 //    Constructor with all parameters but mailingAddress
-    public AccountHolder(long id, Name name, LocalDate dateOfBirth, Address primaryAddress) {
-        super(id, name);
+    public AccountHolder(long id, Name name, int age, LocalDate dateOfBirth, Address primaryAddress) {
+        super(id, name, age);
         this.dateOfBirth = dateOfBirth;
         this.primaryAddress = primaryAddress;
     }
 
 //    Constructor with all parameters
-    public AccountHolder(long id, Name name, LocalDate dateOfBirth, Address primaryAddress, String mailingAddress) {
-        super(id, name);
+    public AccountHolder(long id, Name name, int age, LocalDate dateOfBirth, Address primaryAddress, String mailingAddress) {
+        super(id, name, age);
         this.dateOfBirth = dateOfBirth;
         this.primaryAddress = primaryAddress;
         this.mailingAddress = mailingAddress;

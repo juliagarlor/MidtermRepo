@@ -32,7 +32,12 @@ public class StudentCheckingAccount extends Account{
         this.status = status;
     }
 
-//    Getters and Setters
+    @Override
+    public boolean checkPassword(String password) {
+        return secretKey.equals(password);
+    }
+
+    //    Getters and Setters
 
     public String getSecretKey() {
         return secretKey;

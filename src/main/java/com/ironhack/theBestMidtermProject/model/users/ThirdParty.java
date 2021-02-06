@@ -15,8 +15,8 @@ public class ThirdParty extends User{
     }
 
 //    Constructor with parameters
-    public ThirdParty(long id, Name name, String hashedKey) {
-        super(id, name);
+    public ThirdParty(long id, Name name, int age, String hashedKey) {
+        super(id, name, age);
         this.hashedKey = hashedKey;
     }
 
