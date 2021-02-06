@@ -22,7 +22,8 @@ public class SavingsAccount extends Account{
     @Min(100L)
     @Embedded
     @AttributeOverrides(value ={
-            @AttributeOverride(name = "amount", column = @Column(name = "minimum_balance"))
+            @AttributeOverride(name = "amount", column = @Column(name = "minimum_balance")),
+            @AttributeOverride(name = "currency", column = @Column(name = "currency"))
     })
     private Money minimumBalance = new Money(new BigDecimal("1000"));
 

@@ -18,7 +18,8 @@ public class CreditCardAccount extends Account{
     private User secondaryOwner;
     @Embedded
     @AttributeOverrides(value ={
-            @AttributeOverride(name = "amount", column = @Column(name = "monthly_maintenance_fee"))
+            @AttributeOverride(name = "amount", column = @Column(name = "monthly_maintenance_fee")),
+            @AttributeOverride(name = "currency", column = @Column(name = "currency"))
     })
     private Money monthlyMaintenanceFee;
 

@@ -44,33 +44,52 @@ FOREIGN KEY(primary_owner_id) REFERENCES `user`(id)
 
 -- voy a probar a ver si acepta que no incluya las constantes
 CREATE TABLE checking_account(
+id BIGINT AUTO_INCREMENT NOT NULL,
+amount DECIMAL(10, 4),
+currency VARCHAR(255),
 secret_key VARCHAR(255),
 secondary_owner_id BIGINT,
 `status` VARCHAR(255),
+PRIMARY KEY(id),
+FOREIGN KEY(id) REFERENCES `account`(id),
 FOREIGN KEY(secondary_owner_id) REFERENCES `user`(id)
 ); 
 
 -- aquí voy a probar a ver si me acepta el optional 
 CREATE TABLE credit_card_account(
+id BIGINT AUTO_INCREMENT NOT NULL,
+currency VARCHAR(255),
 secondary_owner_id BIGINT,
 monthly_maintenance_fee DECIMAL(10, 4),
 interest_rate DECIMAL(10, 4),
 credit_limit DECIMAL(10, 4),
+PRIMARY KEY(id),
+FOREIGN KEY(id) REFERENCES `account`(id),
 FOREIGN KEY(secondary_owner_id) REFERENCES `user`(id)
 ); 
 
 CREATE TABLE savings_account(
+id BIGINT AUTO_INCREMENT NOT NULL,
+amount DECIMAL(10, 4),
+currency VARCHAR(255),
 secret_key VARCHAR(255),
 secondary_owner_id BIGINT,
 `status` VARCHAR(255),
 minimum_balance DECIMAL(10, 4),
 interest_rate DECIMAL(10, 4),
+PRIMARY KEY(id),
+FOREIGN KEY(id) REFERENCES `account`(id),
 FOREIGN KEY(secondary_owner_id) REFERENCES `user`(id)
 ); 
 
 CREATE TABLE student_checking_account(
+id BIGINT AUTO_INCREMENT NOT NULL,
+amount DECIMAL(10, 4),
+currency VARCHAR(255),
 secret_key VARCHAR(255),
 secondary_owner_id BIGINT,
 `status` VARCHAR(255),
+PRIMARY KEY(id),
+FOREIGN KEY(id) REFERENCES `account`(id),
 FOREIGN KEY(secondary_owner_id) REFERENCES `user`(id)
 ); 
