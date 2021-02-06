@@ -13,7 +13,13 @@ public class CreditCardAccount extends Account{
 //todo que hago con este en mysql?
 
 //    The secondary owner is optional in a creditCardAccount
-    private Optional<User> secondaryOwner;
+    @ManyToOne
+    @JoinColumn(name = "secondary_owner_id")
+    private User secondaryOwner;
+    @Embedded
+    @AttributeOverrides(value ={
+            @AttributeOverride(name = "amount", column = @Column(name = "monthly_maintenance_fee"))
+    })
     private Money monthlyMaintenanceFee;
 
 //    CreditCardAccounts have a default interest rate of 0.2, and a minimum of 0.1
@@ -23,6 +29,10 @@ public class CreditCardAccount extends Account{
 //    todo pregunta si Max vale para un objeto Money
 //    and a default credit limit of 100 with a maximum limit of 100000:
     @Max(100000L)
+    @Embedded
+    @AttributeOverrides(value ={
+            @AttributeOverride(name = "amount", column = @Column(name = "credit_limit"))
+    })
     private Money creditLimit = new Money(new BigDecimal("100"));
 
 //    Empty constructor
@@ -38,7 +48,7 @@ public class CreditCardAccount extends Account{
     }
 
 //    constructor in which we introduce all parameters
-    public CreditCardAccount(Money balance, User primaryOwner, Optional<User> secondaryOwner, Money monthlyMaintenanceFee, @DecimalMin("0.1") BigDecimal interestRate, @Max(100000L) Money creditLimit) {
+    public CreditCardAccount(Money balance, User primaryOwner, User secondaryOwner, Money monthlyMaintenanceFee, @DecimalMin("0.1") BigDecimal interestRate, @Max(100000L) Money creditLimit) {
         super(balance, primaryOwner);
         this.secondaryOwner = secondaryOwner;
         this.monthlyMaintenanceFee = monthlyMaintenanceFee;
@@ -48,11 +58,11 @@ public class CreditCardAccount extends Account{
 
 //    Getters and Setters
 
-    public Optional<User> getSecondaryOwner() {
+    public User getSecondaryOwner() {
         return secondaryOwner;
     }
 
-    public void setSecondaryOwner(Optional<User> secondaryOwner) {
+    public void setSecondaryOwner(User secondaryOwner) {
         this.secondaryOwner = secondaryOwner;
     }
 

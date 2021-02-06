@@ -5,18 +5,23 @@ import com.ironhack.theBestMidtermProject.utils.*;
 
 import javax.persistence.*;
 
-//todo NO PARECE QUE MONEY LE SIENTE MUY BIEN A MYSQL
-
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Account {
+public abstract class Account {
 
 //    todo pregunta si id puede ser un generated value o normalmente los dígitos tienen algún sentido
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 //    TODO TOMO ESTO COMO UN BIGDECIMAL? Y SI ES ASÍ, QUE TIPO DE DATO USO EN MYSQL? Y SI ES DECIMAL, CUANTOS DIGITOS USO?
+    @Embedded
+    @AttributeOverrides(value ={
+            @AttributeOverride(name = "amount", column = @Column(name = "balance")),
+            @AttributeOverride(name = "currency", column = @Column(name = "currency"))
+    })
     private Money balance;
+    @ManyToOne
+    @JoinColumn(name = "primary_owner_id")
     private User primaryOwner;
 
 //    Empty constructor

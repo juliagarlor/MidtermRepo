@@ -12,12 +12,18 @@ import java.math.*;
 public class SavingsAccount extends Account{
 
     private String secretKey;
+    @ManyToOne
+    @JoinColumn(name = "secondary_owner_id")
     private User secondaryOwner;
     @Enumerated(EnumType.STRING)
     private Status status;
 
 //    SavingsAccounts have a default minimum balance of 1000, and the minimum of this value is 100
     @Min(100L)
+    @Embedded
+    @AttributeOverrides(value ={
+            @AttributeOverride(name = "amount", column = @Column(name = "minimum_balance"))
+    })
     private Money minimumBalance = new Money(new BigDecimal("1000"));
 
 //    and a default interestRate of 0.0025, and a maximum of 0.5

@@ -11,6 +11,8 @@ import java.math.*;
 public class CheckingAccount extends Account{
 
     private String secretKey;
+    @ManyToOne
+    @JoinColumn(name = "secondary_owner_id")
     private User secondaryOwner;
     @Enumerated(EnumType.STRING)
     private Status status;
