@@ -1,4 +1,4 @@
-package com.ironhack.theBestMidtermProject.utils;
+package com.ironhack.theBestMidtermProject.utils.classes;
 
 import com.sun.istack.*;
 

@@ -1,5 +1,7 @@
 package com.ironhack.theBestMidtermProject.model.users;
 
+import com.ironhack.theBestMidtermProject.utils.classes.*;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,7 +13,7 @@ public class Admin extends User{
 
 //    Constructor with all parameters
 
-    public Admin(long id, String name) {
+    public Admin(long id, Name name) {
         super(id, name);
     }
 }

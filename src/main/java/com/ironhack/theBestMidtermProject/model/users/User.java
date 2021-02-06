@@ -1,5 +1,6 @@
 package com.ironhack.theBestMidtermProject.model.users;
 
+import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.sun.istack.*;
 
 import javax.persistence.*;
@@ -13,8 +14,8 @@ public abstract class User {
     private long id;
 
 //    todo ponle algún filtro a los nombres para que tengan dos partes al menos
-    @NotNull
-    private String name;
+    @Embedded
+    private Name name;
 
 //    Empty constructor
     public User() {
@@ -22,7 +23,7 @@ public abstract class User {
 
 //    Constructor with all parameters
 
-    public User(long id, String name) {
+    public User(long id, Name name) {
         this.id = id;
         this.name = name;
     }
@@ -37,11 +38,11 @@ public abstract class User {
         this.id = id;
     }
 
-    public String getName() {
+    public Name getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(Name name) {
         this.name = name;
     }
 }

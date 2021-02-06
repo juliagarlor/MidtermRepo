@@ -1,5 +1,6 @@
 package com.ironhack.theBestMidtermProject.model.users;
 
+import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.sun.istack.*;
 
 import javax.persistence.*;
@@ -14,7 +15,7 @@ public class ThirdParty extends User{
     }
 
 //    Constructor with parameters
-    public ThirdParty(long id, String name, String hashedKey) {
+    public ThirdParty(long id, Name name, String hashedKey) {
         super(id, name);
         this.hashedKey = hashedKey;
     }

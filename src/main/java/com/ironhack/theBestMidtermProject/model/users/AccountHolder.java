@@ -1,10 +1,9 @@
 package com.ironhack.theBestMidtermProject.model.users;
 
-import com.ironhack.theBestMidtermProject.utils.*;
+import com.ironhack.theBestMidtermProject.utils.classes.*;
 
 import javax.persistence.*;
 import java.time.*;
-import java.util.*;
 
 @Entity
 public class AccountHolder extends User{
@@ -19,14 +18,14 @@ public class AccountHolder extends User{
     }
 
 //    Constructor with all parameters but mailingAddress
-    public AccountHolder(long id, String name, LocalDate dateOfBirth, Address primaryAddress) {
+    public AccountHolder(long id, Name name, LocalDate dateOfBirth, Address primaryAddress) {
         super(id, name);
         this.dateOfBirth = dateOfBirth;
         this.primaryAddress = primaryAddress;
     }
 
 //    Constructor with all parameters
-    public AccountHolder(long id, String name, LocalDate dateOfBirth, Address primaryAddress, String mailingAddress) {
+    public AccountHolder(long id, Name name, LocalDate dateOfBirth, Address primaryAddress, String mailingAddress) {
         super(id, name);
         this.dateOfBirth = dateOfBirth;
         this.primaryAddress = primaryAddress;

@@ -1,12 +1,11 @@
 package com.ironhack.theBestMidtermProject.model.accounts;
 
 import com.ironhack.theBestMidtermProject.model.users.*;
-import com.ironhack.theBestMidtermProject.utils.*;
+import com.ironhack.theBestMidtermProject.utils.classes.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.*;
-import java.util.*;
 
 @Entity
 public class CreditCardAccount extends Account{
