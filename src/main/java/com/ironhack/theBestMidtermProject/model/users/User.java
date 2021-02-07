@@ -15,10 +15,12 @@ public abstract class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-//    todo ponle algún filtro a los nombres para que tengan dos partes al menos
     @Embedded
     private Name name;
     private int age;
+
+//    We will add a boolean in order to know whether the user is logged or not, allowing to perform operations
+    private boolean loggedIn;
 
     @OneToMany(mappedBy = "primaryOwner")
     private Map<Long, Account> principalAccounts;
@@ -36,6 +38,19 @@ public abstract class User {
         this.id = id;
         this.name = name;
         this.age = age;
+//        When creating an object, the user has not log into the account yet
+        this.loggedIn = false;
+    }
+
+//    Adding new accounts:
+    public Account addPrincipalAccount(Account account){
+        principalAccounts.put(account.getId(), account);
+        return account;
+    }
+
+    public Account addSecondaryAccount(Account account){
+        principalAccounts.put(account.getId(), account);
+        return account;
     }
 
 //    Getter y Setters
@@ -62,6 +77,14 @@ public abstract class User {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
     }
 
     public Map<Long, Account> getPrincipalAccounts() {

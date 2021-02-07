@@ -30,4 +30,10 @@ public class UserController implements IUserController {
         return userService.login(userId, accountId, password);
     }
 
+    @GetMapping("/logout/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    public String logout(@PathVariable long userId){
+        return userService.logout(userId);
+    }
+
 }

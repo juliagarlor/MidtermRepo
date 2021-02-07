@@ -7,6 +7,7 @@ import com.ironhack.theBestMidtermProject.service.interfaces.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.*;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.*;
 
 import java.util.*;
@@ -39,6 +40,21 @@ public class UserService implements IUserService {
         }
     }
 
+    public String logout(long userId){
+        Optional<User> user = userRepository.findById(userId);
+
+        if (user.isPresent()){
+            if (user.get().isLoggedIn()){
+                return "Thank you. We hope to see you soon, " + user.get().getName();
+            }else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This client is not logged in yet.");
+            }
+        }else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This id does not belong to any of our clients. " +
+                    "Please, intruduce a valid id.");
+        }
+    }
+
     public Account checkValidAccess(Long id, User user, Optional<String> password, boolean firstRound){
         Map<Long, Account> accounts;
 
@@ -61,6 +77,8 @@ public class UserService implements IUserService {
                             "introduce the password of this account.");
                 }
             }
+//            The user has accomplish the requirements to log in the account
+            user.setLoggedIn(true);
             return account;
         } else {
             if (firstRound){
