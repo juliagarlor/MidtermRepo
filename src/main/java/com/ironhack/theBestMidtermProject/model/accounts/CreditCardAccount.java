@@ -9,7 +9,6 @@ import java.math.*;
 
 @Entity
 public class CreditCardAccount extends Account{
-//todo que hago con este en mysql?
 
 //    The secondary owner is optional in a creditCardAccount
     @ManyToOne
@@ -39,16 +38,34 @@ public class CreditCardAccount extends Account{
     public CreditCardAccount() {
     }
 
-//    constructor in which we can introduce all parameters except a secondaryOwner
-    public CreditCardAccount(Money balance, User primaryOwner, Money monthlyMaintenanceFee, @DecimalMin("0.1") BigDecimal interestRate, @Max(100000L) Money creditLimit) {
+//    Constructor without interestRate and creditLimit
+    public CreditCardAccount(Money balance, User primaryOwner, User secondaryOwner, Money monthlyMaintenanceFee) {
         super(balance, primaryOwner);
+        this.secondaryOwner = secondaryOwner;
         this.monthlyMaintenanceFee = monthlyMaintenanceFee;
-        this.interestRate = interestRate;
+    }
+
+//    Constructor without interestRate
+    public CreditCardAccount(Money balance, User primaryOwner, User secondaryOwner, Money monthlyMaintenanceFee,
+                             @Max(100000L) Money creditLimit) {
+        super(balance, primaryOwner);
+        this.secondaryOwner = secondaryOwner;
+        this.monthlyMaintenanceFee = monthlyMaintenanceFee;
         this.creditLimit = creditLimit;
     }
 
-//    constructor in which we introduce all parameters
-    public CreditCardAccount(Money balance, User primaryOwner, User secondaryOwner, Money monthlyMaintenanceFee, @DecimalMin("0.1") BigDecimal interestRate, @Max(100000L) Money creditLimit) {
+//    Constructor without creditLimit
+    public CreditCardAccount(Money balance, User primaryOwner, User secondaryOwner, Money monthlyMaintenanceFee,
+                             @DecimalMin("0.1") BigDecimal interestRate) {
+        super(balance, primaryOwner);
+        this.secondaryOwner = secondaryOwner;
+        this.monthlyMaintenanceFee = monthlyMaintenanceFee;
+        this.interestRate = interestRate;
+    }
+
+//    Constructor in which we introduce all parameters
+    public CreditCardAccount(Money balance, User primaryOwner, User secondaryOwner, Money monthlyMaintenanceFee,
+                             @DecimalMin("0.1") BigDecimal interestRate, @Max(100000L) Money creditLimit) {
         super(balance, primaryOwner);
         this.secondaryOwner = secondaryOwner;
         this.monthlyMaintenanceFee = monthlyMaintenanceFee;

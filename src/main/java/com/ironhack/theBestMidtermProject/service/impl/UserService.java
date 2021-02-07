@@ -45,6 +45,7 @@ public class UserService implements IUserService {
 
         if (user.isPresent()){
             if (user.get().isLoggedIn()){
+                user.get().setLoggedIn(false);
                 return "Thank you. We hope to see you soon, " + user.get().getName();
             }else {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This client is not logged in yet.");

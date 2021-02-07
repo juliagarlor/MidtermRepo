@@ -14,6 +14,7 @@ import org.springframework.stereotype.*;
 import org.springframework.web.server.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.math.*;
 import java.util.*;
 
@@ -23,9 +24,16 @@ public class AdminService implements IAdminService {
     private UserRepository userRepository;
 
     @Autowired
+    private CheckingAccountRepository checkingAccountRepository;
+
+    @Autowired
+    private StudentCheckingAccountRepository studentAccountRepository;
+
+    @Autowired
     private AccountRepository accountRepository;
 
 //    todo QUE HACEMOS SI NOS PASAN UN AMOUNT NEGATIVO? SOMOS FLEXIBLES Y LO CORREGIMOS O INFORMAMOS AL USER?
+//    todo SI GUARDO UNA CUENTA CUALQUIERA EN ACCOUNTREPOSITORY, ME LA GUARDARÁ COMO ACCOUNT O COMO LA CUENTA QUE ES?
 
     public Account addAmount(long accountId, Money amount) {
         Optional<Account> account = accountRepository.findById(accountId);
@@ -40,13 +48,14 @@ public class AdminService implements IAdminService {
 //            in a new Money variable in order to pass it to setBalance
             Money newBalance = new Money(output.getBalance().increaseAmount(amountToAbs));
             output.setBalance(newBalance);
-            return output;
+            return accountRepository.save(output);
         }else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The account number is not correct. " +
                     "Please introduce a valid identifier");
         }
     }
 
+//    TODO SI CAMBIAS EL SAVE ARRIBA, ACUERDATE DE CAMBIARLO AQUI TAMBIEN
     public Account subtractAmount(long accountId, Money amount){
         Optional<Account> account = accountRepository.findById(accountId);
 
@@ -78,19 +87,58 @@ public class AdminService implements IAdminService {
     public Account createCheckAccount(long userId, CheckingAcDTO checkingAcDTO){
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()){
+
             User primaryOwner = user.get();
             Money balance = new Money(checkingAcDTO.getBalance());
             String secretKey = checkingAcDTO.getSecretKey();
             Optional<User> secondaryOwner = checkingAcDTO.getSecondaryOwner();
 
-            if (secondaryOwner.isPresent()){
-                return new CheckingAccount(balance, primaryOwner, secretKey, Status.ACTIVE, secondaryOwner.get());
+            if(primaryOwner.getAge() < 24){
+                StudentCheckingAccount newAccount = new StudentCheckingAccount(balance, primaryOwner, secretKey,
+                        secondaryOwner.get(), Status.ACTIVE);
+                if (secondaryOwner.isPresent()){
+                    secondaryOwner.get().addSecondaryAccount(newAccount);
+                }
+                primaryOwner.addPrincipalAccount(newAccount);
+                return studentAccountRepository.save(newAccount);
+            }else {
+                CheckingAccount newAccount = new CheckingAccount(balance, primaryOwner, secretKey, Status.ACTIVE,
+                        secondaryOwner.get());
+                if (secondaryOwner.isPresent()){
+                    secondaryOwner.get().addSecondaryAccount(newAccount);
+                }
+                primaryOwner.addPrincipalAccount(newAccount);
+                return checkingAccountRepository.save(newAccount);
             }
-            return new CheckingAccount(balance, primaryOwner, secretKey, Status.ACTIVE);
+        }else{
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The first owner identifier is not correct. " +
+                    "Please introduce a valid identifier");
+        }
+    }
+
+    public Account createSavingsAccount(long userId, SavingsAcDTO savingsAcDTO){
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()){
+
+            User primaryOwner = user.get();
+            Money balance = new Money(savingsAcDTO.getBalance());
+            Money minimumBalance = new Money(savingsAcDTO.getMinimumBalance());
+            String secretKey = savingsAcDTO.getSecretKey();
+            Optional<User> secondaryOwner = savingsAcDTO.getSecondaryOwner();
+            BigDecimal interestRate = savingsAcDTO.getInterestRate();
+
+//            If we do not have a secondary owner, its variable will be set to null
+            return new SavingsAccount(balance, primaryOwner, secretKey, secondaryOwner.get(), Status.ACTIVE, minimumBalance, interestRate);
 
         }else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The first owner identifier is not correct. " +
                     "Please introduce a valid identifier");
         }
+    }
+
+
+//    todo ESTOY AQUIIIIIII!!!!!!!!!!!!!!!!!
+    public Account createCreditAccount(long userId, CreditAcDTO creditAcDTO) {
+        return null;
     }
 }

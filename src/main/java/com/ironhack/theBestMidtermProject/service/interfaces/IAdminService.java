@@ -8,4 +8,6 @@ public interface IAdminService {
     Account addAmount(long accountId, Money amount);
     Account subtractAmount(long accountId, Money amount);
     Account createCheckAccount(long userId, CheckingAcDTO checkingAcDTO);
+    Account createSavingsAccount(long userId, SavingsAcDTO savingsAcDTO);
+    Account createCreditAccount(long userId, CreditAcDTO creditAcDTO);
 }

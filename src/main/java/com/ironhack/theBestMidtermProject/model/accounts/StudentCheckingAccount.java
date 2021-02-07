@@ -23,7 +23,7 @@ public class StudentCheckingAccount extends Account{
     public StudentCheckingAccount() {
     }
 
-    //    Constructor with all the parameters
+//    Constructor with all the parameters
     public StudentCheckingAccount(Money balance, User primaryOwner, String secretKey, User secondaryOwner,
                                   Status status) {
         super(balance, primaryOwner);

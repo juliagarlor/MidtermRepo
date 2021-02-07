@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.*;
 
+//todo SI USO DTOS PARA METER DATOS, EL ORDEN EN EL QUE SE ESCRIBAN LOS PARÁMETROS EN EL BODY ES IMPORTANTE?
+
 @RestController
 public class AdminController implements IAdminController {
     @Autowired
@@ -33,5 +35,17 @@ public class AdminController implements IAdminController {
     @ResponseStatus(HttpStatus.CREATED)
     public Account createCheckAccount(@PathVariable long userId, @RequestBody @Valid CheckingAcDTO checkingAcDTO){
         return iAdminService.createCheckAccount(userId, checkingAcDTO);
+    }
+
+    @PostMapping("/new/savings-account/{userId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Account createSavingsAccount(@PathVariable long userId, @RequestBody @Valid SavingsAcDTO savingsAcDTO){
+        return iAdminService.createSavingsAccount(userId, savingsAcDTO);
+    }
+
+    @PostMapping("/new/credit-account/{userId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Account createCreditAccount(@PathVariable long userId, @RequestBody @Valid CreditAcDTO creditAcDTO){
+        return iAdminService.createCreditAccount(userId, creditAcDTO);
     }
 }
