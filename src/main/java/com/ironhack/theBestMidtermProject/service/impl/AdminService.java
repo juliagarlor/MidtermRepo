@@ -30,6 +30,12 @@ public class AdminService implements IAdminService {
     private StudentCheckingAccountRepository studentAccountRepository;
 
     @Autowired
+    private SavingsAccountRepository savingsAccountRepository;
+
+    @Autowired
+    private CreditCardAccountRepository creditAccountRepository;
+
+    @Autowired
     private AccountRepository accountRepository;
 
 //    todo QUE HACEMOS SI NOS PASAN UN AMOUNT NEGATIVO? SOMOS FLEXIBLES Y LO CORREGIMOS O INFORMAMOS AL USER?
@@ -128,7 +134,9 @@ public class AdminService implements IAdminService {
             BigDecimal interestRate = savingsAcDTO.getInterestRate();
 
 //            If we do not have a secondary owner, its variable will be set to null
-            return new SavingsAccount(balance, primaryOwner, secretKey, secondaryOwner.get(), Status.ACTIVE, minimumBalance, interestRate);
+            SavingsAccount newAccount = new SavingsAccount(balance, primaryOwner, secretKey, secondaryOwner.get(),
+                    Status.ACTIVE, minimumBalance, interestRate);
+            return savingsAccountRepository.save(newAccount);
 
         }else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The first owner identifier is not correct. " +
@@ -136,9 +144,24 @@ public class AdminService implements IAdminService {
         }
     }
 
-
-//    todo ESTOY AQUIIIIIII!!!!!!!!!!!!!!!!!
     public Account createCreditAccount(long userId, CreditAcDTO creditAcDTO) {
-        return null;
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()){
+
+            User primaryOwner = user.get();
+            Money balance = new Money(creditAcDTO.getBalance());
+            Money monthlyMaintenanceFee = new Money(creditAcDTO.getMonthlyMaintenanceFee());
+            BigDecimal interestRate = creditAcDTO.getInterestRate();
+            Optional<User> secondaryOwner = creditAcDTO.getSecondaryOwner();
+            Money creditLimit = new Money(creditAcDTO.getCreditLimit());
+
+//            If we do not have a secondary owner, its variable will be set to null
+            CreditCardAccount newAccount = new CreditCardAccount(balance, primaryOwner, secondaryOwner.get(),
+                    monthlyMaintenanceFee, interestRate, creditLimit);
+            return creditAccountRepository.save(newAccount);
+        }else{
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The first owner identifier is not correct. " +
+                    "Please introduce a valid identifier");
+        }
     }
 }
