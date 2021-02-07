@@ -22,11 +22,7 @@ public abstract class User {
 //    We will add a boolean in order to know whether the user is logged or not, allowing to perform operations
     private boolean loggedIn;
 
-    @OneToMany(mappedBy = "primaryOwner")
-    private Map<Long, Account> principalAccounts;
-
-    @OneToMany(mappedBy = "secondaryOwner")
-    private Map<Long, Account> secondaryAccounts;
+    private Map<Long, Account> accounts;
 
 //    Empty constructor
     public User() {
@@ -43,13 +39,8 @@ public abstract class User {
     }
 
 //    Adding new accounts:
-    public Account addPrincipalAccount(Account account){
-        principalAccounts.put(account.getId(), account);
-        return account;
-    }
-
-    public Account addSecondaryAccount(Account account){
-        principalAccounts.put(account.getId(), account);
+    public Account addAccount(Account account){
+        accounts.put(account.getId(), account);
         return account;
     }
 
@@ -87,19 +78,11 @@ public abstract class User {
         this.loggedIn = loggedIn;
     }
 
-    public Map<Long, Account> getPrincipalAccounts() {
-        return principalAccounts;
+    public Map<Long, Account> getAccounts() {
+        return accounts;
     }
 
-    public void setPrincipalAccounts(Map<Long, Account> principalAccounts) {
-        this.principalAccounts = principalAccounts;
-    }
-
-    public Map<Long, Account> getSecondaryAccounts() {
-        return secondaryAccounts;
-    }
-
-    public void setSecondaryAccounts(Map<Long, Account> secondaryAccounts) {
-        this.secondaryAccounts = secondaryAccounts;
+    public void setAccounts(Map<Long, Account> accounts) {
+        this.accounts = accounts;
     }
 }
