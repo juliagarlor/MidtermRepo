@@ -27,8 +27,15 @@ public class CheckingAccount extends Account{
     public CheckingAccount() {
     }
 
+//    Constructor without secondary owner
+    public CheckingAccount(Money balance, User primaryOwner, String secretKey, Status status) {
+        super(balance, primaryOwner);
+        this.secretKey = secretKey;
+        this.status = status;
+    }
+
     //    Constructor with all parameters
-    public CheckingAccount(Money balance, User primaryOwner, String secretKey, User secondaryOwner, Status status) {
+    public CheckingAccount(Money balance, User primaryOwner, String secretKey, Status status, User secondaryOwner) {
         super(balance, primaryOwner);
         this.secretKey = secretKey;
         this.secondaryOwner = secondaryOwner;
