@@ -24,7 +24,7 @@ public class Name {
         this.salutation = salutation;
     }
 
-//    Constructor with middle firstName
+//    Constructor with all parameters
     public Name(String lastName, String firstName, String middleName, Salutation salutation) {
         this.lastName = lastName;
         this.firstName = firstName;
