@@ -25,17 +25,18 @@ public abstract class User {
     })
     protected Name name;
     protected int age;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    protected Set<Role> roles;
 
 //    Empty constructor
     public User() {
     }
 
 //    Constructor with all parameters
-
-    public User(long id, Name name, int age) {
-        this.id = id;
+    public User(Name name, int age, Set<Role> roles) {
         this.name = name;
         this.age = age;
+        this.roles = roles;
     }
 
 //    Getter y Setters
@@ -64,4 +65,11 @@ public abstract class User {
         this.age = age;
     }
 
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
 }

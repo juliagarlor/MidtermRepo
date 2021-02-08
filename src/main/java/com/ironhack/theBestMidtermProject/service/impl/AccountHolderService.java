@@ -14,22 +14,22 @@ import org.springframework.web.server.*;
 import java.util.*;
 
 public class AccountHolderService implements IAccountHolderService {
-//
-//    @Autowired
-//    private UserRepository userRepository;
-//    @Autowired
-//    private AccountRepository accountRepository;
-//
-//    public Money checkBalance(long accountId) {
-//        Optional<Account> account = accountRepository.findById(accountId);
-//        if (account.isPresent()){
-//            return account.get().getBalance();
-//        }else {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This id does not belong to any of our accounts. " +
-//                    "Please, intruduce a valid id.");
-//        }
-//    }
-//
+
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private AccountRepository accountRepository;
+
+    public Money checkBalance(long accountId) {
+        Optional<Account> account = accountRepository.findById(accountId);
+        if (account.isPresent()){
+            return account.get().getBalance();
+        }else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This id does not belong to any of our accounts. " +
+                    "Please, intruduce a valid id.");
+        }
+    }
+
 ////    TODO NO VOY A COMPROBAR SI LA CANTIDAD QUE ME DAN ES POSITIVA O NEGATIVA, PREGUNTA Y DESPUES LO ARREGLAMOS
 ////    CUANDO PUEDAS LIMPIA ESTO UN POCO:
 //    public Money transferAmount(Name name, long targetId, long emisorId, Money amount) {

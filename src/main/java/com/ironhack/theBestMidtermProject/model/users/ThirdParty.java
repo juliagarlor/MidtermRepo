@@ -4,6 +4,7 @@ import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.sun.istack.*;
 
 import javax.persistence.*;
+import java.util.*;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "id")
@@ -16,8 +17,8 @@ public class ThirdParty extends User{
     }
 
 //    Constructor with parameters
-    public ThirdParty(long id, Name name, int age, String hashedKey) {
-        super(id, name, age);
+    public ThirdParty(Name name, int age, Set<Role> roles, String hashedKey) {
+        super(name, age, roles);
         this.hashedKey = hashedKey;
     }
 

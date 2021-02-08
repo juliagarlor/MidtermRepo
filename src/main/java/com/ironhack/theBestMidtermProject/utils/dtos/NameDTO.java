@@ -26,8 +26,6 @@ public class NameDTO {
     }
 
 //    Constructor with all the parameters
-
-
     public NameDTO(@NotNull(message = "Please, introduce the last name of the owner.") String lastName,
                    @NotNull(message = "Please, introduce the first name of the owner.") String firstName, String middleName,
                    @NotNull(message = "Please, add the correct salutation") Salutation salutation) {
