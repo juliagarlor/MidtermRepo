@@ -1,5 +1,6 @@
 package com.ironhack.theBestMidtermProject.model.users;
 
+import com.fasterxml.jackson.annotation.*;
 import com.ironhack.theBestMidtermProject.model.accounts.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.sun.istack.*;
@@ -26,6 +27,7 @@ public abstract class User {
     protected Name name;
     protected int age;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
     protected Set<Role> roles;
 
 //    Empty constructor

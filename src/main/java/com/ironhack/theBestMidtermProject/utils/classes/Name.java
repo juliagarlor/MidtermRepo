@@ -13,7 +13,10 @@ public class Name {
     @Enumerated(EnumType.STRING)
     private Salutation salutation;
 
-//    Constructor without middle name
+    public Name() {
+    }
+
+    //    Constructor without middle name
     public Name(String lastName, String firstName, Salutation salutation) {
         this.lastName = lastName;
         this.firstName = firstName;

@@ -1,6 +1,9 @@
 package com.ironhack.theBestMidtermProject.utils.dtos;
 
 
+import com.fasterxml.jackson.databind.annotation.*;
+import com.fasterxml.jackson.datatype.jsr310.deser.*;
+import com.fasterxml.jackson.datatype.jsr310.ser.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.ironhack.theBestMidtermProject.utils.enums.*;
 
@@ -10,45 +13,46 @@ import java.time.*;
 import java.util.*;
 
 public class AccountHolderDTO {
-    private Name name;
+    @Valid
+    private NameDTO nameDTO;
     @Min(value = 18, message = "The user must be of age.")
     private int age;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dateOfBirth;
     @Valid
-    private Address primaryAddress;
+    private AddressDTO primaryAddressDTO;
     @Valid
-    private Address mailingAddress;
+    private AddressDTO mailingAddressDTO;
 
-//    Constructor without mailingAddress
-
-    public AccountHolderDTO(@Valid NameDTO nameDTO, @Min(value = 18, message = "The user must be of age.") int age,
-                            LocalDateTime dateOfBirth, @Valid AddressDTO primaryAddressDTO) {
-        setName(nameDTO);
-        this.age = age;
-        this.dateOfBirth = dateOfBirth;
-        setPrimaryAddress(primaryAddressDTO);
+    public AccountHolderDTO() {
     }
 
-//    Constructor with all parameters
+    //    Constructor with all parameters
     public AccountHolderDTO(@Valid NameDTO nameDTO, @Min(value = 18, message = "The user must be of age.") int age,
                             LocalDateTime dateOfBirth, @Valid AddressDTO primaryAddressDTO, @Valid AddressDTO mailingAddressDTO) {
-        setName(nameDTO);
+        this.nameDTO = nameDTO;
         this.age = age;
         this.dateOfBirth = dateOfBirth;
-        setPrimaryAddress(primaryAddressDTO);
-        setMailingAddress(mailingAddressDTO);
+        this.primaryAddressDTO = primaryAddressDTO;
+        this.mailingAddressDTO = mailingAddressDTO;
     }
 
-    public Name getName() {
-        return name;
+//    Constructor without mailingAddress
+    public AccountHolderDTO(@Valid NameDTO nameDTO, @Min(value = 18, message = "The user must be of age.") int age,
+                            LocalDateTime dateOfBirth, @Valid AddressDTO primaryAddressDTO) {
+        this.nameDTO = nameDTO;
+        this.age = age;
+        this.dateOfBirth = dateOfBirth;
+        this.primaryAddressDTO = primaryAddressDTO;
     }
 
-    public void setName(NameDTO nameDTO) {
-        String firstName = nameDTO.getFirstName();
-        String lastName = nameDTO.getLastName();
-        String middleName = nameDTO.getMiddleName();
-        Salutation salutation = nameDTO.getSalutation();
-        this.name = new Name(lastName, firstName, middleName, salutation);
+    public NameDTO getNameDTO() {
+        return nameDTO;
+    }
+
+    public void setNameDTO(NameDTO nameDTO) {
+        this.nameDTO = nameDTO;
     }
 
     public int getAge() {
@@ -67,27 +71,19 @@ public class AccountHolderDTO {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Address getPrimaryAddress() {
-        return primaryAddress;
+    public AddressDTO getPrimaryAddressDTO() {
+        return primaryAddressDTO;
     }
 
-    public void setPrimaryAddress(AddressDTO primaryAddressDTO) {
-        int num = primaryAddressDTO.getNumber();
-        String street = primaryAddressDTO.getStreet();
-        String city = primaryAddressDTO.getCity();
-        String country = primaryAddressDTO.getCountry();
-        this.primaryAddress = new Address(num, street, city, country);
+    public void setPrimaryAddressDTO(AddressDTO primaryAddressDTO) {
+        this.primaryAddressDTO = primaryAddressDTO;
     }
 
-    public Address getMailingAddress() {
-        return mailingAddress;
+    public AddressDTO getMailingAddressDTO() {
+        return mailingAddressDTO;
     }
 
-    public void setMailingAddress(AddressDTO mailingAddressDTO) {
-        int num = mailingAddressDTO.getNumber();
-        String street = mailingAddressDTO.getStreet();
-        String city = mailingAddressDTO.getCity();
-        String country = mailingAddressDTO.getCountry();
-        this.mailingAddress = new Address(num, street, city, country);
+    public void setMailingAddressDTO(AddressDTO mailingAddressDTO) {
+        this.mailingAddressDTO = mailingAddressDTO;
     }
 }

@@ -12,7 +12,10 @@ public class Address {
     private String city;
     private String country;
 
-//    Constructor
+    public Address() {
+    }
+
+    //    Constructor
     public Address(int number, String street, String city, String country) {
         this.number = number;
         this.street = street;

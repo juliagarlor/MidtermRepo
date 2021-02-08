@@ -12,6 +12,9 @@ public class AddressDTO {
     @NotNull(message = "Please, introduce the name of a valid country.")
     private String country;
 
+    public AddressDTO() {
+    }
+
     public AddressDTO(@Min(value = 0, message = "The number must be a positive value.") int number,
                       @NotNull(message = "Please, introduce the street name.") String street,
                       @NotNull(message = "Please, introduce the name of the city.") String city,

@@ -15,8 +15,10 @@ public class NameDTO {
     @Enumerated(EnumType.STRING)
     private Salutation salutation;
 
-//    Constructor without middleName
+    public NameDTO() {
+    }
 
+    //    Constructor without middleName
     public NameDTO(@NotNull(message = "Please, introduce the last name of the owner.") String lastName,
                    @NotNull(message = "Please, introduce the first name of the owner.") String firstName,
                    @NotNull(message = "Please, add the correct salutation") Salutation salutation) {

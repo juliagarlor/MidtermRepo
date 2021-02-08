@@ -7,18 +7,28 @@ import com.ironhack.theBestMidtermProject.repository.users.*;
 import com.ironhack.theBestMidtermProject.service.interfaces.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.ironhack.theBestMidtermProject.utils.dtos.*;
+import com.ironhack.theBestMidtermProject.utils.enums.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
+import org.springframework.stereotype.*;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.*;
 
+import javax.validation.*;
+import java.time.*;
 import java.util.*;
 
+@Service
 public class AccountHolderService implements IAccountHolderService {
 
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private AccountHolderRepository accountHolderRepository;
+
+    private Ensambler ensambler;
 
     public Money checkBalance(long accountId) {
         Optional<Account> account = accountRepository.findById(accountId);
@@ -28,6 +38,22 @@ public class AccountHolderService implements IAccountHolderService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This id does not belong to any of our accounts. " +
                     "Please, intruduce a valid id.");
         }
+    }
+
+    public AccountHolder createAccountHolder(AccountHolderDTO accountHolderDTO){
+
+        Name name = ensambler.ensambleName(accountHolderDTO.getNameDTO());
+        int age = accountHolderDTO.getAge();
+        LocalDateTime dateOfBirth = accountHolderDTO.getDateOfBirth();
+        Address primaryAddress = ensambler.ensambleAddress(accountHolderDTO.getPrimaryAddressDTO());
+        Address mailingAddress = ensambler.ensambleAddress(accountHolderDTO.getMailingAddressDTO());
+        Set<Role> roles = new HashSet<>();
+
+        AccountHolder newAccountHolder = new AccountHolder(name, age, roles, dateOfBirth, primaryAddress, mailingAddress);
+
+        roles.add(new Role("USER", newAccountHolder));
+        newAccountHolder.setRoles(roles);
+        return accountHolderRepository.save(newAccountHolder);
     }
 
 ////    TODO NO VOY A COMPROBAR SI LA CANTIDAD QUE ME DAN ES POSITIVA O NEGATIVA, PREGUNTA Y DESPUES LO ARREGLAMOS

@@ -11,8 +11,6 @@ import com.ironhack.theBestMidtermProject.utils.dtos.*;
 import com.ironhack.theBestMidtermProject.utils.enums.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
-import org.springframework.security.core.*;
-import org.springframework.security.core.annotation.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.*;
@@ -37,18 +35,7 @@ public class AccountHolderController implements IAccountHolderController {
     @PostMapping("/register/accountHolder")
     @ResponseStatus(HttpStatus.CREATED)
     public AccountHolder createAccountHolder(@RequestBody @Valid AccountHolderDTO accountHolderDTO){
-        Name name = accountHolderDTO.getName();
-        int age = accountHolderDTO.getAge();
-        LocalDateTime dateOfBirth = accountHolderDTO.getDateOfBirth();
-        Address primaryAddress = accountHolderDTO.getPrimaryAddress();
-        Address mailingAddress = accountHolderDTO.getMailingAddress();
-        Set<Role> roles = new HashSet<>();
-
-        AccountHolder newAccountHolder = new AccountHolder(name, age, roles, dateOfBirth, primaryAddress, mailingAddress);
-
-        roles.add(new Role("USER", newAccountHolder));
-        newAccountHolder.setRoles(roles);
-        return accountHolderRepository.save(newAccountHolder);
+        return iAccountHolderService.createAccountHolder(accountHolderDTO);
     }
 
 //    @PatchMapping("/transference/{nameDTO}/{targetId}/{emisorId}")

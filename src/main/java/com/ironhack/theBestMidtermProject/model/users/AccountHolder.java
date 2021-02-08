@@ -1,5 +1,8 @@
 package com.ironhack.theBestMidtermProject.model.users;
 
+import com.fasterxml.jackson.databind.annotation.*;
+import com.fasterxml.jackson.datatype.jsr310.deser.*;
+import com.fasterxml.jackson.datatype.jsr310.ser.*;
 import com.ironhack.theBestMidtermProject.model.*;
 import com.ironhack.theBestMidtermProject.model.accounts.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
@@ -11,6 +14,9 @@ import java.util.*;
 @Entity
 @PrimaryKeyJoinColumn(name = "id")
 public class AccountHolder extends User{
+
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dateOfBirth;
 
     @Embedded
