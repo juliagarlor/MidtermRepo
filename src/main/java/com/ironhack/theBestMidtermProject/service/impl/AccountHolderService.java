@@ -14,35 +14,35 @@ import org.springframework.web.server.*;
 import java.util.*;
 
 public class AccountHolderService implements IAccountHolderService {
-//
-//    @Autowired
-//    private UserRepository userRepository;
-//    @Autowired
-//    private AccountRepository accountRepository;
-//
-//    public Money checkBalance(long accountId) {
-//        Optional<Account> account = accountRepository.findById(accountId);
-//        if (account.isPresent()){
-//            return account.get().getBalance();
-//        }else {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This id does not belong to any of our accounts. " +
-//                    "Please, intruduce a valid id.");
-//        }
-//    }
-//
-////    TODO NO VOY A COMPROBAR SI LA CANTIDAD QUE ME DAN ES POSITIVA O NEGATIVA, PREGUNTA Y DESPUES LO ARREGLAMOS
-////    CUANDO PUEDAS LIMPIA ESTO UN POCO:
-//    public Money transferAmount(Name name, long targetId, long emisorId, Money amount) {
-////        This way we check both that the emisor id is correct and that this account has enough balance
-//        Money emisorBalance = checkBalance(emisorId);
-//        Account emisorAccount = accountRepository.findById(emisorId).get();
-//
-//        if (emisorBalance.getAmount().compareTo(amount.getAmount()) != 0){
-//            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The balance of the emisor account is not enough for this transaction");
-//        }
-//
-//        Optional<Account> receptorAccount = accountRepository.findById(targetId);
-//
+
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private AccountRepository accountRepository;
+
+    public Money checkBalance(long accountId) {
+        Optional<Account> account = accountRepository.findById(accountId);
+        if (account.isPresent()){
+            return account.get().getBalance();
+        }else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This id does not belong to any of our accounts. " +
+                    "Please, intruduce a valid id.");
+        }
+    }
+
+//    TODO NO VOY A COMPROBAR SI LA CANTIDAD QUE ME DAN ES POSITIVA O NEGATIVA, PREGUNTA Y DESPUES LO ARREGLAMOS
+//    CUANDO PUEDAS LIMPIA ESTO UN POCO:
+    public Money transferAmount(Name name, long targetId, long emisorId, Money amount) {
+//        This way we check both that the emisor id is correct and that this account has enough balance
+        Money emisorBalance = checkBalance(emisorId);
+        Account emisorAccount = accountRepository.findById(emisorId).get();
+
+        if (emisorBalance.getAmount().compareTo(amount.getAmount()) != 0){
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The balance of the emisor account is not enough for this transaction");
+        }
+
+        Optional<Account> receptorAccount = accountRepository.findById(targetId);
+
 //        if (receptorAccount.isPresent()){
 ////            lets check whether this is the account we are looking for
 //            boolean matchingNameAndId = userRepository.findByNameAndAccountsIdIs(name, targetId).isPresent();
@@ -63,7 +63,7 @@ public class AccountHolderService implements IAccountHolderService {
 //            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found receptor account id. " +
 //                    "Please, intruduce a valid id.");
 //        }
-//
-//        return emisorBalance;
-//    }
+
+        return emisorBalance;
+    }
 }

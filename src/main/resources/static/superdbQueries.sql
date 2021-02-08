@@ -5,7 +5,6 @@ USE superdb;
 CREATE TABLE `user`(
 id BIGINT AUTO_INCREMENT NOT NULL,
 age INT,
-logged_in BIT(1),
 last_name VARCHAR(60),
 first_name VARCHAR(60),
 middle_name VARCHAR(60),
@@ -16,11 +15,11 @@ PRIMARY KEY(id)
 CREATE TABLE account_holder(
 id BIGINT AUTO_INCREMENT NOT NULL,
 date_of_birth DATE,
-mailing_address_number VARCHAR(60),
+mailing_address_number INT,
 mailing_address_street VARCHAR(60),
 mailing_address_city VARCHAR(60),
 mailing_address_country VARCHAR(60),
-primary_address_number VARCHAR(60),
+primary_address_number INT,
 primary_address_street VARCHAR(60),
 primary_address_city VARCHAR(60),
 primary_address_country VARCHAR(60),

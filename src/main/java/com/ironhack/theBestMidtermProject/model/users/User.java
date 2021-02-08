@@ -26,9 +26,6 @@ public abstract class User {
     protected Name name;
     protected int age;
 
-//    We will add a boolean in order to know whether the user is logged or not, allowing to perform operations
-    protected boolean loggedIn;
-
 //    Empty constructor
     public User() {
     }
@@ -39,8 +36,6 @@ public abstract class User {
         this.id = id;
         this.name = name;
         this.age = age;
-//        When creating an object, the user has not log into the account yet
-        this.loggedIn = false;
     }
 
 //    Getter y Setters
@@ -67,14 +62,6 @@ public abstract class User {
 
     public void setAge(int age) {
         this.age = age;
-    }
-
-    public boolean isLoggedIn() {
-        return loggedIn;
-    }
-
-    public void setLoggedIn(boolean loggedIn) {
-        this.loggedIn = loggedIn;
     }
 
 }
