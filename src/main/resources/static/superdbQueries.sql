@@ -14,7 +14,7 @@ PRIMARY KEY(id)
 
 CREATE TABLE account_holder(
 id BIGINT AUTO_INCREMENT NOT NULL,
-date_of_birth DATE,
+date_of_birth DATETIME,
 mailing_address_number INT,
 mailing_address_street VARCHAR(60),
 mailing_address_city VARCHAR(60),
@@ -42,16 +42,17 @@ FOREIGN KEY(id) REFERENCES `user`(id)
 
 CREATE TABLE `account`(
 id BIGINT AUTO_INCREMENT NOT NULL,
+-- ni puñetera idea de por que me obliga a poner aqui amount
+amount DECIMAL(19, 4),
 balance DECIMAL(19, 4),
 currency VARCHAR(255),
 primary_owner_id BIGINT,
 secondary_owner_id BIGINT,
 PRIMARY KEY(id),
-FOREIGN KEY(primary_owner_id) REFERENCES `user`(id),
-FOREIGN KEY(secondary_owner_id) REFERENCES `user`(id)
+FOREIGN KEY(primary_owner_id) REFERENCES account_holder(id),
+FOREIGN KEY(secondary_owner_id) REFERENCES account_holder(id)
 );
 
--- voy a probar a ver si acepta que no incluya las constantes
 CREATE TABLE checking_account(
 id BIGINT AUTO_INCREMENT NOT NULL,
 amount DECIMAL(19, 4),
@@ -62,7 +63,6 @@ PRIMARY KEY(id),
 FOREIGN KEY(id) REFERENCES `account`(id)
 ); 
 
--- aquí voy a probar a ver si me acepta el optional 
 CREATE TABLE credit_card_account(
 id BIGINT AUTO_INCREMENT NOT NULL,
 currency VARCHAR(255),
@@ -75,7 +75,7 @@ FOREIGN KEY(id) REFERENCES `account`(id)
 
 CREATE TABLE savings_account(
 id BIGINT AUTO_INCREMENT NOT NULL,
-amount DECIMAL(19, 4),
+-- amount DECIMAL(19, 4),
 currency VARCHAR(255),
 secret_key VARCHAR(255),
 `status` VARCHAR(255),
@@ -87,10 +87,22 @@ FOREIGN KEY(id) REFERENCES `account`(id)
 
 CREATE TABLE student_checking_account(
 id BIGINT AUTO_INCREMENT NOT NULL,
-amount DECIMAL(19, 4),
-currency VARCHAR(255),
+-- amount DECIMAL(19, 4),
+-- currency VARCHAR(255),
 secret_key VARCHAR(255),
 `status` VARCHAR(255),
 PRIMARY KEY(id),
 FOREIGN KEY(id) REFERENCES `account`(id)
 ); 
+
+CREATE TABLE transactions(
+id BIGINT AUTO_INCREMENT NOT NULL,
+emisor_id BIGINT,
+receptor_id BIGINT,
+amount DECIMAL(19, 4),
+currency VARCHAR(255),
+moment DATETIME,
+PRIMARY KEY(id),
+FOREIGN KEY(emisor_id) REFERENCES `account`(id),
+FOREIGN KEY(receptor_id) REFERENCES `account`(id)
+);

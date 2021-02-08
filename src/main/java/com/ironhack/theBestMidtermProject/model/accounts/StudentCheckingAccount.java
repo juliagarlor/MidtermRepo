@@ -15,8 +15,6 @@ public class StudentCheckingAccount extends Account{
     private String secretKey;
     @Enumerated(EnumType.STRING)
     private Status status;
-//    The penalty fee is always 40
-    private final Money PENALTY_FEE = new Money(new BigDecimal("40"));
 
 //    Empty constructor of StudentCheckingAccount
     public StudentCheckingAccount() {
@@ -51,9 +49,5 @@ public class StudentCheckingAccount extends Account{
 
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    public Money getPENALTY_FEE() {
-        return PENALTY_FEE;
     }
 }

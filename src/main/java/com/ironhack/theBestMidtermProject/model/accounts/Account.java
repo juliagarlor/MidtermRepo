@@ -5,6 +5,7 @@ import com.ironhack.theBestMidtermProject.model.users.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 
 import javax.persistence.*;
+import java.math.*;
 import java.util.*;
 
 @Entity
@@ -20,6 +21,8 @@ public abstract class Account {
             @AttributeOverride(name = "currency", column = @Column(name = "currency"))
     })
     protected Money balance;
+
+
     @ManyToOne
     @JoinColumn(name = "primary_owner_id")
     protected AccountHolder primaryOwner;
@@ -28,10 +31,15 @@ public abstract class Account {
     @JoinColumn(name = "secondary_owner_id")
     protected AccountHolder secondaryOwner;
 
-    @OneToMany(mappedBy = "emisorId")
+    @Embedded
+    @OneToMany(mappedBy = "emisor")
     protected List<Transactions> sentTransactions;
-    @OneToMany(mappedBy = "receptorId")
+    @Embedded
+    @OneToMany(mappedBy = "receptor")
     protected List<Transactions> receivedTransactions;
+
+//    and the penalty fee is always 40
+    protected final Money PENALTY_FEE = new Money(new BigDecimal("40"));
 
 //    Empty constructor
     public Account() {
@@ -43,7 +51,6 @@ public abstract class Account {
         this.balance = balance;
         this.primaryOwner = primaryOwner;
     }
-
 
 //    Peculiar methods
     public abstract boolean checkPassword(String password);
@@ -95,5 +102,9 @@ public abstract class Account {
 
     public void setReceivedTransactions(List<Transactions> receivedTransactions) {
         this.receivedTransactions = receivedTransactions;
+    }
+
+    public Money getPENALTY_FEE() {
+        return PENALTY_FEE;
     }
 }

@@ -1,10 +1,12 @@
 package com.ironhack.theBestMidtermProject.model;
 
+import com.ironhack.theBestMidtermProject.model.accounts.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 
 import javax.persistence.*;
 import java.time.*;
 
+@Embeddable
 @Entity
 public class Transactions {
     @Id
@@ -12,10 +14,15 @@ public class Transactions {
     private long id;
     @ManyToOne
     @JoinColumn(name = "emisor_id")
-    private long emisorId;
+    private Account emisor;
     @ManyToOne
     @JoinColumn(name = "receptor_id")
-    private long receptorId;
+    private Account receptor;
+    @Embedded
+    @AttributeOverrides(value ={
+            @AttributeOverride(name = "amount", column = @Column(name = "amount")),
+            @AttributeOverride(name = "currency", column = @Column(name = "currency"))
+    })
     private Money amount;
     private LocalDateTime moment;
 
@@ -24,10 +31,10 @@ public class Transactions {
     }
 
 //    Controller with all parameters
-    public Transactions(long id, long emisorId, long receptorId, Money amount, LocalDateTime moment) {
+    public Transactions(long id, Account emisorId, Account receptorId, Money amount, LocalDateTime moment) {
         this.id = id;
-        this.emisorId = emisorId;
-        this.receptorId = receptorId;
+        this.emisor = emisorId;
+        this.receptor = receptorId;
         this.amount = amount;
         this.moment = moment;
     }
@@ -41,20 +48,20 @@ public class Transactions {
         this.id = id;
     }
 
-    public long getEmisorId() {
-        return emisorId;
+    public Account getEmisorId() {
+        return emisor;
     }
 
-    public void setEmisorId(long emisorId) {
-        this.emisorId = emisorId;
+    public void setEmisorId(Account emisorId) {
+        this.emisor = emisorId;
     }
 
-    public long getReceptorId() {
-        return receptorId;
+    public Account getReceptorId() {
+        return receptor;
     }
 
-    public void setReceptorId(long receptorId) {
-        this.receptorId = receptorId;
+    public void setReceptorId(Account receptorId) {
+        this.receptor = receptorId;
     }
 
     public Money getAmount() {

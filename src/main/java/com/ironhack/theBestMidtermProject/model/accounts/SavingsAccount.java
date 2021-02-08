@@ -28,9 +28,6 @@ public class SavingsAccount extends Account{
 //    and a default interestRate of 0.0025, and a maximum of 0.5
     private BigDecimal interestRate = new BigDecimal("0.0025");
 
-//    The penalty fee is always 40
-    private final Money PENALTY_FEE = new Money(new BigDecimal("40"));
-
 //    Empty constructor
     public SavingsAccount() {
     }
@@ -85,10 +82,6 @@ public class SavingsAccount extends Account{
         this.secretKey = secretKey;
     }
 
-    public Money getPenaltyFee() {
-        return PENALTY_FEE;
-    }
-
     public Status getStatus() {
         return status;
     }
@@ -111,9 +104,5 @@ public class SavingsAccount extends Account{
 
     public void setInterestRate(BigDecimal interestRate) {
         this.interestRate = interestRate;
-    }
-
-    public Money getPENALTY_FEE() {
-        return PENALTY_FEE;
     }
 }
