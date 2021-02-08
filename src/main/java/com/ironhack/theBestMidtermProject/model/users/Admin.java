@@ -5,6 +5,7 @@ import com.ironhack.theBestMidtermProject.utils.classes.*;
 import javax.persistence.*;
 
 @Entity
+@PrimaryKeyJoinColumn(name = "id")
 public class Admin extends User{
 
 //    Empty constructor

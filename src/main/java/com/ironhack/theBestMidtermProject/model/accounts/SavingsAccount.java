@@ -7,19 +7,17 @@ import com.ironhack.theBestMidtermProject.utils.enums.*;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.*;
+import java.util.*;
 
 @Entity
+@PrimaryKeyJoinColumn(name = "id")
 public class SavingsAccount extends Account{
 
     private String secretKey;
-    @ManyToOne
-    @JoinColumn(name = "secondary_owner_id")
-    private User secondaryOwner;
     @Enumerated(EnumType.STRING)
     private Status status;
 
 //    SavingsAccounts have a default minimum balance of 1000, and the minimum of this value is 100
-    @Min(100L)
     @Embedded
     @AttributeOverrides(value ={
             @AttributeOverride(name = "amount", column = @Column(name = "minimum_balance")),
@@ -28,7 +26,6 @@ public class SavingsAccount extends Account{
     private Money minimumBalance = new Money(new BigDecimal("1000"));
 
 //    and a default interestRate of 0.0025, and a maximum of 0.5
-    @DecimalMax("0.5")
     private BigDecimal interestRate = new BigDecimal("0.0025");
 
 //    The penalty fee is always 40
@@ -39,39 +36,36 @@ public class SavingsAccount extends Account{
     }
 
 //    constructor with all parameters but minimumBalance
-    public SavingsAccount(Money balance, User primaryOwner, String secretKey, User secondaryOwner, Status status,
-                          @DecimalMax("0.5") BigDecimal interestRate) {
-        super(balance, primaryOwner);
+    public SavingsAccount(Long id, Money balance, AccountHolder primaryOwner, String secretKey,
+                          Status status, BigDecimal interestRate) {
+        super(id, balance, primaryOwner);
         this.secretKey = secretKey;
-        this.secondaryOwner = secondaryOwner;
         this.status = status;
         this.interestRate = interestRate;
     }
 
 //    constructor with all parameters but interestRate
-    public SavingsAccount(Money balance, User primaryOwner, String secretKey, User secondaryOwner,
-                           Status status, @Min(100L) Money minimumBalance) {
-        super(balance, primaryOwner);
+    public SavingsAccount(Long id, Money balance, AccountHolder primaryOwner, String secretKey,
+                          Status status, Money minimumBalance) {
+        super(id, balance, primaryOwner);
         this.secretKey = secretKey;
-        this.secondaryOwner = secondaryOwner;
         this.status = status;
         this.minimumBalance = minimumBalance;
     }
 
 //    constructor with all parameters but both minimumBalance and interestBalance
-    public SavingsAccount(Money balance, User primaryOwner, String secretKey, User secondaryOwner, Status status) {
-        super(balance, primaryOwner);
+    public SavingsAccount(Long id, Money balance, AccountHolder primaryOwner, String secretKey,
+                          Status status) {
+        super(id, balance, primaryOwner);
         this.secretKey = secretKey;
-        this.secondaryOwner = secondaryOwner;
         this.status = status;
     }
 
 //    constructor with all parameters
-    public SavingsAccount(Money balance, User primaryOwner, String secretKey, User secondaryOwner, Status status,
-                          @Min(100L) Money minimumBalance, @DecimalMax("0.5") BigDecimal interestRate) {
-        super(balance, primaryOwner);
+    public SavingsAccount(Long id, Money balance, AccountHolder primaryOwner, String secretKey,
+                          Status status, Money minimumBalance, BigDecimal interestRate) {
+        super(id, balance, primaryOwner);
         this.secretKey = secretKey;
-        this.secondaryOwner = secondaryOwner;
         this.status = status;
         this.minimumBalance = minimumBalance;
         this.interestRate = interestRate;
@@ -89,14 +83,6 @@ public class SavingsAccount extends Account{
 
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
-    }
-
-    public User getSecondaryOwner() {
-        return secondaryOwner;
-    }
-
-    public void setSecondaryOwner(User secondaryOwner) {
-        this.secondaryOwner = secondaryOwner;
     }
 
     public Money getPenaltyFee() {
@@ -125,5 +111,9 @@ public class SavingsAccount extends Account{
 
     public void setInterestRate(BigDecimal interestRate) {
         this.interestRate = interestRate;
+    }
+
+    public Money getPENALTY_FEE() {
+        return PENALTY_FEE;
     }
 }

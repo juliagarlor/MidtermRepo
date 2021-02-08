@@ -14,25 +14,25 @@ import java.util.*;
 
 @RestController
 public class AccountHolderController implements IAccountHolderController {
-
-    @Autowired
-    private IAccountHolderService iAccountHolderService;
-
-    @GetMapping("/balance/{accountId}")
-    @ResponseStatus(HttpStatus.OK)
-    public Money checkBalance(@PathVariable long accountId){
-        return iAccountHolderService.checkBalance(accountId);
-    }
-
-    @PatchMapping("/transference/{nameDTO}/{targetId}/{emisorId}")
-    @ResponseStatus(HttpStatus.OK)
-    public Money transferAmount(@PathVariable @Valid NameDTO nameDTO, @PathVariable long targetId, @PathVariable long emisorId,
-                                @RequestBody Money amount){
-        String firstName = nameDTO.getFirstName();
-        String lastName = nameDTO.getLastName();
-        String middleName = nameDTO.getMiddleName();
-        Salutation salutation = nameDTO.getSalutation();
-        Name name = new Name(firstName, lastName, middleName, salutation);
-        return iAccountHolderService.transferAmount(name, targetId, emisorId, amount);
-    }
+//
+//    @Autowired
+//    private IAccountHolderService iAccountHolderService;
+//
+//    @GetMapping("/balance/{accountId}")
+//    @ResponseStatus(HttpStatus.OK)
+//    public Money checkBalance(@PathVariable long accountId){
+//        return iAccountHolderService.checkBalance(accountId);
+//    }
+//
+//    @PatchMapping("/transference/{nameDTO}/{targetId}/{emisorId}")
+//    @ResponseStatus(HttpStatus.OK)
+//    public Money transferAmount(@PathVariable @Valid NameDTO nameDTO, @PathVariable long targetId, @PathVariable long emisorId,
+//                                @RequestBody Money amount){
+//        String firstName = nameDTO.getFirstName();
+//        String lastName = nameDTO.getLastName();
+//        String middleName = nameDTO.getMiddleName();
+//        Salutation salutation = nameDTO.getSalutation();
+//        Name name = new Name(firstName, lastName, middleName, salutation);
+//        return iAccountHolderService.transferAmount(name, targetId, emisorId, amount);
+//    }
 }

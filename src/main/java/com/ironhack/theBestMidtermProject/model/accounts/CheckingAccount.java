@@ -6,14 +6,13 @@ import com.ironhack.theBestMidtermProject.utils.enums.*;
 
 import javax.persistence.*;
 import java.math.*;
+import java.util.*;
 
 @Entity
+@PrimaryKeyJoinColumn(name = "id")
 public class CheckingAccount extends Account{
 
     private String secretKey;
-    @ManyToOne
-    @JoinColumn(name = "secondary_owner_id")
-    private User secondaryOwner;
     @Enumerated(EnumType.STRING)
     private Status status;
 //    checkingAccounts have a minimum balance of 250:
@@ -27,11 +26,11 @@ public class CheckingAccount extends Account{
     public CheckingAccount() {
     }
 
-    //    Constructor with all parameters
-    public CheckingAccount(Money balance, User primaryOwner, String secretKey, User secondaryOwner, Status status) {
-        super(balance, primaryOwner);
+//    Constructor with all parameters
+    public CheckingAccount(Long id, Money balance, AccountHolder primaryOwner, String secretKey,
+                           Status status) {
+        super(id, balance, primaryOwner);
         this.secretKey = secretKey;
-        this.secondaryOwner = secondaryOwner;
         this.status = status;
     }
 
@@ -47,14 +46,6 @@ public class CheckingAccount extends Account{
 
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
-    }
-
-    public User getSecondaryOwner() {
-        return secondaryOwner;
-    }
-
-    public void setSecondaryOwner(User secondaryOwner) {
-        this.secondaryOwner = secondaryOwner;
     }
 
     public Money getMINIMUM_BALANCE() {

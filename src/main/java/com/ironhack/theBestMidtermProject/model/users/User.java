@@ -13,16 +13,21 @@ public abstract class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    protected long id;
 
     @Embedded
-    private Name name;
-    private int age;
+    @AttributeOverrides(value = {
+            @AttributeOverride(name = "lastName", column = @Column(name = "last_name", columnDefinition = "varchar(60)")),
+            @AttributeOverride(name = "firstName", column = @Column(name = "first_name", columnDefinition = "varchar(60)")),
+            @AttributeOverride(name = "middleName", column = @Column(name = "middle_name", columnDefinition = "varchar(60)")),
+            @AttributeOverride(name = "salutation", column = @Column(name = "salutation", columnDefinition = "varchar(60)")),
+
+    })
+    protected Name name;
+    protected int age;
 
 //    We will add a boolean in order to know whether the user is logged or not, allowing to perform operations
-    private boolean loggedIn;
-
-    private Map<Long, Account> accounts;
+    protected boolean loggedIn;
 
 //    Empty constructor
     public User() {
@@ -36,12 +41,6 @@ public abstract class User {
         this.age = age;
 //        When creating an object, the user has not log into the account yet
         this.loggedIn = false;
-    }
-
-//    Adding new accounts:
-    public Account addAccount(Account account){
-        accounts.put(account.getId(), account);
-        return account;
     }
 
 //    Getter y Setters
@@ -78,11 +77,4 @@ public abstract class User {
         this.loggedIn = loggedIn;
     }
 
-    public Map<Long, Account> getAccounts() {
-        return accounts;
-    }
-
-    public void setAccounts(Map<Long, Account> accounts) {
-        this.accounts = accounts;
-    }
 }

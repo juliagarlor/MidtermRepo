@@ -15,79 +15,79 @@ import java.util.*;
 @Service
 public class UserService implements IUserService {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    public User getUser(long id) {
-        Optional<User> user = userRepository.findById(id);
-
-        if (user.isPresent()){
-            return user.get();
-        }else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This id does not belong to any of our clients. " +
-                    "Please, intruduce a valid id.");
-        }
-    }
-
-    public Account login(long userId, long accountId, Optional<String> password) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()){
-            User validUser = user.get();
-            return checkValidAccess(accountId, validUser, password, true);
-        }else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This id does not belong to any of our clients. " +
-                    "Please, intruduce a valid id.");
-        }
-    }
-
-    public String logout(long userId){
-        Optional<User> user = userRepository.findById(userId);
-
-        if (user.isPresent()){
-            if (user.get().isLoggedIn()){
-                return "Thank you. We hope to see you soon, " + user.get().getName();
-            }else {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This client is not logged in yet.");
-            }
-        }else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This id does not belong to any of our clients. " +
-                    "Please, intruduce a valid id.");
-        }
-    }
-
-    public Account checkValidAccess(Long id, User user, Optional<String> password, boolean firstRound){
-        Map<Long, Account> accounts;
-
-        if (firstRound){
-            accounts = user.getPrincipalAccounts();
-        } else {
-            accounts = user.getSecondaryAccounts();
-        }
-
-        Set<Long> keys = accounts.keySet();
-        if (keys.contains(id)){
-            Account account = accounts.get(id);
-            if (account.getClass() != CreditCardAccount.class){
-                if (password.isPresent()){
-                    if (!account.checkPassword(password.get())){
-                        throw new IllegalArgumentException("The password is incorrect.");
-                    }
-                }else {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please, " +
-                            "introduce the password of this account.");
-                }
-            }
-//            The user has accomplish the requirements to log in the account
-            user.setLoggedIn(true);
-            return account;
-        } else {
-            if (firstRound){
-                checkValidAccess(id, user, password, false);
-            }else {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The account number " + id + " does not belong to "
-                        + user.getName() + ".");
-            }
-        }
-        return null;
-    }
+//    @Autowired
+//    private UserRepository userRepository;
+//
+//    public User getUser(long id) {
+//        Optional<User> user = userRepository.findById(id);
+//
+//        if (user.isPresent()){
+//            return user.get();
+//        }else {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This id does not belong to any of our clients. " +
+//                    "Please, intruduce a valid id.");
+//        }
+//    }
+//
+//    public Account login(long userId, long accountId, Optional<String> password) {
+//        Optional<User> user = userRepository.findById(userId);
+//        if (user.isPresent()){
+//            User validUser = user.get();
+//            return checkValidAccess(accountId, validUser, password, true);
+//        }else {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This id does not belong to any of our clients. " +
+//                    "Please, intruduce a valid id.");
+//        }
+//    }
+//
+//    public String logout(long userId){
+//        Optional<User> user = userRepository.findById(userId);
+//
+//        if (user.isPresent()){
+//            if (user.get().isLoggedIn()){
+//                return "Thank you. We hope to see you soon, " + user.get().getName();
+//            }else {
+//                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This client is not logged in yet.");
+//            }
+//        }else {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This id does not belong to any of our clients. " +
+//                    "Please, intruduce a valid id.");
+//        }
+//    }
+//
+//    public Account checkValidAccess(Long id, User user, Optional<String> password, boolean firstRound){
+//        Map<Long, Account> accounts;
+//
+//        if (firstRound){
+//            accounts = user.getPrincipalAccounts();
+//        } else {
+//            accounts = user.getSecondaryAccounts();
+//        }
+//
+//        Set<Long> keys = accounts.keySet();
+//        if (keys.contains(id)){
+//            Account account = accounts.get(id);
+//            if (account.getClass() != CreditCardAccount.class){
+//                if (password.isPresent()){
+//                    if (!account.checkPassword(password.get())){
+//                        throw new IllegalArgumentException("The password is incorrect.");
+//                    }
+//                }else {
+//                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please, " +
+//                            "introduce the password of this account.");
+//                }
+//            }
+////            The user has accomplish the requirements to log in the account
+//            user.setLoggedIn(true);
+//            return account;
+//        } else {
+//            if (firstRound){
+//                checkValidAccess(id, user, password, false);
+//            }else {
+//                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The account number " + id + " does not belong to "
+//                        + user.getName() + ".");
+//            }
+//        }
+//        return null;
+//    }
 }

@@ -6,14 +6,13 @@ import com.ironhack.theBestMidtermProject.utils.enums.*;
 
 import javax.persistence.*;
 import java.math.*;
+import java.util.*;
 
 @Entity
+@PrimaryKeyJoinColumn(name = "id")
 public class StudentCheckingAccount extends Account{
 
     private String secretKey;
-    @ManyToOne
-    @JoinColumn(name = "secondary_owner_id")
-    private User secondaryOwner;
     @Enumerated(EnumType.STRING)
     private Status status;
 //    The penalty fee is always 40
@@ -23,12 +22,11 @@ public class StudentCheckingAccount extends Account{
     public StudentCheckingAccount() {
     }
 
-    //    Constructor with all the parameters
-    public StudentCheckingAccount(Money balance, User primaryOwner, String secretKey, User secondaryOwner,
-                                  Status status) {
-        super(balance, primaryOwner);
+//    Constructor with all the parameters
+    public StudentCheckingAccount(Long id, Money balance, AccountHolder primaryOwner,
+                                  String secretKey, Status status) {
+        super(id, balance, primaryOwner);
         this.secretKey = secretKey;
-        this.secondaryOwner = secondaryOwner;
         this.status = status;
     }
 
@@ -37,7 +35,7 @@ public class StudentCheckingAccount extends Account{
         return secretKey.equals(password);
     }
 
-    //    Getters and Setters
+//    Getters and Setters
 
     public String getSecretKey() {
         return secretKey;
@@ -45,14 +43,6 @@ public class StudentCheckingAccount extends Account{
 
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
-    }
-
-    public User getSecondaryOwner() {
-        return secondaryOwner;
-    }
-
-    public void setSecondaryOwner(User secondaryOwner) {
-        this.secondaryOwner = secondaryOwner;
     }
 
     public Status getStatus() {

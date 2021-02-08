@@ -7,13 +7,9 @@ import javax.persistence.*;
 @Embeddable
 public class Name {
 
-    @Column(columnDefinition = "varchar(60)")
     private String lastName;
-    @Column(columnDefinition = "varchar(60)")
     private String firstName;
-    @Column(columnDefinition = "varchar(60)")
     private String middleName;
-    @Column(columnDefinition = "varchar(60)")
     @Enumerated(EnumType.STRING)
     private Salutation salutation;
 

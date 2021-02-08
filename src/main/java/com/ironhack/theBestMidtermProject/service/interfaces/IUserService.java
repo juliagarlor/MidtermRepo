@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 public interface IUserService {
-    User getUser(long id);
-    Account login(long userId, long accountId, Optional<String> password);
-    public String logout(long userId);
+//    User getUser(long id);
+//    Account login(long userId, long accountId, Optional<String> password);
+//    public String logout(long userId);
 }

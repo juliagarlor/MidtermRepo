@@ -6,6 +6,7 @@ import com.sun.istack.*;
 import javax.persistence.*;
 
 @Entity
+@PrimaryKeyJoinColumn(name = "id")
 public class ThirdParty extends User{
     @NotNull
     private String hashedKey;

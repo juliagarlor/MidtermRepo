@@ -9,7 +9,4 @@ import java.util.*;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByPrincipalAccountsId(long id);
-    Optional<User> findBySecondaryAccountsId(long id);
-    Optional<User> findByNameAndAccountsIdIs(Name name, long id);
 }
