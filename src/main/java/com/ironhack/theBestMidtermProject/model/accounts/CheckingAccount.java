@@ -6,20 +6,17 @@ import com.ironhack.theBestMidtermProject.utils.enums.*;
 
 import javax.persistence.*;
 import java.math.*;
+import java.util.*;
 
 @Entity
+@PrimaryKeyJoinColumn(name = "id")
 public class CheckingAccount extends Account{
 
     private String secretKey;
-    @ManyToOne
-    @JoinColumn(name = "secondary_owner_id")
-    private User secondaryOwner;
     @Enumerated(EnumType.STRING)
     private Status status;
 //    checkingAccounts have a minimum balance of 250:
     private final Money MINIMUM_BALANCE = new Money(new BigDecimal("250"));
-//    and the penalty fee is always 40
-    private final Money PENALTY_FEE = new Money(new BigDecimal("40"));
 //    and a monthly maintenance fee of 12:
     private final Money MONTHLY_MAINTENANCE_FEE = new Money(new BigDecimal("12"));
 
@@ -27,18 +24,17 @@ public class CheckingAccount extends Account{
     public CheckingAccount() {
     }
 
-//    Constructor without secondary owner
-    public CheckingAccount(Money balance, User primaryOwner, String secretKey, Status status) {
+//    Constructor with all parameters but secondaryOwner
+    public CheckingAccount(Money balance, AccountHolder primaryOwner, String secretKey, Status status) {
         super(balance, primaryOwner);
         this.secretKey = secretKey;
         this.status = status;
     }
 
     //    Constructor with all parameters
-    public CheckingAccount(Money balance, User primaryOwner, String secretKey, Status status, User secondaryOwner) {
-        super(balance, primaryOwner);
+    public CheckingAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, String secretKey, Status status) {
+        super(balance, primaryOwner, secondaryOwner);
         this.secretKey = secretKey;
-        this.secondaryOwner = secondaryOwner;
         this.status = status;
     }
 
@@ -56,20 +52,8 @@ public class CheckingAccount extends Account{
         this.secretKey = secretKey;
     }
 
-    public User getSecondaryOwner() {
-        return secondaryOwner;
-    }
-
-    public void setSecondaryOwner(User secondaryOwner) {
-        this.secondaryOwner = secondaryOwner;
-    }
-
     public Money getMINIMUM_BALANCE() {
         return MINIMUM_BALANCE;
-    }
-
-    public Money getPENALTY_FEE() {
-        return PENALTY_FEE;
     }
 
     public Money getMONTHLY_MAINTENANCE_FEE() {

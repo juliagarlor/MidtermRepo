@@ -1,5 +1,6 @@
 package com.ironhack.theBestMidtermProject.model.users;
 
+import com.fasterxml.jackson.annotation.*;
 import com.ironhack.theBestMidtermProject.model.accounts.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.sun.istack.*;
@@ -13,44 +14,31 @@ public abstract class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    protected long id;
 
     @Embedded
-    private Name name;
-    private int age;
+    @AttributeOverrides(value = {
+            @AttributeOverride(name = "lastName", column = @Column(name = "last_name", columnDefinition = "varchar(60)")),
+            @AttributeOverride(name = "firstName", column = @Column(name = "first_name", columnDefinition = "varchar(60)")),
+            @AttributeOverride(name = "middleName", column = @Column(name = "middle_name", columnDefinition = "varchar(60)")),
+            @AttributeOverride(name = "salutation", column = @Column(name = "salutation", columnDefinition = "varchar(60)")),
 
-//    We will add a boolean in order to know whether the user is logged or not, allowing to perform operations
-    private boolean loggedIn;
-
-    @OneToMany(mappedBy = "primaryOwner")
-    private Map<Long, Account> principalAccounts;
-
-    @OneToMany(mappedBy = "secondaryOwner")
-    private Map<Long, Account> secondaryAccounts;
+    })
+    protected Name name;
+    protected int age;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
+    protected Set<Role> roles;
 
 //    Empty constructor
     public User() {
     }
 
 //    Constructor with all parameters
-
-    public User(long id, Name name, int age) {
-        this.id = id;
+    public User(Name name, int age, Set<Role> roles) {
         this.name = name;
         this.age = age;
-//        When creating an object, the user has not log into the account yet
-        this.loggedIn = false;
-    }
-
-//    Adding new accounts:
-    public Account addPrincipalAccount(Account account){
-        principalAccounts.put(account.getId(), account);
-        return account;
-    }
-
-    public Account addSecondaryAccount(Account account){
-        principalAccounts.put(account.getId(), account);
-        return account;
+        this.roles = roles;
     }
 
 //    Getter y Setters
@@ -79,27 +67,11 @@ public abstract class User {
         this.age = age;
     }
 
-    public boolean isLoggedIn() {
-        return loggedIn;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setLoggedIn(boolean loggedIn) {
-        this.loggedIn = loggedIn;
-    }
-
-    public Map<Long, Account> getPrincipalAccounts() {
-        return principalAccounts;
-    }
-
-    public void setPrincipalAccounts(Map<Long, Account> principalAccounts) {
-        this.principalAccounts = principalAccounts;
-    }
-
-    public Map<Long, Account> getSecondaryAccounts() {
-        return secondaryAccounts;
-    }
-
-    public void setSecondaryAccounts(Map<Long, Account> secondaryAccounts) {
-        this.secondaryAccounts = secondaryAccounts;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }

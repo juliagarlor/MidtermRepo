@@ -7,16 +7,15 @@ import javax.persistence.*;
 @Embeddable
 public class Address {
 
-    @Column(columnDefinition = "varchar(60)")
     private int number;
-    @Column(columnDefinition = "varchar(60)")
     private String street;
-    @Column(columnDefinition = "varchar(60)")
     private String city;
-    @Column(columnDefinition = "varchar(60)")
     private String country;
 
-//    Constructor
+    public Address() {
+    }
+
+    //    Constructor
     public Address(int number, String street, String city, String country) {
         this.number = number;
         this.street = street;

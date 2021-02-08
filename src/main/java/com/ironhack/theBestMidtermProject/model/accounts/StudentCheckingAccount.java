@@ -6,29 +6,31 @@ import com.ironhack.theBestMidtermProject.utils.enums.*;
 
 import javax.persistence.*;
 import java.math.*;
+import java.util.*;
 
 @Entity
+@PrimaryKeyJoinColumn(name = "id")
 public class StudentCheckingAccount extends Account{
 
     private String secretKey;
-    @ManyToOne
-    @JoinColumn(name = "secondary_owner_id")
-    private User secondaryOwner;
     @Enumerated(EnumType.STRING)
     private Status status;
-//    The penalty fee is always 40
-    private final Money PENALTY_FEE = new Money(new BigDecimal("40"));
 
-//    Empty constructor of StudentCheckingAccount
+//    Empty constructor
     public StudentCheckingAccount() {
     }
 
-//    Constructor with all the parameters
-    public StudentCheckingAccount(Money balance, User primaryOwner, String secretKey, User secondaryOwner,
-                                  Status status) {
+//    Constructor with all parameters but secondary owner
+    public StudentCheckingAccount(Money balance, AccountHolder primaryOwner, String secretKey, Status status) {
         super(balance, primaryOwner);
         this.secretKey = secretKey;
-        this.secondaryOwner = secondaryOwner;
+        this.status = status;
+    }
+
+    //    Constructor with all the parameters
+    public StudentCheckingAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, String secretKey, Status status) {
+        super(balance, primaryOwner, secondaryOwner);
+        this.secretKey = secretKey;
         this.status = status;
     }
 
@@ -37,7 +39,7 @@ public class StudentCheckingAccount extends Account{
         return secretKey.equals(password);
     }
 
-    //    Getters and Setters
+//    Getters and Setters
 
     public String getSecretKey() {
         return secretKey;
@@ -47,23 +49,11 @@ public class StudentCheckingAccount extends Account{
         this.secretKey = secretKey;
     }
 
-    public User getSecondaryOwner() {
-        return secondaryOwner;
-    }
-
-    public void setSecondaryOwner(User secondaryOwner) {
-        this.secondaryOwner = secondaryOwner;
-    }
-
     public Status getStatus() {
         return status;
     }
 
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    public Money getPENALTY_FEE() {
-        return PENALTY_FEE;
     }
 }

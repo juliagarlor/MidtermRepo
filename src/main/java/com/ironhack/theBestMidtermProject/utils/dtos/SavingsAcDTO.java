@@ -13,14 +13,14 @@ public class SavingsAcDTO {
     private BigDecimal minimumBalance;
     @NotNull(message = "This account must have a secret key")
     private String secretKey;
-    private Optional<User> secondaryOwner;
+    private Optional<AccountHolder> secondaryOwner;
     @DecimalMax(value = "0.5", message = "The interest rate can not be higher than 0.5")
     private BigDecimal interestRate;
     private final Money PENALTY_FEE = new Money(new BigDecimal("40"));
 
 //    Constructor without minimumBalance and interestRate
     public SavingsAcDTO(@DecimalMin(value = "0", message = "A new account can not be opened with a negative balance") BigDecimal balance,
-                        @NotNull(message = "This account must have a secret key") String secretKey, Optional<User> secondaryOwner) {
+                        @NotNull(message = "This account must have a secret key") String secretKey, Optional<AccountHolder> secondaryOwner) {
         this.balance = balance;
         this.minimumBalance = new BigDecimal("1000");
         this.secretKey = secretKey;
@@ -30,7 +30,7 @@ public class SavingsAcDTO {
 
 //    Constructor without minimumBalance
     public SavingsAcDTO(@DecimalMin(value = "0", message = "A new account can not be opened with a negative balance") BigDecimal balance,
-                        @NotNull(message = "This account must have a secret key") String secretKey, Optional<User> secondaryOwner,
+                        @NotNull(message = "This account must have a secret key") String secretKey, Optional<AccountHolder> secondaryOwner,
                         @DecimalMax(value = "0.5", message = "The interest rate can not be higher than 0.5") BigDecimal interestRate) {
         this.balance = balance;
         this.minimumBalance = new BigDecimal("1000");
@@ -42,7 +42,7 @@ public class SavingsAcDTO {
 //    Constructor without interestRate
     public SavingsAcDTO(@DecimalMin(value = "0", message = "A new account can not be opened with a negative balance") BigDecimal balance,
                         @DecimalMin(value = "100", message = "The minimum balance for this account must be higher than 100.") BigDecimal minimumBalance,
-                        @NotNull(message = "This account must have a secret key") String secretKey, Optional<User> secondaryOwner) {
+                        @NotNull(message = "This account must have a secret key") String secretKey, Optional<AccountHolder> secondaryOwner) {
         this.balance = balance;
         this.minimumBalance = minimumBalance;
         this.secretKey = secretKey;
@@ -53,7 +53,7 @@ public class SavingsAcDTO {
 //    Constructor with all parameters
     public SavingsAcDTO(@DecimalMin(value = "0", message = "A new account can not be opened with a negative balance") BigDecimal balance,
                         @DecimalMin(value = "100", message = "The minimum balance for this account must be higher than 100.") BigDecimal minimumBalance,
-                        @NotNull(message = "This account must have a secret key") String secretKey, Optional<User> secondaryOwner,
+                        @NotNull(message = "This account must have a secret key") String secretKey, Optional<AccountHolder> secondaryOwner,
                         @DecimalMax(value = "0.5", message = "The interest rate can not be higher than 0.5") BigDecimal interestRate) {
         this.balance = balance;
         this.minimumBalance = minimumBalance;
@@ -87,11 +87,11 @@ public class SavingsAcDTO {
         this.secretKey = secretKey;
     }
 
-    public Optional<User> getSecondaryOwner() {
+    public Optional<AccountHolder> getSecondaryOwner() {
         return secondaryOwner;
     }
 
-    public void setSecondaryOwner(Optional<User> secondaryOwner) {
+    public void setSecondaryOwner(Optional<AccountHolder> secondaryOwner) {
         this.secondaryOwner = secondaryOwner;
     }
 

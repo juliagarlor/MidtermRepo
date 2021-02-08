@@ -1,6 +1,6 @@
-DROP SCHEMA IF EXISTS superdb;
-CREATE SCHEMA superdb;
-USE superdb;
+DROP SCHEMA IF EXISTS superdb_test;
+CREATE SCHEMA superdb_test;
+USE superdb_test;
 
 CREATE TABLE `user`(
 id BIGINT AUTO_INCREMENT NOT NULL,

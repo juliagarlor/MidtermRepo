@@ -12,7 +12,7 @@ public class CreditAcDTO {
     private BigDecimal creditLimit;
     @DecimalMin(value = "0", message = "A new account must have a positive valance")
     private BigDecimal balance;
-    private Optional<User> secondaryOwner;
+    private Optional<AccountHolder> secondaryOwner;
     @DecimalMin(value = "0", message = "The maintenance fee must be positive")
     private BigDecimal monthlyMaintenanceFee;
     @DecimalMin(value = "0.1", message = "Interest rate should be higher than 0.1")
@@ -20,7 +20,7 @@ public class CreditAcDTO {
 
 //    Constructor without creditLimit and interestRate
     public CreditAcDTO(@DecimalMin(value = "0", message = "A new account must have a positive valance") BigDecimal balance,
-                       Optional<User> secondaryOwner,
+                       Optional<AccountHolder> secondaryOwner,
                        @DecimalMin(value = "0", message = "The maintenance fee must be positive") BigDecimal monthlyMaintenanceFee) {
         this.balance = balance;
         this.secondaryOwner = secondaryOwner;
@@ -29,7 +29,7 @@ public class CreditAcDTO {
 
 //    Constructor without creditLimit
     public CreditAcDTO(@DecimalMin(value = "0", message = "A new account must have a positive valance") BigDecimal balance,
-                       Optional<User> secondaryOwner,
+                       Optional<AccountHolder> secondaryOwner,
                        @DecimalMin(value = "0", message = "The maintenance fee must be positive") BigDecimal monthlyMaintenanceFee,
                        @DecimalMin(value = "0.1", message = "Interest rate should be higher than 0.1") BigDecimal interestRate) {
         this.creditLimit = new BigDecimal("100");
@@ -41,7 +41,7 @@ public class CreditAcDTO {
 
 //    Constructor without interestRate
     public CreditAcDTO(@DecimalMax("100000") BigDecimal creditLimit, @DecimalMin(value = "0", message = "A new account must have a positive valance")
-            BigDecimal balance, Optional<User> secondaryOwner,
+            BigDecimal balance, Optional<AccountHolder> secondaryOwner,
                        @DecimalMin(value = "0", message = "The maintenance fee must be positive") BigDecimal monthlyMaintenanceFee) {
         this.creditLimit = creditLimit;
         this.balance = balance;
@@ -52,7 +52,7 @@ public class CreditAcDTO {
 
     //    Constructor with all params
     public CreditAcDTO(@DecimalMax("100000") BigDecimal creditLimit, @DecimalMin(value = "0", message = "A new account must have a positive valance")
-            BigDecimal balance, Optional<User> secondaryOwner,
+            BigDecimal balance, Optional<AccountHolder> secondaryOwner,
                        @DecimalMin(value = "0", message = "The maintenance fee must be positive") BigDecimal monthlyMaintenanceFee,
                        @DecimalMin(value = "0.1", message = "Interest rate should be higher than 0.1") BigDecimal interestRate) {
         this.creditLimit = creditLimit;
@@ -80,11 +80,11 @@ public class CreditAcDTO {
         this.balance = balance;
     }
 
-    public Optional<User> getSecondaryOwner() {
+    public Optional<AccountHolder> getSecondaryOwner() {
         return secondaryOwner;
     }
 
-    public void setSecondaryOwner(Optional<User> secondaryOwner) {
+    public void setSecondaryOwner(Optional<AccountHolder> secondaryOwner) {
         this.secondaryOwner = secondaryOwner;
     }
 

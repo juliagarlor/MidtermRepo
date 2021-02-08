@@ -1,38 +1,43 @@
-package com.ironhack.theBestMidtermProject.utils.classes;
+package com.ironhack.theBestMidtermProject.utils.dtos;
 
 import com.ironhack.theBestMidtermProject.utils.enums.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
-@Embeddable
-public class Name {
-
+public class NameDTO {
+    @NotNull(message = "Please, introduce the last name of the owner.")
     private String lastName;
+    @NotNull(message = "Please, introduce the first name of the owner.")
     private String firstName;
     private String middleName;
+    @NotNull(message = "Please, add the correct salutation")
     @Enumerated(EnumType.STRING)
     private Salutation salutation;
 
-    public Name() {
+    public NameDTO() {
     }
 
-    //    Constructor without middle name
-    public Name(String lastName, String firstName, Salutation salutation) {
+    //    Constructor without middleName
+    public NameDTO(@NotNull(message = "Please, introduce the last name of the owner.") String lastName,
+                   @NotNull(message = "Please, introduce the first name of the owner.") String firstName,
+                   @NotNull(message = "Please, add the correct salutation") Salutation salutation) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.salutation = salutation;
     }
 
-//    Constructor with all parameters
-    public Name(String lastName, String firstName, String middleName, Salutation salutation) {
+//    Constructor with all the parameters
+    public NameDTO(@NotNull(message = "Please, introduce the last name of the owner.") String lastName,
+                   @NotNull(message = "Please, introduce the first name of the owner.") String firstName, String middleName,
+                   @NotNull(message = "Please, add the correct salutation") Salutation salutation) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.middleName = middleName;
         this.salutation = salutation;
     }
 
-//    Getters and Setters
-
+    //    Setters and Getters
     public String getLastName() {
         return lastName;
     }

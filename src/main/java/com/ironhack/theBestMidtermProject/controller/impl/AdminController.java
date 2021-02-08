@@ -2,6 +2,7 @@ package com.ironhack.theBestMidtermProject.controller.impl;
 
 import com.ironhack.theBestMidtermProject.controller.interfaces.*;
 import com.ironhack.theBestMidtermProject.model.accounts.*;
+import com.ironhack.theBestMidtermProject.model.users.*;
 import com.ironhack.theBestMidtermProject.service.interfaces.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.ironhack.theBestMidtermProject.utils.dtos.*;
@@ -11,12 +12,16 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.*;
 
-//todo SI USO DTOS PARA METER DATOS, EL ORDEN EN EL QUE SE ESCRIBAN LOS PARÁMETROS EN EL BODY ES IMPORTANTE?
-
 @RestController
 public class AdminController implements IAdminController {
     @Autowired
     private IAdminService iAdminService;
+
+    @PostMapping("/register/administrator")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Admin createAdmin(@RequestBody @Valid AdminDTO adminDTO){
+        return iAdminService.createAdmin(adminDTO);
+    }
 
     @PatchMapping("/increaseBalance/{accountId}")
     @ResponseStatus(HttpStatus.OK)
