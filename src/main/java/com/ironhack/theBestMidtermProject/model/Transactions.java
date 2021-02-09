@@ -6,8 +6,9 @@ import com.ironhack.theBestMidtermProject.utils.classes.*;
 import javax.persistence.*;
 import java.time.*;
 
-@Embeddable
+
 @Entity
+@PrimaryKeyJoinColumn(name = "id")
 public class Transactions {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

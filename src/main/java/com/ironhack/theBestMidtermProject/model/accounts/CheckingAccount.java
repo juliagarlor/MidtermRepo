@@ -31,7 +31,7 @@ public class CheckingAccount extends Account{
         this.status = status;
     }
 
-    //    Constructor with all parameters
+//    Constructor with all parameters
     public CheckingAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, String secretKey, Status status) {
         super(balance, primaryOwner, secondaryOwner);
         this.secretKey = secretKey;

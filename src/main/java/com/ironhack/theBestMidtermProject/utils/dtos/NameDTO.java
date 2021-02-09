@@ -6,9 +6,9 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 public class NameDTO {
-    @NotNull(message = "Please, introduce the last name of the owner.")
+    @NotEmpty(message = "Please, introduce the last name of the owner.")
     private String lastName;
-    @NotNull(message = "Please, introduce the first name of the owner.")
+    @NotEmpty(message = "Please, introduce the first name of the owner.")
     private String firstName;
     private String middleName;
     @NotNull(message = "Please, add the correct salutation")
@@ -19,8 +19,8 @@ public class NameDTO {
     }
 
     //    Constructor without middleName
-    public NameDTO(@NotNull(message = "Please, introduce the last name of the owner.") String lastName,
-                   @NotNull(message = "Please, introduce the first name of the owner.") String firstName,
+    public NameDTO(@NotEmpty(message = "Please, introduce the last name of the owner.") String lastName,
+                   @NotEmpty(message = "Please, introduce the first name of the owner.") String firstName,
                    @NotNull(message = "Please, add the correct salutation") Salutation salutation) {
         this.lastName = lastName;
         this.firstName = firstName;
@@ -28,8 +28,8 @@ public class NameDTO {
     }
 
 //    Constructor with all the parameters
-    public NameDTO(@NotNull(message = "Please, introduce the last name of the owner.") String lastName,
-                   @NotNull(message = "Please, introduce the first name of the owner.") String firstName, String middleName,
+    public NameDTO(@NotEmpty(message = "Please, introduce the last name of the owner.") String lastName,
+                   @NotEmpty(message = "Please, introduce the first name of the owner.") String firstName, String middleName,
                    @NotNull(message = "Please, add the correct salutation") Salutation salutation) {
         this.lastName = lastName;
         this.firstName = firstName;

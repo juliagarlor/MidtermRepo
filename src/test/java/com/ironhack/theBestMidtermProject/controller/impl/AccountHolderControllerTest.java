@@ -57,9 +57,10 @@ class AccountHolderControllerTest {
     void createAccountHolder_validDTO_AccountHolder() throws Exception {
         assertEquals(0, accountHolderRepository.findAll().size());
         NameDTO nameDTO = new NameDTO("Lopez", "Cris", Salutation.Ms);
+        String password = "password";
         AddressDTO primaryAddressDTO = new AddressDTO(2, "Los Pinos", "Tarancón", "España");
         AddressDTO mailingAddressDTO = new AddressDTO(5, "Las Olivas", "Tarancón", "España");
-        AccountHolderDTO accountHolderDTO = new AccountHolderDTO(nameDTO, 20, LocalDateTime.of(1996, 12, 19, 17, 0, 0),
+        AccountHolderDTO accountHolderDTO = new AccountHolderDTO(nameDTO, 20, password, LocalDateTime.of(1996, 12, 19, 17, 0, 0),
                 primaryAddressDTO, mailingAddressDTO);
 
         String body = objectMapper.writeValueAsString(accountHolderDTO);
@@ -79,9 +80,10 @@ class AccountHolderControllerTest {
 //        lastName to null
         assertEquals(0, accountHolderRepository.findAll().size());
         NameDTO nameDTO = new NameDTO(null, "Cris", Salutation.Ms);
+        String password = "password";
         AddressDTO primaryAddressDTO = new AddressDTO(1, "Los Pinos", "Tarancón", "España");
         AddressDTO mailingAddressDTO = new AddressDTO(5, "Las Olivas", "Tarancón", "España");
-        AccountHolderDTO accountHolderDTO = new AccountHolderDTO(nameDTO, 20, LocalDateTime.of(1996, 12, 19, 17, 0, 0),
+        AccountHolderDTO accountHolderDTO = new AccountHolderDTO(nameDTO, 20, password, LocalDateTime.of(1996, 12, 19, 17, 0, 0),
                 primaryAddressDTO, mailingAddressDTO);
 
         String body = objectMapper.writeValueAsString(accountHolderDTO);

@@ -17,6 +17,8 @@ public class AccountHolderDTO {
     private NameDTO nameDTO;
     @Min(value = 18, message = "The user must be of age.")
     private int age;
+    @Size(min = 7, message = "The password key must have at least 7 digits.")
+    private String password;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dateOfBirth;
@@ -28,23 +30,27 @@ public class AccountHolderDTO {
     public AccountHolderDTO() {
     }
 
-    //    Constructor with all parameters
-    public AccountHolderDTO(@Valid NameDTO nameDTO, @Min(value = 18, message = "The user must be of age.") int age,
-                            LocalDateTime dateOfBirth, @Valid AddressDTO primaryAddressDTO, @Valid AddressDTO mailingAddressDTO) {
-        this.nameDTO = nameDTO;
-        this.age = age;
-        this.dateOfBirth = dateOfBirth;
-        this.primaryAddressDTO = primaryAddressDTO;
-        this.mailingAddressDTO = mailingAddressDTO;
-    }
-
 //    Constructor without mailingAddress
     public AccountHolderDTO(@Valid NameDTO nameDTO, @Min(value = 18, message = "The user must be of age.") int age,
+                            @Size(min = 7, message = "The password key must have at least 7 digits.") String password,
                             LocalDateTime dateOfBirth, @Valid AddressDTO primaryAddressDTO) {
         this.nameDTO = nameDTO;
         this.age = age;
+        this.password = password;
         this.dateOfBirth = dateOfBirth;
         this.primaryAddressDTO = primaryAddressDTO;
+    }
+
+    //    Constructor with all parameters
+    public AccountHolderDTO(@Valid NameDTO nameDTO, @Min(value = 18, message = "The user must be of age.") int age,
+                            @Size(min = 7, message = "The password key must have at least 7 digits.") String password,
+                            LocalDateTime dateOfBirth, @Valid AddressDTO primaryAddressDTO, @Valid AddressDTO mailingAddressDTO) {
+        this.nameDTO = nameDTO;
+        this.age = age;
+        this.password = password;
+        this.dateOfBirth = dateOfBirth;
+        this.primaryAddressDTO = primaryAddressDTO;
+        this.mailingAddressDTO = mailingAddressDTO;
     }
 
     public NameDTO getNameDTO() {
@@ -85,5 +91,13 @@ public class AccountHolderDTO {
 
     public void setMailingAddressDTO(AddressDTO mailingAddressDTO) {
         this.mailingAddressDTO = mailingAddressDTO;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

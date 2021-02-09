@@ -14,7 +14,7 @@ public class Admin extends User{
     }
 
 //    Constructor with all parameters
-    public Admin(Name name, int age, Set<Role> roles) {
-        super(name, age, roles);
+    public Admin(Name name, String password, int age, Set<Role> roles) {
+        super(name, password, age, roles);
     }
 }

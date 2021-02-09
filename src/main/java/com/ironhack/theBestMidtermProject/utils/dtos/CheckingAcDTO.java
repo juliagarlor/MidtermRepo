@@ -17,7 +17,7 @@ public class CheckingAcDTO {
     private BigDecimal balance;
     @NotNull(message = "The account must have a secret key")
 //    We want our key to be at least 7 characters long so it is safer
-    @Size(min = 7)
+    @Size(min = 7, message = "The secret key must have at least 7 digits.")
     private String secretKey;
     private Optional<AccountHolder> secondaryOwner;
 

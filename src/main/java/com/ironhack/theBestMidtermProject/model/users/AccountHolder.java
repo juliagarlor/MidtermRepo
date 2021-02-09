@@ -47,21 +47,23 @@ public class AccountHolder extends User{
     }
 
 //    Constructor without mailingAddress
-    public AccountHolder(LocalDateTime dateOfBirth, Address primaryAddress) {
+    public AccountHolder(Name name, String password, int age, Set<Role> roles, LocalDateTime dateOfBirth,
+                         Address primaryAddress) {
+        super(name, password, age, roles);
         this.dateOfBirth = dateOfBirth;
         this.primaryAddress = primaryAddress;
     }
 
-    //    Constructor with all parameters
-    public AccountHolder(Name name, int age, Set<Role> roles, LocalDateTime dateOfBirth, Address primaryAddress,
-                         Address mailingAddress) {
-        super(name, age, roles);
+//    Constructor with all parameters
+    public AccountHolder(Name name, String password, int age, Set<Role> roles, LocalDateTime dateOfBirth,
+                         Address primaryAddress, Address mailingAddress) {
+        super(name, password, age, roles);
         this.dateOfBirth = dateOfBirth;
         this.primaryAddress = primaryAddress;
         this.mailingAddress = mailingAddress;
     }
 
-    //    Adding new accounts:
+//    Adding new accounts:
     public Account addPrimaryAccount(Account account){
         primaryAccounts.add(account);
         return account;

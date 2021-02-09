@@ -1,10 +1,7 @@
 package com.ironhack.theBestMidtermProject.controller.impl;
 
-import com.ironhack.theBestMidtermProject.controller.interfaces.*;
-import com.ironhack.theBestMidtermProject.model.accounts.*;
 import com.ironhack.theBestMidtermProject.model.users.*;
 import com.ironhack.theBestMidtermProject.service.interfaces.*;
-import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.ironhack.theBestMidtermProject.utils.dtos.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
@@ -13,13 +10,13 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.*;
 
 @RestController
-public class AdminController implements IAdminController {
+public class ThirdPartyController {
     @Autowired
-    private IAdminService iAdminService;
+    private IThirdPartyService iThirdPartyService;
 
-    @PostMapping("/register/administrator")
+    @PostMapping("/register/third-party")
     @ResponseStatus(HttpStatus.CREATED)
-    public Admin createAdmin(@RequestBody @Valid AdminDTO adminDTO){
-        return iAdminService.createAdmin(adminDTO);
+    public ThirdParty createThirdParty(@RequestBody @Valid ThirdPartyDTO thirdPartyDTO){
+        return iThirdPartyService.createThirdParty(thirdPartyDTO);
     }
 }

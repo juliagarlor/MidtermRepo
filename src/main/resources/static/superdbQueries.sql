@@ -5,6 +5,7 @@ USE superdb;
 CREATE TABLE `user`(
 id BIGINT AUTO_INCREMENT NOT NULL,
 age INT,
+`password` VARCHAR(255),
 last_name VARCHAR(60),
 first_name VARCHAR(60),
 middle_name VARCHAR(60),

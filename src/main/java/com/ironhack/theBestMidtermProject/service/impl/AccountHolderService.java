@@ -28,7 +28,7 @@ public class AccountHolderService implements IAccountHolderService {
     @Autowired
     private AccountHolderRepository accountHolderRepository;
 
-    private Ensambler ensambler;
+    private Ensambler ensambler = new Ensambler();
 
     public Money checkBalance(long accountId) {
         Optional<Account> account = accountRepository.findById(accountId);
@@ -47,9 +47,10 @@ public class AccountHolderService implements IAccountHolderService {
         LocalDateTime dateOfBirth = accountHolderDTO.getDateOfBirth();
         Address primaryAddress = ensambler.ensambleAddress(accountHolderDTO.getPrimaryAddressDTO());
         Address mailingAddress = ensambler.ensambleAddress(accountHolderDTO.getMailingAddressDTO());
+        String password = accountHolderDTO.getPassword();
         Set<Role> roles = new HashSet<>();
 
-        AccountHolder newAccountHolder = new AccountHolder(name, age, roles, dateOfBirth, primaryAddress, mailingAddress);
+        AccountHolder newAccountHolder = new AccountHolder(name, password, age, roles, dateOfBirth, primaryAddress, mailingAddress);
 
         roles.add(new Role("USER", newAccountHolder));
         newAccountHolder.setRoles(roles);

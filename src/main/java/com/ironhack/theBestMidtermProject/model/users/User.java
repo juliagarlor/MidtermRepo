@@ -26,6 +26,7 @@ public abstract class User {
     })
     protected Name name;
     protected int age;
+    protected String password;
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnore
     protected Set<Role> roles;
@@ -35,8 +36,9 @@ public abstract class User {
     }
 
 //    Constructor with all parameters
-    public User(Name name, int age, Set<Role> roles) {
+    public User(Name name, String password, int age, Set<Role> roles) {
         this.name = name;
+        this.password = password;
         this.age = age;
         this.roles = roles;
     }

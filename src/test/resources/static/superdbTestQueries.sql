@@ -5,6 +5,7 @@ USE superdb_test;
 CREATE TABLE `user`(
 id BIGINT AUTO_INCREMENT NOT NULL,
 age INT,
+`password` VARCHAR(255),
 last_name VARCHAR(60),
 first_name VARCHAR(60),
 middle_name VARCHAR(60),
@@ -61,7 +62,7 @@ secret_key VARCHAR(255),
 `status` VARCHAR(255),
 PRIMARY KEY(id),
 FOREIGN KEY(id) REFERENCES `account`(id)
-); 
+);
 
 CREATE TABLE credit_card_account(
 id BIGINT AUTO_INCREMENT NOT NULL,
@@ -71,7 +72,7 @@ interest_rate DECIMAL(19, 4),
 credit_limit DECIMAL(19, 4),
 PRIMARY KEY(id),
 FOREIGN KEY(id) REFERENCES `account`(id)
-); 
+);
 
 CREATE TABLE savings_account(
 id BIGINT AUTO_INCREMENT NOT NULL,
@@ -83,7 +84,7 @@ minimum_balance DECIMAL(19, 4),
 interest_rate DECIMAL(19, 4),
 PRIMARY KEY(id),
 FOREIGN KEY(id) REFERENCES `account`(id)
-); 
+);
 
 CREATE TABLE student_checking_account(
 id BIGINT AUTO_INCREMENT NOT NULL,
@@ -93,7 +94,7 @@ secret_key VARCHAR(255),
 `status` VARCHAR(255),
 PRIMARY KEY(id),
 FOREIGN KEY(id) REFERENCES `account`(id)
-); 
+);
 
 CREATE TABLE transactions(
 id BIGINT AUTO_INCREMENT NOT NULL,

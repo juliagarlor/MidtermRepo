@@ -9,7 +9,7 @@ import java.util.*;
 @Entity
 @PrimaryKeyJoinColumn(name = "id")
 public class ThirdParty extends User{
-    @NotNull
+//    Besides of the userPassword, ThirdParty will have a hashedKey
     private String hashedKey;
 
 //    Empty constructor
@@ -17,10 +17,11 @@ public class ThirdParty extends User{
     }
 
 //    Constructor with parameters
-    public ThirdParty(Name name, int age, Set<Role> roles, String hashedKey) {
-        super(name, age, roles);
+    public ThirdParty(Name name, String password, int age, Set<Role> roles, String hashedKey) {
+        super(name, password, age, roles);
         this.hashedKey = hashedKey;
     }
+
 
 //    Getters and Setters
 

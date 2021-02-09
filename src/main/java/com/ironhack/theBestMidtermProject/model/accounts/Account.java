@@ -30,10 +30,8 @@ public abstract class Account {
     @JoinColumn(name = "secondary_owner_id")
     protected AccountHolder secondaryOwner;
 
-    @Embedded
     @OneToMany(mappedBy = "emisor")
     protected List<Transactions> sentTransactions;
-    @Embedded
     @OneToMany(mappedBy = "receptor")
     protected List<Transactions> receivedTransactions;
 
