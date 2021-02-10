@@ -9,7 +9,6 @@ import java.util.*;
 
 @Repository
 public interface AccountHolderRepository extends JpaRepository<AccountHolder, Long> {
-//    Optional<User> findByPrincipalAccountsId(long id);
-//    Optional<User> findBySecondaryAccountsId(long id);
-//    Optional<User> findByNameAndAccountsIdIs(Name name, long id);
+    Optional<AccountHolder> findByIdAndPrimaryAccountsId(long userId, long accountId);
+    Optional<AccountHolder> findByIdAndSecondaryAccountsId(long userId, long accountId);
 }

@@ -1,7 +1,9 @@
 package com.ironhack.theBestMidtermProject.service.impl;
 
 import com.ironhack.theBestMidtermProject.model.accounts.*;
+import com.ironhack.theBestMidtermProject.model.users.*;
 import com.ironhack.theBestMidtermProject.repository.accounts.*;
+import com.ironhack.theBestMidtermProject.repository.users.*;
 import com.ironhack.theBestMidtermProject.service.interfaces.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 import org.springframework.beans.factory.annotation.*;
@@ -16,7 +18,40 @@ import java.util.*;
 public class CheckingAccountService implements ICheckingAccountService {
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private AccountHolderRepository accountHolderRepository;
+
+    @Autowired
     private CheckingAccountRepository checkingAccountRepository;
+
+    @Override
+    public CheckingAccount checkAccount(long accountId, String userId) {
+        Optional<CheckingAccount> account = checkingAccountRepository.findById(accountId);
+
+//        We assume that the client authentication is correct, because otherwise the system will advise you
+        if (account.isPresent()){
+            long clientId = Long.parseLong(userId);
+
+            User client = userRepository.findById(clientId).get();
+            boolean isAdmin = client.getRoles().stream().anyMatch(x ->x.getName().equals("ADMIN"));
+
+            if (!isAdmin) {
+                Optional<AccountHolder> clientConfirmation = accountHolderRepository.findByIdAndPrimaryAccountsId(clientId, accountId);
+                if (!clientConfirmation.isPresent()) {
+                    clientConfirmation = accountHolderRepository.findByIdAndSecondaryAccountsId(clientId, accountId);
+                    if (!clientConfirmation.isPresent()) {
+                        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to see this data");
+                    }
+                }
+            }
+            return account.get();
+        }else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The account number is not correct. " +
+                    "Please introduce a valid identifier");
+        }
+    }
 
     @Override
     public CheckingAccount addAmount(long accountId, Money amount) {

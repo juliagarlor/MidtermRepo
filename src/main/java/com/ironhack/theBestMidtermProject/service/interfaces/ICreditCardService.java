@@ -6,6 +6,7 @@ import com.ironhack.theBestMidtermProject.utils.dtos.*;
 import org.springframework.web.bind.annotation.*;
 
 public interface ICreditCardService {
+    CreditCardAccount checkAccount( long accountId, String userId);
     CreditCardAccount createCreditAccount(long userId, CreditAcDTO creditAcDTO);
     CreditCardAccount addAmount(long accountId, Money amount);
     CreditCardAccount subtractAmount(long accountId, Money amount);

@@ -7,6 +7,8 @@ import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.ironhack.theBestMidtermProject.utils.dtos.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
+import org.springframework.security.core.*;
+import org.springframework.security.core.annotation.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.*;
@@ -16,6 +18,13 @@ public class SavingsAccountController implements ISavingsAccountController {
 
     @Autowired
     private ISavingsAccountService iSavingsAccountService;
+
+    @GetMapping("/check/savings-account/{accountId}")
+    @ResponseStatus(HttpStatus.OK)
+    public SavingsAccount checkAccount(@PathVariable long accountId, @AuthenticationPrincipal Authentication authentication){
+        String userId = authentication.getName();
+        return iSavingsAccountService.checkAccount(accountId, userId);
+    }
 
     @PostMapping("/new/savings-account/{userId}")
     @ResponseStatus(HttpStatus.CREATED)

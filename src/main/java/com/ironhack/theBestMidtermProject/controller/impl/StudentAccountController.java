@@ -5,6 +5,8 @@ import com.ironhack.theBestMidtermProject.service.interfaces.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
+import org.springframework.security.core.*;
+import org.springframework.security.core.annotation.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -12,6 +14,13 @@ public class StudentAccountController {
 
     @Autowired
     private IStudentAccountService iStudentAccountService;
+
+    @GetMapping("/check/student-account/{accountId}")
+    @ResponseStatus(HttpStatus.OK)
+    public StudentCheckingAccount checkAccount(@PathVariable long accountId, @AuthenticationPrincipal Authentication authentication){
+        String userId = authentication.getName();
+        return iStudentAccountService.checkAccount(accountId, userId);
+    }
 
     @PatchMapping("/admin/student-account/{accountId}/increaseBalance")
     @ResponseStatus(HttpStatus.OK)

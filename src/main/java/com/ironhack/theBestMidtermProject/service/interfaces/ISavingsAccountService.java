@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.*;
 
 public interface ISavingsAccountService {
+    SavingsAccount checkAccount( long accountId, String userId);
     SavingsAccount createSavingsAccount(long userId, SavingsAcDTO savingsAcDTO);
     SavingsAccount addAmount(long accountId, Money amount);
     SavingsAccount subtractAmount(long accountId, Money amount);
