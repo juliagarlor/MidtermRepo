@@ -39,21 +39,21 @@ class SavingsAccountControllerTest {
     @Autowired
     private AccountHolderService accountHolderService;
 
-    private Ensambler ensambler = new Ensambler();
+    private Transformer transformer = new Transformer();
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
-        NameDTO name = ensambler.ensambleNameDTO("Rodriguez", "Cayetano", "Jesús", Salutation.Mr);
-        AddressDTO primaryAddress = ensambler.ensambleAddressDTO(1, "Castilla", "Madrid", "España");
-        AccountHolderDTO primaryOwner = ensambler.ensambleAccountHolderDTO(name,18, "contraseña",
+        NameDTO name = transformer.ensambleNameDTO("Rodriguez", "Cayetano", "Jesús", Salutation.Mr);
+        AddressDTO primaryAddress = transformer.ensambleAddressDTO(1, "Castilla", "Madrid", "España");
+        AccountHolderDTO primaryOwner = transformer.ensambleAccountHolderDTO(name,18, "contraseña",
                 LocalDateTime.of(2002, 5, 20, 18, 40, 00), primaryAddress, null);
         accountHolderService.createAccountHolder(primaryOwner);
 
-        NameDTO name2 = ensambler.ensambleNameDTO("Rodriguez", "María", "Jesús", Salutation.Mrs);
-        AddressDTO primaryAddress2 = ensambler.ensambleAddressDTO(1, "Castilla", "Madrid", "España");
-        AccountHolderDTO secondaryOwner = ensambler.ensambleAccountHolderDTO(name2, 40, "contraseña2",
+        NameDTO name2 = transformer.ensambleNameDTO("Rodriguez", "María", "Jesús", Salutation.Mrs);
+        AddressDTO primaryAddress2 = transformer.ensambleAddressDTO(1, "Castilla", "Madrid", "España");
+        AccountHolderDTO secondaryOwner = transformer.ensambleAccountHolderDTO(name2, 40, "contraseña2",
                 LocalDateTime.of(1980, 5, 20, 18, 40, 00), primaryAddress2, null);
         accountHolderService.createAccountHolder(secondaryOwner);
     }
@@ -73,7 +73,7 @@ class SavingsAccountControllerTest {
         BigDecimal minimumBalance = new BigDecimal("100");
         BigDecimal interestRate = new BigDecimal("0.4");
 
-        SavingsAcDTO savingsAcDTO = ensambler.ensambleSavingsDTO(balance, minimumBalance, "algunoTieneBarco",
+        SavingsAcDTO savingsAcDTO = transformer.ensambleSavingsDTO(balance, minimumBalance, "algunoTieneBarco",
                 secondaryOwnerId, interestRate);
 
         String body = objectMapper.writeValueAsString(savingsAcDTO);
@@ -100,7 +100,7 @@ class SavingsAccountControllerTest {
         long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
         BigDecimal minimumBalance = new BigDecimal("99");
         BigDecimal interestRate = new BigDecimal("0.4");
-        SavingsAcDTO savingsAcDTO = ensambler.ensambleSavingsDTO(balance, minimumBalance, "siempreTresBotonesDesabrochados", secondaryOwnerId, interestRate);
+        SavingsAcDTO savingsAcDTO = transformer.ensambleSavingsDTO(balance, minimumBalance, "siempreTresBotonesDesabrochados", secondaryOwnerId, interestRate);
 
         String body = objectMapper.writeValueAsString(savingsAcDTO);
         System.out.println(body);

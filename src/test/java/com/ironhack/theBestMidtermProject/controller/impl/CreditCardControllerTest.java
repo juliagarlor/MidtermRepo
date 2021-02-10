@@ -1,7 +1,6 @@
 package com.ironhack.theBestMidtermProject.controller.impl;
 
 import com.fasterxml.jackson.databind.*;
-import com.ironhack.theBestMidtermProject.model.users.*;
 import com.ironhack.theBestMidtermProject.repository.accounts.*;
 import com.ironhack.theBestMidtermProject.repository.users.*;
 import com.ironhack.theBestMidtermProject.service.impl.*;
@@ -18,7 +17,6 @@ import org.springframework.web.context.*;
 
 import java.math.*;
 import java.time.*;
-import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,21 +39,21 @@ class CreditCardControllerTest {
     @Autowired
     private AccountHolderService accountHolderService;
 
-    private Ensambler ensambler = new Ensambler();
+    private Transformer transformer = new Transformer();
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
-        NameDTO name = ensambler.ensambleNameDTO("Rodriguez", "Cayetano", "Jesús", Salutation.Mr);
-        AddressDTO primaryAddress = ensambler.ensambleAddressDTO(1, "Castilla", "Madrid", "España");
-        AccountHolderDTO primaryOwner = ensambler.ensambleAccountHolderDTO(name,18, "contraseña",
+        NameDTO name = transformer.ensambleNameDTO("Rodriguez", "Cayetano", "Jesús", Salutation.Mr);
+        AddressDTO primaryAddress = transformer.ensambleAddressDTO(1, "Castilla", "Madrid", "España");
+        AccountHolderDTO primaryOwner = transformer.ensambleAccountHolderDTO(name,18, "contraseña",
                 LocalDateTime.of(2002, 5, 20, 18, 40, 00), primaryAddress, null);
         accountHolderService.createAccountHolder(primaryOwner);
 
-        NameDTO name2 = ensambler.ensambleNameDTO("Rodriguez", "María", "Jesús", Salutation.Mrs);
-        AddressDTO primaryAddress2 = ensambler.ensambleAddressDTO(1, "Castilla", "Madrid", "España");
-        AccountHolderDTO secondaryOwner = ensambler.ensambleAccountHolderDTO(name2, 40, "contraseña2",
+        NameDTO name2 = transformer.ensambleNameDTO("Rodriguez", "María", "Jesús", Salutation.Mrs);
+        AddressDTO primaryAddress2 = transformer.ensambleAddressDTO(1, "Castilla", "Madrid", "España");
+        AccountHolderDTO secondaryOwner = transformer.ensambleAccountHolderDTO(name2, 40, "contraseña2",
                 LocalDateTime.of(1980, 5, 20, 18, 40, 00), primaryAddress2, null);
         accountHolderService.createAccountHolder(secondaryOwner);
     }
@@ -73,7 +71,7 @@ class CreditCardControllerTest {
         BigDecimal balance = new BigDecimal("1000");
         long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
         BigDecimal monthlyMaintenanceFee = new BigDecimal("6");
-        CreditAcDTO creditAcDTO = ensambler.ensambleCreditAcDTO(balance, secondaryOwnerId, null, monthlyMaintenanceFee, null);
+        CreditAcDTO creditAcDTO = transformer.ensambleCreditAcDTO(balance, secondaryOwnerId, null, monthlyMaintenanceFee, null);
 
         String body = objectMapper.writeValueAsString(creditAcDTO);
         System.out.println(body);
@@ -99,7 +97,7 @@ class CreditCardControllerTest {
         long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
         BigDecimal monthlyMaintenanceFee = new BigDecimal("6");
         BigDecimal creditLimit = new BigDecimal("50");
-        CreditAcDTO creditAcDTO = ensambler.ensambleCreditAcDTO(balance, secondaryOwnerId, creditLimit, monthlyMaintenanceFee, null);
+        CreditAcDTO creditAcDTO = transformer.ensambleCreditAcDTO(balance, secondaryOwnerId, creditLimit, monthlyMaintenanceFee, null);
 
         String body = objectMapper.writeValueAsString(creditAcDTO);
         System.out.println(body);

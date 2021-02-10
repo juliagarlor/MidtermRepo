@@ -7,14 +7,11 @@ import com.ironhack.theBestMidtermProject.repository.users.*;
 import com.ironhack.theBestMidtermProject.service.interfaces.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.ironhack.theBestMidtermProject.utils.dtos.*;
-import com.ironhack.theBestMidtermProject.utils.enums.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.*;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.*;
 
-import javax.validation.*;
 import java.time.*;
 import java.util.*;
 
@@ -28,7 +25,7 @@ public class AccountHolderService implements IAccountHolderService {
     @Autowired
     private AccountHolderRepository accountHolderRepository;
 
-    private Ensambler ensambler = new Ensambler();
+    private Transformer transformer = new Transformer();
 
     public Money checkBalance(long accountId, String userName) {
         Optional<Account> account = accountRepository.findById(accountId);
@@ -58,12 +55,12 @@ public class AccountHolderService implements IAccountHolderService {
 
     public AccountHolder createAccountHolder(AccountHolderDTO accountHolderDTO){
 
-        Name name = ensambler.ensambleName(accountHolderDTO.getNameDTO());
+        Name name = transformer.ensambleName(accountHolderDTO.getNameDTO());
         int age = accountHolderDTO.getAge();
         LocalDateTime dateOfBirth = accountHolderDTO.getDateOfBirth();
-        Address primaryAddress = ensambler.ensambleAddress(accountHolderDTO.getPrimaryAddressDTO());
+        Address primaryAddress = transformer.ensambleAddress(accountHolderDTO.getPrimaryAddressDTO());
         Address mailingAddress = (accountHolderDTO.getMailingAddressDTO() != null) ?
-                ensambler.ensambleAddress(accountHolderDTO.getMailingAddressDTO()) : null;
+                transformer.ensambleAddress(accountHolderDTO.getMailingAddressDTO()) : null;
         String password = accountHolderDTO.getPassword();
         Set<Role> roles = new HashSet<>();
 

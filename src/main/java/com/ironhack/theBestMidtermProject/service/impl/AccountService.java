@@ -1,7 +1,9 @@
 package com.ironhack.theBestMidtermProject.service.impl;
 
+import com.ironhack.theBestMidtermProject.model.*;
 import com.ironhack.theBestMidtermProject.model.accounts.*;
 import com.ironhack.theBestMidtermProject.model.users.*;
+import com.ironhack.theBestMidtermProject.repository.*;
 import com.ironhack.theBestMidtermProject.repository.accounts.*;
 import com.ironhack.theBestMidtermProject.repository.users.*;
 import com.ironhack.theBestMidtermProject.service.interfaces.*;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.*;
 import org.springframework.web.server.*;
 
 import java.math.*;
+import java.time.*;
 import java.util.*;
 
 @Service
@@ -30,6 +33,12 @@ public class AccountService implements IAccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
+
+    @Autowired
+    private FraudChecker fraudChecker;
 
     public Account createCheckAccount(long userId, CheckingAcDTO checkingAcDTO){
         Optional<AccountHolder> accountHolder = accountHolderRepository.findById(userId);
@@ -53,5 +62,41 @@ public class AccountService implements IAccountService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The first owner identifier is not correct. " +
                     "Please introduce a valid identifier");
         }
+    }
+
+    public Transactions transfer(long emisorId, TransactionsDTO transactionsDTO){
+
+//      Check if both emisor and receptor accounts exists:
+        Optional<Account> emisorAccountOp = accountRepository.findById(transactionsDTO.getEmisor());
+        Optional<Account> receptorAccountOp = accountRepository.findById(transactionsDTO.getReceptor());
+
+        if(emisorAccountOp.isPresent() && receptorAccountOp.isPresent() && receptorAccountOp.get() != emisorAccountOp.get()){
+            Account emisorAccount = emisorAccountOp.get();
+            Account receptorAccount = receptorAccountOp.get();
+
+//            We suppose that the one logging is the emisor
+            if (emisorAccount.getPrimaryOwner().getId() == emisorId){
+                Money amount = new Money(transactionsDTO.getAmount());
+                LocalDateTime moment = transactionsDTO.getMoment();
+
+                Transactions transactions = new Transactions(emisorAccount, receptorAccount, amount, moment);
+
+                if (fraudChecker.checkFraudInADay(transactions) || fraudChecker.checkFraudInLastSecond(transactions)){
+                    throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "You may need money for a ticket," +
+                            " but it is not going to come from this bank. Good luck with the police :)");
+                }else {
+
+//                    TODO: HAZ ALGO POR AQUI
+                    return transactionRepository.save(transactions);
+                }
+
+            }else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please, transfer from your own account.");
+            }
+        }else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The account identifiers must be valid and different.");
+        }
+
+
     }
 }

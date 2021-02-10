@@ -30,7 +30,7 @@ class ThirdPartyControllerTest {
     @Autowired
     private RoleRepository roleRepository;
 
-    private Ensambler ensambler = new Ensambler();
+    private Transformer transformer = new Transformer();
 
     @BeforeEach
     void setUp() {
@@ -46,8 +46,8 @@ class ThirdPartyControllerTest {
     @Test
     void createThirdParty_validValues_ThirdParty() throws Exception {
         assertEquals(0, thirdPartyRepository.findAll().size());
-        NameDTO nameDTO = ensambler.ensambleNameDTO("Lopez", "Cris", null, Salutation.Ms);
-        ThirdPartyDTO thirdPartyDTO = ensambler.ensambleThirdPartyDTO(nameDTO, 20, "rusaConKetchup", "ensaladilla");
+        NameDTO nameDTO = transformer.ensambleNameDTO("Lopez", "Cris", null, Salutation.Ms);
+        ThirdPartyDTO thirdPartyDTO = transformer.ensambleThirdPartyDTO(nameDTO, 20, "rusaConKetchup", "ensaladilla");
 
         String body = objectMapper.writeValueAsString(thirdPartyDTO);
         System.out.println(body);
@@ -64,8 +64,8 @@ class ThirdPartyControllerTest {
     @Test
     void createThirdParty_invalidValues_ThirdParty() throws Exception {
         assertEquals(0, thirdPartyRepository.findAll().size());
-        NameDTO nameDTO = ensambler.ensambleNameDTO("Lopez", "Cris", null, Salutation.Ms);
-        ThirdPartyDTO thirdPartyDTO = ensambler.ensambleThirdPartyDTO(nameDTO, 17, "rusaConKetchup", "ensaladilla");
+        NameDTO nameDTO = transformer.ensambleNameDTO("Lopez", "Cris", null, Salutation.Ms);
+        ThirdPartyDTO thirdPartyDTO = transformer.ensambleThirdPartyDTO(nameDTO, 17, "rusaConKetchup", "ensaladilla");
 
         String body = objectMapper.writeValueAsString(thirdPartyDTO);
         MvcResult result = mockMvc.perform(

@@ -32,8 +32,7 @@ public class Transactions {
     }
 
 //    Controller with all parameters
-    public Transactions(long id, Account emisorId, Account receptorId, Money amount, LocalDateTime moment) {
-        this.id = id;
+    public Transactions(Account emisorId, Account receptorId, Money amount, LocalDateTime moment) {
         this.emisor = emisorId;
         this.receptor = receptorId;
         this.amount = amount;

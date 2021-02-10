@@ -1,9 +1,7 @@
 package com.ironhack.theBestMidtermProject.controller.impl;
 
-import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.databind.*;
 import com.ironhack.theBestMidtermProject.model.accounts.*;
-import com.ironhack.theBestMidtermProject.model.users.*;
 import com.ironhack.theBestMidtermProject.repository.accounts.*;
 import com.ironhack.theBestMidtermProject.repository.users.*;
 import com.ironhack.theBestMidtermProject.service.impl.*;
@@ -12,21 +10,13 @@ import com.ironhack.theBestMidtermProject.utils.dtos.*;
 import com.ironhack.theBestMidtermProject.utils.enums.*;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.*;
-import org.springframework.boot.autoconfigure.security.*;
 import org.springframework.boot.test.context.*;
 import org.springframework.http.*;
-import org.springframework.security.authentication.*;
-import org.springframework.security.core.authority.*;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.web.authentication.preauth.*;
 import org.springframework.test.web.servlet.*;
 import org.springframework.test.web.servlet.setup.*;
 import org.springframework.web.context.*;
 
-import javax.validation.*;
-import javax.validation.constraints.*;
 import java.math.*;
-import java.security.*;
 import java.time.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -55,16 +45,16 @@ class AccountHolderControllerTest {
     @Autowired
     private SavingsAccountRepository savingsAccountRepository;
 
-    private Ensambler ensambler = new Ensambler();
+    private Transformer transformer = new Transformer();
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
 //        Create an accountHolder
-        NameDTO name = ensambler.ensambleNameDTO("Rosalía", "La", null, Salutation.Ms);
-        AddressDTO primaryAddress = ensambler.ensambleAddressDTO(1, "Castilla", "Madrid", "España");
-        AccountHolderDTO primaryOwner = ensambler.ensambleAccountHolderDTO(name,25, "contraseña",
+        NameDTO name = transformer.ensambleNameDTO("Rosalía", "La", null, Salutation.Ms);
+        AddressDTO primaryAddress = transformer.ensambleAddressDTO(1, "Castilla", "Madrid", "España");
+        AccountHolderDTO primaryOwner = transformer.ensambleAccountHolderDTO(name,25, "contraseña",
                 LocalDateTime.of(2002, 5, 20, 18, 40, 00), primaryAddress, null);
         accountHolderService.createAccountHolder(primaryOwner);
 
@@ -102,11 +92,11 @@ class AccountHolderControllerTest {
     @Test
     void createAccountHolder_validDTO_AccountHolder() throws Exception {
         assertEquals(1, accountHolderRepository.findAll().size());
-        NameDTO nameDTO = ensambler.ensambleNameDTO("Lopez", "Cris", null, Salutation.Ms);
+        NameDTO nameDTO = transformer.ensambleNameDTO("Lopez", "Cris", null, Salutation.Ms);
         String password = "password";
-        AddressDTO primaryAddressDTO = ensambler.ensambleAddressDTO(2, "Los Pinos", "Tarancón", "España");
-        AddressDTO mailingAddressDTO = ensambler.ensambleAddressDTO(5, "Las Olivas", "Tarancón", "España");
-        AccountHolderDTO accountHolderDTO = ensambler.ensambleAccountHolderDTO(nameDTO, 20, password,
+        AddressDTO primaryAddressDTO = transformer.ensambleAddressDTO(2, "Los Pinos", "Tarancón", "España");
+        AddressDTO mailingAddressDTO = transformer.ensambleAddressDTO(5, "Las Olivas", "Tarancón", "España");
+        AccountHolderDTO accountHolderDTO = transformer.ensambleAccountHolderDTO(nameDTO, 20, password,
                 LocalDateTime.of(1996, 12, 19, 17, 0, 0),
                 primaryAddressDTO, mailingAddressDTO);
 
@@ -126,11 +116,11 @@ class AccountHolderControllerTest {
     void createAccountHolder_invalidDTO_Exception() throws Exception {
 //        lastName to null
         assertEquals(1, accountHolderRepository.findAll().size());
-        NameDTO nameDTO = ensambler.ensambleNameDTO(null, "Cris", null, Salutation.Ms);
+        NameDTO nameDTO = transformer.ensambleNameDTO(null, "Cris", null, Salutation.Ms);
         String password = "password";
-        AddressDTO primaryAddressDTO = ensambler.ensambleAddressDTO(1, "Los Pinos", "Tarancón", "España");
-        AddressDTO mailingAddressDTO = ensambler.ensambleAddressDTO(5, "Las Olivas", "Tarancón", "España");
-        AccountHolderDTO accountHolderDTO = ensambler.ensambleAccountHolderDTO(nameDTO, 20, password,
+        AddressDTO primaryAddressDTO = transformer.ensambleAddressDTO(1, "Los Pinos", "Tarancón", "España");
+        AddressDTO mailingAddressDTO = transformer.ensambleAddressDTO(5, "Las Olivas", "Tarancón", "España");
+        AccountHolderDTO accountHolderDTO = transformer.ensambleAccountHolderDTO(nameDTO, 20, password,
                 LocalDateTime.of(1996, 12, 19, 17, 0, 0),
                 primaryAddressDTO, mailingAddressDTO);
 

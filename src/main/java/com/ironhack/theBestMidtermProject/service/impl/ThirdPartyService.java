@@ -16,10 +16,10 @@ public class ThirdPartyService implements IThirdPartyService {
     @Autowired
     private ThirdPartyRepository thirdPartyRepository;
 
-    private Ensambler ensambler = new Ensambler();
+    private Transformer transformer = new Transformer();
 
     public ThirdParty createThirdParty(ThirdPartyDTO thirdPartyDTO){
-        Name name = ensambler.ensambleName(thirdPartyDTO.getNameDTO());
+        Name name = transformer.ensambleName(thirdPartyDTO.getNameDTO());
         int age = thirdPartyDTO.getAge();
         String password = thirdPartyDTO.getPassword();
         Set<Role> roles = new HashSet<>();

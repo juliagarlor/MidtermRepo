@@ -15,10 +15,10 @@ public class AdminService implements IAdminService {
     @Autowired
     private AdminRepository adminRepository;
 
-    private Ensambler ensambler = new Ensambler();
+    private Transformer transformer = new Transformer();
 
     public Admin createAdmin(AdminDTO adminDTO){
-        Name name = ensambler.ensambleName(adminDTO.getNameDTO());
+        Name name = transformer.ensambleName(adminDTO.getNameDTO());
         int age = adminDTO.getAge();
         String password = adminDTO.getPassword();
         Set<Role> roles = new HashSet<>();

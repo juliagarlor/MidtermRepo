@@ -1,14 +1,15 @@
 package com.ironhack.theBestMidtermProject.utils.classes;
 
+import com.ironhack.theBestMidtermProject.model.*;
 import com.ironhack.theBestMidtermProject.utils.dtos.*;
 import com.ironhack.theBestMidtermProject.utils.enums.*;
 
 import java.math.*;
 import java.time.*;
 
-public class Ensambler {
+public class Transformer {
 
-    public Name ensambleName(NameDTO nameDTO){
+    public Name assembleName(NameDTO nameDTO){
         String firstName = nameDTO.getFirstName();
         String lastName = nameDTO.getLastName();
         String middleName = nameDTO.getMiddleName();
@@ -16,7 +17,7 @@ public class Ensambler {
         return new Name(lastName,firstName,middleName,salutation);
     }
 
-    public Address ensambleAddress(AddressDTO addressDTO){
+    public Address assembleAddress(AddressDTO addressDTO){
         int num = addressDTO.getNumber();
         String street = addressDTO.getStreet();
         String city = addressDTO.getCity();
@@ -24,7 +25,7 @@ public class Ensambler {
         return new Address(num, street, city, country);
     }
 
-    public NameDTO ensambleNameDTO(String lastName, String firstName, String middleName, Salutation salutation){
+    public NameDTO assembleNameDTO(String lastName, String firstName, String middleName, Salutation salutation){
         NameDTO output = new NameDTO();
         output.setLastName(lastName);
         output.setFirstName(firstName);
@@ -33,7 +34,7 @@ public class Ensambler {
         return output;
     }
 
-    public AddressDTO ensambleAddressDTO(int num, String street, String city, String country){
+    public AddressDTO assembleAddressDTO(int num, String street, String city, String country){
         AddressDTO output = new AddressDTO();
         output.setNumber(num);
         output.setStreet(street);
@@ -42,7 +43,7 @@ public class Ensambler {
         return output;
     }
 
-    public AccountHolderDTO ensambleAccountHolderDTO(NameDTO nameDTO, int age, String password, LocalDateTime dateOfBirth,
+    public AccountHolderDTO assembleAccountHolderDTO(NameDTO nameDTO, int age, String password, LocalDateTime dateOfBirth,
                                                      AddressDTO primaryAddress, AddressDTO mailingAddress){
         AccountHolderDTO output = new AccountHolderDTO();
         output.setNameDTO(nameDTO);
@@ -54,7 +55,7 @@ public class Ensambler {
         return output;
     }
 
-    public AdminDTO ensambleAdminDTO(NameDTO nameDTO, int age, String password){
+    public AdminDTO assembleAdminDTO(NameDTO nameDTO, int age, String password){
         AdminDTO output = new AdminDTO();
         output.setNameDTO(nameDTO);
         output.setAge(age);
@@ -62,7 +63,7 @@ public class Ensambler {
         return output;
     }
 
-    public ThirdPartyDTO ensambleThirdPartyDTO(NameDTO nameDTO, int age, String hashKey, String password){
+    public ThirdPartyDTO assembleThirdPartyDTO(NameDTO nameDTO, int age, String hashKey, String password){
         ThirdPartyDTO output = new ThirdPartyDTO();
         output.setNameDTO(nameDTO);
         output.setAge(age);
@@ -71,7 +72,7 @@ public class Ensambler {
         return output;
     }
 
-    public CheckingAcDTO ensambleCheckingAcDTO(BigDecimal balance, String secretKey, long secondaryOwnerId){
+    public CheckingAcDTO assembleCheckingAcDTO(BigDecimal balance, String secretKey, long secondaryOwnerId){
         CheckingAcDTO output = new CheckingAcDTO();
         output.setBalance(balance);
         output.setSecretKey(secretKey);
@@ -79,7 +80,7 @@ public class Ensambler {
         return output;
     }
 
-    public CreditAcDTO ensambleCreditAcDTO(BigDecimal balance, long secondaryOwnerId, BigDecimal creditLimit,
+    public CreditAcDTO assembleCreditAcDTO(BigDecimal balance, long secondaryOwnerId, BigDecimal creditLimit,
                                            BigDecimal monthlyMaintenanceFee, BigDecimal interestRate){
         CreditAcDTO output = new CreditAcDTO();
         output.setBalance(balance);
@@ -90,7 +91,7 @@ public class Ensambler {
         return output;
     }
 
-    public SavingsAcDTO ensambleSavingsDTO(BigDecimal balance, BigDecimal minimumBalance, String secretKey,
+    public SavingsAcDTO assembleSavingsDTO(BigDecimal balance, BigDecimal minimumBalance, String secretKey,
                                            long secondaryOwnerId, BigDecimal interestRate){
         SavingsAcDTO output = new SavingsAcDTO();
         output.setBalance(balance);

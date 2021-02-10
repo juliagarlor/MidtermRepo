@@ -34,8 +34,6 @@ public class CreditCardAccount extends Account{
 //    Empty constructor
     public CreditCardAccount() {
     }
-//TODO: supongo que no vamos a instanciar objetos a no ser que sea por los dtos, así que las combinaciones de constructores los voy a poner alli
-
 ////    constructor in which we introduce all parameters but secondary owner
 //    public CreditCardAccount(Money balance, AccountHolder primaryOwner,
 //                             Money monthlyMaintenanceFee, BigDecimal interestRate, Money creditLimit) {
