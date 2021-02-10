@@ -24,20 +24,33 @@ public class CreditCardService implements ICreditCardService {
     private CreditCardAccountRepository creditAccountRepository;
 
     public CreditCardAccount createCreditAccount(long userId, CreditAcDTO creditAcDTO) {
+//        Find account owner whose account will be created
         Optional<AccountHolder> accountHolder = accountHolderRepository.findById(userId);
+//        if exists
         if (accountHolder.isPresent()){
-
             AccountHolder primaryOwner = accountHolder.get();
             Money balance = new Money(creditAcDTO.getBalance());
             Money monthlyMaintenanceFee = new Money(creditAcDTO.getMonthlyMaintenanceFee());
-            BigDecimal interestRate = creditAcDTO.getInterestRate();
-            Optional<AccountHolder> secondaryOwner = creditAcDTO.getSecondaryOwner();
-            Money creditLimit = new Money(creditAcDTO.getCreditLimit());
+            Optional<AccountHolder> secondaryOwner = accountHolderRepository.findById(creditAcDTO.getSecondaryOwnerId());
+
+            Money creditLimit;
+            if (creditAcDTO.getCreditLimit() == null){
+                creditLimit = new Money(new BigDecimal("100"));
+            } else {
+                creditLimit = new Money(creditAcDTO.getCreditLimit());
+            }
+            BigDecimal interestRate;
+            if (creditAcDTO.getInterestRate() == null){
+                interestRate =  new BigDecimal("0.2");
+            } else {
+                interestRate = creditAcDTO.getInterestRate();
+            }
 
 //            If we do not have a secondary owner, its variable will be set to null
             CreditCardAccount newAccount = new CreditCardAccount(balance, primaryOwner, secondaryOwner.get(),
                     monthlyMaintenanceFee, interestRate, creditLimit);
             return creditAccountRepository.save(newAccount);
+//            return new CreditCardAccount();
         }else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The first owner identifier is not correct. " +
                     "Please introduce a valid identifier");

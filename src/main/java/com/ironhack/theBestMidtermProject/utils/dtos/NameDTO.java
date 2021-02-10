@@ -15,28 +15,6 @@ public class NameDTO {
     @Enumerated(EnumType.STRING)
     private Salutation salutation;
 
-    public NameDTO() {
-    }
-
-    //    Constructor without middleName
-    public NameDTO(@NotEmpty(message = "Please, introduce the last name of the owner.") String lastName,
-                   @NotEmpty(message = "Please, introduce the first name of the owner.") String firstName,
-                   @NotNull(message = "Please, add the correct salutation") Salutation salutation) {
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.salutation = salutation;
-    }
-
-//    Constructor with all the parameters
-    public NameDTO(@NotEmpty(message = "Please, introduce the last name of the owner.") String lastName,
-                   @NotEmpty(message = "Please, introduce the first name of the owner.") String firstName, String middleName,
-                   @NotNull(message = "Please, add the correct salutation") Salutation salutation) {
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.salutation = salutation;
-    }
-
     //    Setters and Getters
     public String getLastName() {
         return lastName;

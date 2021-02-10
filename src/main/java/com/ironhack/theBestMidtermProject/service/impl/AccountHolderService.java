@@ -46,7 +46,8 @@ public class AccountHolderService implements IAccountHolderService {
         int age = accountHolderDTO.getAge();
         LocalDateTime dateOfBirth = accountHolderDTO.getDateOfBirth();
         Address primaryAddress = ensambler.ensambleAddress(accountHolderDTO.getPrimaryAddressDTO());
-        Address mailingAddress = ensambler.ensambleAddress(accountHolderDTO.getMailingAddressDTO());
+        Address mailingAddress = (accountHolderDTO.getMailingAddressDTO() != null) ?
+                ensambler.ensambleAddress(accountHolderDTO.getMailingAddressDTO()) : null;
         String password = accountHolderDTO.getPassword();
         Set<Role> roles = new HashSet<>();
 

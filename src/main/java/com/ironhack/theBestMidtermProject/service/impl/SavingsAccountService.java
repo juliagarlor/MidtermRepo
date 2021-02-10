@@ -33,7 +33,7 @@ public class SavingsAccountService implements ISavingsAccountService {
             Money balance = new Money(savingsAcDTO.getBalance());
             Money minimumBalance = new Money(savingsAcDTO.getMinimumBalance());
             String secretKey = savingsAcDTO.getSecretKey();
-            Optional<AccountHolder> secondaryOwner = savingsAcDTO.getSecondaryOwner();
+            Optional<AccountHolder> secondaryOwner = accountHolderRepository.findById(savingsAcDTO.getSecondaryOwnerId());
             BigDecimal interestRate = savingsAcDTO.getInterestRate();
 
 //            If we do not have a secondary owner, its variable will be set to null

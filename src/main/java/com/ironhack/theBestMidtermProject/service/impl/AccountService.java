@@ -38,23 +38,15 @@ public class AccountService implements IAccountService {
             AccountHolder primaryOwner = accountHolder.get();
             Money balance = new Money(checkingAcDTO.getBalance());
             String secretKey = checkingAcDTO.getSecretKey();
-            Optional<AccountHolder> secondaryOwner = checkingAcDTO.getSecondaryOwner();
+            Optional<AccountHolder> secondaryOwner = accountHolderRepository.findById(checkingAcDTO.getSecondaryOwner());
 
             if(primaryOwner.getAge() < 24){
                 StudentCheckingAccount newAccount = new StudentCheckingAccount(balance, primaryOwner, secondaryOwner.get(),
                         secretKey, Status.ACTIVE);
-                if (secondaryOwner.isPresent()){
-                    secondaryOwner.get().addSecondaryAccount(newAccount);
-                }
-                primaryOwner.addPrimaryAccount(newAccount);
                 return studentAccountRepository.save(newAccount);
             }else {
                 CheckingAccount newAccount = new CheckingAccount(balance, primaryOwner, secondaryOwner.get(), secretKey,
                         Status.ACTIVE);
-                if (secondaryOwner.isPresent()){
-                    secondaryOwner.get().addSecondaryAccount(newAccount);
-                }
-                primaryOwner.addPrimaryAccount(newAccount);
                 return checkingAccountRepository.save(newAccount);
             }
         }else{

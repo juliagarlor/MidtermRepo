@@ -1,5 +1,6 @@
 package com.ironhack.theBestMidtermProject.model.accounts;
 
+import com.fasterxml.jackson.annotation.*;
 import com.ironhack.theBestMidtermProject.model.*;
 import com.ironhack.theBestMidtermProject.model.users.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;

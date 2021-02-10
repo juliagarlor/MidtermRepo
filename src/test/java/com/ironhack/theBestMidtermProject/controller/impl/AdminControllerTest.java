@@ -2,6 +2,7 @@ package com.ironhack.theBestMidtermProject.controller.impl;
 
 import com.fasterxml.jackson.databind.*;
 import com.ironhack.theBestMidtermProject.repository.users.*;
+import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.ironhack.theBestMidtermProject.utils.dtos.*;
 import com.ironhack.theBestMidtermProject.utils.enums.*;
 import org.junit.jupiter.api.*;
@@ -32,6 +33,8 @@ class AdminControllerTest {
     @Autowired
     private RoleRepository roleRepository;
 
+    private Ensambler ensambler = new Ensambler();
+
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
@@ -46,9 +49,9 @@ class AdminControllerTest {
     @Test
     void createAdmin_validValues_Admin() throws Exception {
         assertEquals(0, adminRepository.findAll().size());
-        NameDTO nameDTO = new NameDTO("Lopez", "Cris", Salutation.Ms);
+        NameDTO nameDTO = ensambler.ensambleNameDTO("Lopez", "Cris", null, Salutation.Ms);
         String password = "ensaladilla";
-        AdminDTO adminDTO = new AdminDTO(nameDTO, 20, password);
+        AdminDTO adminDTO = ensambler.ensambleAdminDTO(nameDTO, 20, password);
 
         String body = objectMapper.writeValueAsString(adminDTO);
         System.out.println(body);
@@ -65,9 +68,9 @@ class AdminControllerTest {
     @Test
     void createAdmin_invalidValues_Admin() throws Exception {
         assertEquals(0, adminRepository.findAll().size());
-        NameDTO nameDTO = new NameDTO("Lopez", "Cris", Salutation.Ms);
+        NameDTO nameDTO = ensambler.ensambleNameDTO("Lopez", "Cris", null, Salutation.Ms);
         String password = "ensaladilla";
-        AdminDTO adminDTO = new AdminDTO(nameDTO, 17, password);
+        AdminDTO adminDTO = ensambler.ensambleAdminDTO(nameDTO, 17, password);
 
         String body = objectMapper.writeValueAsString(adminDTO);
         MvcResult result = mockMvc.perform(

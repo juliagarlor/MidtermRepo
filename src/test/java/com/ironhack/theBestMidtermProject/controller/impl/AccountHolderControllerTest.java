@@ -38,6 +38,8 @@ class AccountHolderControllerTest {
     @Autowired
     private RoleRepository roleRepository;
 
+    private Ensambler ensambler = new Ensambler();
+
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
@@ -56,11 +58,12 @@ class AccountHolderControllerTest {
     @Test
     void createAccountHolder_validDTO_AccountHolder() throws Exception {
         assertEquals(0, accountHolderRepository.findAll().size());
-        NameDTO nameDTO = new NameDTO("Lopez", "Cris", Salutation.Ms);
+        NameDTO nameDTO = ensambler.ensambleNameDTO("Lopez", "Cris", null, Salutation.Ms);
         String password = "password";
-        AddressDTO primaryAddressDTO = new AddressDTO(2, "Los Pinos", "Tarancón", "España");
-        AddressDTO mailingAddressDTO = new AddressDTO(5, "Las Olivas", "Tarancón", "España");
-        AccountHolderDTO accountHolderDTO = new AccountHolderDTO(nameDTO, 20, password, LocalDateTime.of(1996, 12, 19, 17, 0, 0),
+        AddressDTO primaryAddressDTO = ensambler.ensambleAddressDTO(2, "Los Pinos", "Tarancón", "España");
+        AddressDTO mailingAddressDTO = ensambler.ensambleAddressDTO(5, "Las Olivas", "Tarancón", "España");
+        AccountHolderDTO accountHolderDTO = ensambler.ensambleAccountHolderDTO(nameDTO, 20, password,
+                LocalDateTime.of(1996, 12, 19, 17, 0, 0),
                 primaryAddressDTO, mailingAddressDTO);
 
         String body = objectMapper.writeValueAsString(accountHolderDTO);
@@ -79,11 +82,12 @@ class AccountHolderControllerTest {
     void createAccountHolder_invalidDTO_Exception() throws Exception {
 //        lastName to null
         assertEquals(0, accountHolderRepository.findAll().size());
-        NameDTO nameDTO = new NameDTO(null, "Cris", Salutation.Ms);
+        NameDTO nameDTO = ensambler.ensambleNameDTO(null, "Cris", null, Salutation.Ms);
         String password = "password";
-        AddressDTO primaryAddressDTO = new AddressDTO(1, "Los Pinos", "Tarancón", "España");
-        AddressDTO mailingAddressDTO = new AddressDTO(5, "Las Olivas", "Tarancón", "España");
-        AccountHolderDTO accountHolderDTO = new AccountHolderDTO(nameDTO, 20, password, LocalDateTime.of(1996, 12, 19, 17, 0, 0),
+        AddressDTO primaryAddressDTO = ensambler.ensambleAddressDTO(1, "Los Pinos", "Tarancón", "España");
+        AddressDTO mailingAddressDTO = ensambler.ensambleAddressDTO(5, "Las Olivas", "Tarancón", "España");
+        AccountHolderDTO accountHolderDTO = ensambler.ensambleAccountHolderDTO(nameDTO, 20, password,
+                LocalDateTime.of(1996, 12, 19, 17, 0, 0),
                 primaryAddressDTO, mailingAddressDTO);
 
         String body = objectMapper.writeValueAsString(accountHolderDTO);

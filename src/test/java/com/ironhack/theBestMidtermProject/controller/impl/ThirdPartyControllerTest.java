@@ -2,6 +2,7 @@ package com.ironhack.theBestMidtermProject.controller.impl;
 
 import com.fasterxml.jackson.databind.*;
 import com.ironhack.theBestMidtermProject.repository.users.*;
+import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.ironhack.theBestMidtermProject.utils.dtos.*;
 import com.ironhack.theBestMidtermProject.utils.enums.*;
 import org.junit.jupiter.api.*;
@@ -29,6 +30,8 @@ class ThirdPartyControllerTest {
     @Autowired
     private RoleRepository roleRepository;
 
+    private Ensambler ensambler = new Ensambler();
+
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
@@ -43,9 +46,8 @@ class ThirdPartyControllerTest {
     @Test
     void createThirdParty_validValues_ThirdParty() throws Exception {
         assertEquals(0, thirdPartyRepository.findAll().size());
-        NameDTO nameDTO = new NameDTO("Lopez", "Cris", Salutation.Ms);
-        String password = "ensaladilla";
-        ThirdPartyDTO thirdPartyDTO = new ThirdPartyDTO(nameDTO, 20,"rusaConKetchup", password);
+        NameDTO nameDTO = ensambler.ensambleNameDTO("Lopez", "Cris", null, Salutation.Ms);
+        ThirdPartyDTO thirdPartyDTO = ensambler.ensambleThirdPartyDTO(nameDTO, 20, "rusaConKetchup", "ensaladilla");
 
         String body = objectMapper.writeValueAsString(thirdPartyDTO);
         System.out.println(body);
@@ -62,9 +64,8 @@ class ThirdPartyControllerTest {
     @Test
     void createThirdParty_invalidValues_ThirdParty() throws Exception {
         assertEquals(0, thirdPartyRepository.findAll().size());
-        NameDTO nameDTO = new NameDTO("Lopez", "Cris", Salutation.Ms);
-        String password = "ensaladilla";
-        ThirdPartyDTO thirdPartyDTO = new ThirdPartyDTO(nameDTO, 17, "rusaConKetchup", password);
+        NameDTO nameDTO = ensambler.ensambleNameDTO("Lopez", "Cris", null, Salutation.Ms);
+        ThirdPartyDTO thirdPartyDTO = ensambler.ensambleThirdPartyDTO(nameDTO, 17, "rusaConKetchup", "ensaladilla");
 
         String body = objectMapper.writeValueAsString(thirdPartyDTO);
         MvcResult result = mockMvc.perform(

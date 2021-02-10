@@ -12,9 +12,12 @@ public class Money {
     private static final RoundingMode DEFAULT_ROUNDING = RoundingMode.HALF_EVEN;
 
     @Column(insertable = false, updatable = false)
-    private final Currency currency;
+    private Currency currency = USD;
     @Column(insertable = false, updatable = false)
     private BigDecimal amount;
+
+    public Money() {
+    }
 
     /**
      * Class constructor specifying amount, currency, and rounding

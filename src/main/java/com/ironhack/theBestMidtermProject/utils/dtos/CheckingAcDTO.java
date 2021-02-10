@@ -19,15 +19,7 @@ public class CheckingAcDTO {
 //    We want our key to be at least 7 characters long so it is safer
     @Size(min = 7, message = "The secret key must have at least 7 digits.")
     private String secretKey;
-    private Optional<AccountHolder> secondaryOwner;
-
-//    Constructor with secondary owner
-    public CheckingAcDTO(@DecimalMin(value = "250", message = "The opening account balance should be above 250") BigDecimal balance,
-                         @NotNull(message = "The account must have a secret key") @Size(min = 7) String secretKey, Optional<AccountHolder> secondaryOwner) {
-        this.balance = balance;
-        this.secretKey = secretKey;
-        this.secondaryOwner = secondaryOwner;
-    }
+    private long secondaryOwner;
 
 //    Getters and Setters
 
@@ -47,11 +39,11 @@ public class CheckingAcDTO {
         this.secretKey = secretKey;
     }
 
-    public Optional<AccountHolder> getSecondaryOwner() {
+    public long getSecondaryOwner() {
         return secondaryOwner;
     }
 
-    public void setSecondaryOwner(Optional<AccountHolder> secondaryOwner) {
+    public void setSecondaryOwner(long secondaryOwner) {
         this.secondaryOwner = secondaryOwner;
     }
 }

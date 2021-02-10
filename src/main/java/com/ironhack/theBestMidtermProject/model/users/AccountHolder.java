@@ -1,13 +1,16 @@
 package com.ironhack.theBestMidtermProject.model.users;
 
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.*;
 import com.fasterxml.jackson.datatype.jsr310.deser.*;
 import com.fasterxml.jackson.datatype.jsr310.ser.*;
 import com.ironhack.theBestMidtermProject.model.*;
 import com.ironhack.theBestMidtermProject.model.accounts.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
 import java.time.*;
 import java.util.*;
 
@@ -37,9 +40,13 @@ public class AccountHolder extends User{
 
     })
     private Address mailingAddress;
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "primaryOwner")
+    @JsonIgnore
     private List<Account> primaryAccounts;
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "secondaryOwner")
+    @JsonIgnore
     private List<Account> secondaryAccounts;
 
 //    Empty constructor

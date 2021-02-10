@@ -27,32 +27,7 @@ public class AccountHolderDTO {
     @Valid
     private AddressDTO mailingAddressDTO;
 
-    public AccountHolderDTO() {
-    }
-
-//    Constructor without mailingAddress
-    public AccountHolderDTO(@Valid NameDTO nameDTO, @Min(value = 18, message = "The user must be of age.") int age,
-                            @Size(min = 7, message = "The password key must have at least 7 digits.") String password,
-                            LocalDateTime dateOfBirth, @Valid AddressDTO primaryAddressDTO) {
-        this.nameDTO = nameDTO;
-        this.age = age;
-        this.password = password;
-        this.dateOfBirth = dateOfBirth;
-        this.primaryAddressDTO = primaryAddressDTO;
-    }
-
-    //    Constructor with all parameters
-    public AccountHolderDTO(@Valid NameDTO nameDTO, @Min(value = 18, message = "The user must be of age.") int age,
-                            @Size(min = 7, message = "The password key must have at least 7 digits.") String password,
-                            LocalDateTime dateOfBirth, @Valid AddressDTO primaryAddressDTO, @Valid AddressDTO mailingAddressDTO) {
-        this.nameDTO = nameDTO;
-        this.age = age;
-        this.password = password;
-        this.dateOfBirth = dateOfBirth;
-        this.primaryAddressDTO = primaryAddressDTO;
-        this.mailingAddressDTO = mailingAddressDTO;
-    }
-
+//    Getters and Setters
     public NameDTO getNameDTO() {
         return nameDTO;
     }
