@@ -13,8 +13,6 @@ import java.util.*;
 public class CheckingAccount extends Account{
 
     private String secretKey;
-    @Enumerated(EnumType.STRING)
-    private Status status;
 //    checkingAccounts have a minimum balance of 250:
     private final Money MINIMUM_BALANCE = new Money(new BigDecimal("250"));
 //    and a monthly maintenance fee of 12:
@@ -24,22 +22,13 @@ public class CheckingAccount extends Account{
     public CheckingAccount() {
     }
 
-////    Constructor with all parameters but secondaryOwner
-//    public CheckingAccount(Money balance, AccountHolder primaryOwner, String secretKey, Status status) {
-//        super(balance, primaryOwner);
-//        this.secretKey = secretKey;
-//        this.status = status;
-//    }
-
 //    Constructor with all parameters
-    public CheckingAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, String secretKey, Status status) {
-        super(balance, primaryOwner, secondaryOwner);
+    public CheckingAccount(Money balance, Status status, AccountHolder primaryOwner, AccountHolder secondaryOwner, String secretKey) {
+        super(balance, status, primaryOwner, secondaryOwner);
         this.secretKey = secretKey;
-        this.status = status;
     }
 
-
-//    Getters and Setters:
+    //    Getters and Setters:
     public String getSecretKey() {
         return secretKey;
     }

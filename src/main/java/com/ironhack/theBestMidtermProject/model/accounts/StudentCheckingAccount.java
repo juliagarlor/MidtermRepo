@@ -13,26 +13,17 @@ import java.util.*;
 public class StudentCheckingAccount extends Account{
 
     private String secretKey;
-    @Enumerated(EnumType.STRING)
-    private Status status;
 
 //    Empty constructor
     public StudentCheckingAccount() {
     }
 
-////    Constructor with all parameters but secondary owner
-//    public StudentCheckingAccount(Money balance, AccountHolder primaryOwner, String secretKey, Status status) {
-//        super(balance, primaryOwner);
-//        this.secretKey = secretKey;
-//        this.status = status;
-//    }
-
-    //    Constructor with all the parameters
-    public StudentCheckingAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, String secretKey, Status status) {
-        super(balance, primaryOwner, secondaryOwner);
+//    Constructor with all the parameters
+    public StudentCheckingAccount(Money balance, Status status, AccountHolder primaryOwner, AccountHolder secondaryOwner, String secretKey) {
+        super(balance, status, primaryOwner, secondaryOwner);
         this.secretKey = secretKey;
-        this.status = status;
     }
+
 
 //    Getters and Setters
 
@@ -42,13 +33,5 @@ public class StudentCheckingAccount extends Account{
 
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 }

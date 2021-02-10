@@ -18,7 +18,7 @@ public class AdminService implements IAdminService {
     private Transformer transformer = new Transformer();
 
     public Admin createAdmin(AdminDTO adminDTO){
-        Name name = transformer.ensambleName(adminDTO.getNameDTO());
+        Name name = transformer.assembleName(adminDTO.getNameDTO());
         int age = adminDTO.getAge();
         String password = adminDTO.getPassword();
         Set<Role> roles = new HashSet<>();

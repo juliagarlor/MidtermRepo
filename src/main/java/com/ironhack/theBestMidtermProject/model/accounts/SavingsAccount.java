@@ -15,8 +15,6 @@ import java.util.*;
 public class SavingsAccount extends Account{
 
     private String secretKey;
-    @Enumerated(EnumType.STRING)
-    private Status status;
 
 //    SavingsAccounts have a default minimum balance of 1000, and the minimum of this value is 100
     @Embedded
@@ -30,31 +28,19 @@ public class SavingsAccount extends Account{
     private BigDecimal interestRate = new BigDecimal("0.0025");
     private LocalDate lastInterestRateApplied;
 
-//    todo: igual que en credit card
 //    Empty constructor
     public SavingsAccount() {
     }
 
-////    Constructor with all parameters but secondary owner
-//    public SavingsAccount(Money balance, AccountHolder primaryOwner, String secretKey, Status status, Money minimumBalance,
-//                          BigDecimal interestRate) {
-//        super(balance, primaryOwner);
-//        this.secretKey = secretKey;
-//        this.status = status;
-//        this.minimumBalance = minimumBalance;
-//        this.interestRate = interestRate;
-//    }
-
-    //    Constructor with all parameters
-    public SavingsAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, String secretKey,
-                          Status status, Money minimumBalance, BigDecimal interestRate) {
-        super(balance, primaryOwner, secondaryOwner);
+//    Constructor with all parameters
+    public SavingsAccount(Money balance, Status status, AccountHolder primaryOwner, AccountHolder secondaryOwner,
+                          String secretKey, Money minimumBalance, BigDecimal interestRate, LocalDate lastInterestRateApplied) {
+        super(balance, status, primaryOwner, secondaryOwner);
         this.secretKey = secretKey;
-        this.status = status;
         this.minimumBalance = minimumBalance;
         this.interestRate = interestRate;
+        this.lastInterestRateApplied = lastInterestRateApplied;
     }
-
 
     //    Getters and Setters
     public String getSecretKey() {
@@ -63,14 +49,6 @@ public class SavingsAccount extends Account{
 
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 
     public Money getMinimumBalance() {

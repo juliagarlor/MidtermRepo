@@ -7,6 +7,7 @@ import com.ironhack.theBestMidtermProject.repository.users.*;
 import com.ironhack.theBestMidtermProject.service.interfaces.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.ironhack.theBestMidtermProject.utils.dtos.*;
+import com.ironhack.theBestMidtermProject.utils.enums.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.*;
@@ -52,10 +53,9 @@ public class CreditCardService implements ICreditCardService {
             }
 
 //            If we do not have a secondary owner, its variable will be set to null
-            CreditCardAccount newAccount = new CreditCardAccount(balance, primaryOwner, secondaryOwner.get(),
-                    monthlyMaintenanceFee, interestRate, creditLimit);
+            CreditCardAccount newAccount = new CreditCardAccount(balance, Status.ACTIVE, primaryOwner, secondaryOwner.get(),
+                    monthlyMaintenanceFee, interestRate, creditLimit, LocalDate.now());
             return creditAccountRepository.save(newAccount);
-//            return new CreditCardAccount();
         }else{
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The first owner identifier is not correct. " +
                     "Please introduce a valid identifier");

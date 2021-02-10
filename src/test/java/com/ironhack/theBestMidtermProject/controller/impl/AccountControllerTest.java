@@ -54,23 +54,23 @@ class AccountControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
 //        Create an accountHolder
-        NameDTO name = transformer.ensambleNameDTO("Rodriguez", "Cayetano", "Jesús", Salutation.Mr);
-        AddressDTO primaryAddress = transformer.ensambleAddressDTO(1, "Castilla", "Madrid", "España");
-        AccountHolderDTO primaryOwner = transformer.ensambleAccountHolderDTO(name,25, "contraseña",
+        NameDTO name = transformer.assembleNameDTO("Rodriguez", "Cayetano", "Jesús", Salutation.Mr);
+        AddressDTO primaryAddress = transformer.assembleAddressDTO(1, "Castilla", "Madrid", "España");
+        AccountHolderDTO primaryOwner = transformer.assembleAccountHolderDTO(name,25, "contraseña",
                 LocalDateTime.of(2002, 5, 20, 18, 40, 00), primaryAddress, null);
         accountHolderService.createAccountHolder(primaryOwner);
 
 //        Another one
-        NameDTO name2 = transformer.ensambleNameDTO("Rodriguez", "María", "Jesús", Salutation.Mrs);
-        AddressDTO primaryAddress2 = transformer.ensambleAddressDTO(1, "Castilla", "Madrid", "España");
-        AccountHolderDTO secondaryOwner = transformer.ensambleAccountHolderDTO(name2, 40, "contraseña2",
+        NameDTO name2 = transformer.assembleNameDTO("Rodriguez", "María", "Jesús", Salutation.Mrs);
+        AddressDTO primaryAddress2 = transformer.assembleAddressDTO(1, "Castilla", "Madrid", "España");
+        AccountHolderDTO secondaryOwner = transformer.assembleAccountHolderDTO(name2, 40, "contraseña2",
                 LocalDateTime.of(1980, 5, 20, 18, 40, 00), primaryAddress2, null);
         accountHolderService.createAccountHolder(secondaryOwner);
 
 //        And a test checkingAccount for the add and subtractBalance method
         Money balance = new Money(new BigDecimal("1000"));
-        CheckingAccount checkingAccount = new CheckingAccount(balance, accountHolderRepository.findAll().get(0),
-                accountHolderRepository.findAll().get(1), "comoLoPasamos", Status.ACTIVE);
+        CheckingAccount checkingAccount = new CheckingAccount(balance, Status.ACTIVE, accountHolderRepository.findAll().get(0),
+                accountHolderRepository.findAll().get(1), "comoLoPasamos");
         checkingAccountRepository.save(checkingAccount);
     }
 
@@ -88,7 +88,7 @@ class AccountControllerTest {
 
         BigDecimal balance = new BigDecimal("1000");
         long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
-        CheckingAcDTO checkingAcDTO = transformer.ensambleCheckingAcDTO(balance, "menudoPelazo", secondaryOwnerId);
+        CheckingAcDTO checkingAcDTO = transformer.assembleCheckingAcDTO(balance, "menudoPelazo", secondaryOwnerId);
 
         String body = objectMapper.writeValueAsString(checkingAcDTO);
         System.out.println(body);
@@ -120,7 +120,7 @@ class AccountControllerTest {
 
         BigDecimal balance = new BigDecimal("1000");
         long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
-        CheckingAcDTO checkingAcDTO = transformer.ensambleCheckingAcDTO(balance, "menudoPelazo", secondaryOwnerId);
+        CheckingAcDTO checkingAcDTO = transformer.assembleCheckingAcDTO(balance, "menudoPelazo", secondaryOwnerId);
 
         String body = objectMapper.writeValueAsString(checkingAcDTO);
         System.out.println(body);
@@ -144,7 +144,7 @@ class AccountControllerTest {
     void createCheckAccount_invalidValues_Exception() throws Exception {
         BigDecimal balance = new BigDecimal("1000");
         long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
-        CheckingAcDTO checkingAcDTO = transformer.ensambleCheckingAcDTO(balance, "uno", secondaryOwnerId);
+        CheckingAcDTO checkingAcDTO = transformer.assembleCheckingAcDTO(balance, "uno", secondaryOwnerId);
 
         String body = objectMapper.writeValueAsString(checkingAcDTO);
         System.out.println(body);

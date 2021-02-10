@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.*;
 import com.ironhack.theBestMidtermProject.model.*;
 import com.ironhack.theBestMidtermProject.model.users.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
+import com.ironhack.theBestMidtermProject.utils.enums.*;
 
 import javax.persistence.*;
 import java.math.*;
@@ -22,6 +23,8 @@ public class Account {
             @AttributeOverride(name = "currency", column = @Column(name = "currency"))
     })
     protected Money balance;
+    @Enumerated(EnumType.STRING)
+    protected Status status;
 
     @ManyToOne
     @JoinColumn(name = "primary_owner_id")
@@ -43,21 +46,13 @@ public class Account {
     public Account() {
     }
 
-////    Constructor all parameters but secondaryOwner
-//    public Account(Money balance, AccountHolder primaryOwner) {
-//        this.balance = balance;
-//        this.primaryOwner = primaryOwner;
-//    }
-
 //    Constructor with all parameters
-    public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
+    public Account(Money balance, Status status, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
         this.balance = balance;
+        this.status = status;
         this.primaryOwner = primaryOwner;
         this.secondaryOwner = secondaryOwner;
     }
-
-    //    Peculiar methods
-//    public abstract boolean checkPassword(String password);
 
 //    Getters and Setters
     public Long getId() {
@@ -74,6 +69,14 @@ public class Account {
 
     public void setBalance(Money balance) {
         this.balance = balance;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public User getPrimaryOwner() {

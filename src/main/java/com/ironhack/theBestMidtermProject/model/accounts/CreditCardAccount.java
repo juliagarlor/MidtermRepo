@@ -2,6 +2,7 @@ package com.ironhack.theBestMidtermProject.model.accounts;
 
 import com.ironhack.theBestMidtermProject.model.users.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
+import com.ironhack.theBestMidtermProject.utils.enums.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -34,23 +35,17 @@ public class CreditCardAccount extends Account{
 //    Empty constructor
     public CreditCardAccount() {
     }
-////    constructor in which we introduce all parameters but secondary owner
-//    public CreditCardAccount(Money balance, AccountHolder primaryOwner,
-//                             Money monthlyMaintenanceFee, BigDecimal interestRate, Money creditLimit) {
-//        super(balance, primaryOwner);
-//        this.monthlyMaintenanceFee = monthlyMaintenanceFee;
-//        this.interestRate = interestRate;
-//        this.creditLimit = creditLimit;
-//    }
 
 //    Constructor with all parameters
-    public CreditCardAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner,
-                             Money monthlyMaintenanceFee, BigDecimal interestRate, Money creditLimit) {
-        super(balance, primaryOwner, secondaryOwner);
+    public CreditCardAccount(Money balance, Status status, AccountHolder primaryOwner, AccountHolder secondaryOwner,
+                             Money monthlyMaintenanceFee, BigDecimal interestRate, Money creditLimit, LocalDate lastInterestRateApplied) {
+        super(balance, status, primaryOwner, secondaryOwner);
         this.monthlyMaintenanceFee = monthlyMaintenanceFee;
         this.interestRate = interestRate;
         this.creditLimit = creditLimit;
+        this.lastInterestRateApplied = lastInterestRateApplied;
     }
+
 
 //    Getters and Setters
 

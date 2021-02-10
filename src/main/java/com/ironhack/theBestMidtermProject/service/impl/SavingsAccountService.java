@@ -41,8 +41,8 @@ public class SavingsAccountService implements ISavingsAccountService {
             BigDecimal interestRate = savingsAcDTO.getInterestRate();
 
 //            If we do not have a secondary owner, its variable will be set to null
-            SavingsAccount newAccount = new SavingsAccount(balance, primaryOwner, secondaryOwner.get(), secretKey,
-                    Status.ACTIVE, minimumBalance, interestRate);
+            SavingsAccount newAccount = new SavingsAccount(balance, Status.ACTIVE, primaryOwner, secondaryOwner.get(), secretKey,
+                    minimumBalance, interestRate, LocalDate.now());
             return savingsAccountRepository.save(newAccount);
 
         }else{

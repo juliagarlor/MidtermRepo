@@ -55,12 +55,12 @@ public class AccountHolderService implements IAccountHolderService {
 
     public AccountHolder createAccountHolder(AccountHolderDTO accountHolderDTO){
 
-        Name name = transformer.ensambleName(accountHolderDTO.getNameDTO());
+        Name name = transformer.assembleName(accountHolderDTO.getNameDTO());
         int age = accountHolderDTO.getAge();
         LocalDateTime dateOfBirth = accountHolderDTO.getDateOfBirth();
-        Address primaryAddress = transformer.ensambleAddress(accountHolderDTO.getPrimaryAddressDTO());
+        Address primaryAddress = transformer.assembleAddress(accountHolderDTO.getPrimaryAddressDTO());
         Address mailingAddress = (accountHolderDTO.getMailingAddressDTO() != null) ?
-                transformer.ensambleAddress(accountHolderDTO.getMailingAddressDTO()) : null;
+                transformer.assembleAddress(accountHolderDTO.getMailingAddressDTO()) : null;
         String password = accountHolderDTO.getPassword();
         Set<Role> roles = new HashSet<>();
 
@@ -70,41 +70,4 @@ public class AccountHolderService implements IAccountHolderService {
         newAccountHolder.setRoles(roles);
         return accountHolderRepository.save(newAccountHolder);
     }
-
-////    TODO NO VOY A COMPROBAR SI LA CANTIDAD QUE ME DAN ES POSITIVA O NEGATIVA, PREGUNTA Y DESPUES LO ARREGLAMOS
-////    CUANDO PUEDAS LIMPIA ESTO UN POCO:
-//    public Money transferAmount(Name name, long targetId, long emisorId, Money amount) {
-////        This way we check both that the emisor id is correct and that this account has enough balance
-//        Money emisorBalance = checkBalance(emisorId);
-//        Account emisorAccount = accountRepository.findById(emisorId).get();
-//
-//        if (emisorBalance.getAmount().compareTo(amount.getAmount()) != 0){
-//            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The balance of the emisor account is not enough for this transaction");
-//        }
-//
-//        Optional<Account> receptorAccount = accountRepository.findById(targetId);
-//
-////        if (receptorAccount.isPresent()){
-//////            lets check whether this is the account we are looking for
-////            boolean matchingNameAndId = userRepository.findByNameAndAccountsIdIs(name, targetId).isPresent();
-////            if (matchingNameAndId){
-//////                Subtract from the emisor balance:
-////                emisorBalance = new Money(emisorAccount.getBalance().decreaseAmount(amount));
-////                emisorAccount.setBalance(emisorBalance);
-////                accountRepository.save(emisorAccount);
-//////                Add it to the receptor balance:
-////                Money receptorBalance = new Money(amount.increaseAmount(receptorAccount.get().getBalance()));
-////                receptorAccount.get().setBalance(receptorBalance);
-////                accountRepository.save(receptorAccount.get());
-////            }else {
-////                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Receptor's name and account id do not match. " +
-////                        "Please, intruduce valid values.");
-////            }
-////        }else {
-////            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Not found receptor account id. " +
-////                    "Please, intruduce a valid id.");
-////        }
-//
-//        return emisorBalance;
-//    }
 }

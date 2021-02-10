@@ -52,9 +52,9 @@ class AccountHolderControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
 //        Create an accountHolder
-        NameDTO name = transformer.ensambleNameDTO("Rosalía", "La", null, Salutation.Ms);
-        AddressDTO primaryAddress = transformer.ensambleAddressDTO(1, "Castilla", "Madrid", "España");
-        AccountHolderDTO primaryOwner = transformer.ensambleAccountHolderDTO(name,25, "contraseña",
+        NameDTO name = transformer.assembleNameDTO("Rosalía", "La", null, Salutation.Ms);
+        AddressDTO primaryAddress = transformer.assembleAddressDTO(1, "Castilla", "Madrid", "España");
+        AccountHolderDTO primaryOwner = transformer.assembleAccountHolderDTO(name,25, "contraseña",
                 LocalDateTime.of(2002, 5, 20, 18, 40, 00), primaryAddress, null);
         accountHolderService.createAccountHolder(primaryOwner);
 
@@ -62,8 +62,8 @@ class AccountHolderControllerTest {
         Money balance = new Money(new BigDecimal("1000"));
         Money minimumBalance = new Money(new BigDecimal("100"));
         BigDecimal interestRate = new BigDecimal("0.4");
-        SavingsAccount savingsAccount = new SavingsAccount(balance, accountHolderRepository.findAll().get(0),
-                null, "comoLoPasamos", Status.ACTIVE, minimumBalance, interestRate);
+        SavingsAccount savingsAccount = new SavingsAccount(balance, Status.ACTIVE, accountHolderRepository.findAll().get(0),
+                null, "comoLoPasamos", minimumBalance, interestRate, LocalDate.now());
         savingsAccountRepository.save(savingsAccount);
     }
 
@@ -92,11 +92,11 @@ class AccountHolderControllerTest {
     @Test
     void createAccountHolder_validDTO_AccountHolder() throws Exception {
         assertEquals(1, accountHolderRepository.findAll().size());
-        NameDTO nameDTO = transformer.ensambleNameDTO("Lopez", "Cris", null, Salutation.Ms);
+        NameDTO nameDTO = transformer.assembleNameDTO("Lopez", "Cris", null, Salutation.Ms);
         String password = "password";
-        AddressDTO primaryAddressDTO = transformer.ensambleAddressDTO(2, "Los Pinos", "Tarancón", "España");
-        AddressDTO mailingAddressDTO = transformer.ensambleAddressDTO(5, "Las Olivas", "Tarancón", "España");
-        AccountHolderDTO accountHolderDTO = transformer.ensambleAccountHolderDTO(nameDTO, 20, password,
+        AddressDTO primaryAddressDTO = transformer.assembleAddressDTO(2, "Los Pinos", "Tarancón", "España");
+        AddressDTO mailingAddressDTO = transformer.assembleAddressDTO(5, "Las Olivas", "Tarancón", "España");
+        AccountHolderDTO accountHolderDTO = transformer.assembleAccountHolderDTO(nameDTO, 20, password,
                 LocalDateTime.of(1996, 12, 19, 17, 0, 0),
                 primaryAddressDTO, mailingAddressDTO);
 
@@ -116,11 +116,11 @@ class AccountHolderControllerTest {
     void createAccountHolder_invalidDTO_Exception() throws Exception {
 //        lastName to null
         assertEquals(1, accountHolderRepository.findAll().size());
-        NameDTO nameDTO = transformer.ensambleNameDTO(null, "Cris", null, Salutation.Ms);
+        NameDTO nameDTO = transformer.assembleNameDTO(null, "Cris", null, Salutation.Ms);
         String password = "password";
-        AddressDTO primaryAddressDTO = transformer.ensambleAddressDTO(1, "Los Pinos", "Tarancón", "España");
-        AddressDTO mailingAddressDTO = transformer.ensambleAddressDTO(5, "Las Olivas", "Tarancón", "España");
-        AccountHolderDTO accountHolderDTO = transformer.ensambleAccountHolderDTO(nameDTO, 20, password,
+        AddressDTO primaryAddressDTO = transformer.assembleAddressDTO(1, "Los Pinos", "Tarancón", "España");
+        AddressDTO mailingAddressDTO = transformer.assembleAddressDTO(5, "Las Olivas", "Tarancón", "España");
+        AccountHolderDTO accountHolderDTO = transformer.assembleAccountHolderDTO(nameDTO, 20, password,
                 LocalDateTime.of(1996, 12, 19, 17, 0, 0),
                 primaryAddressDTO, mailingAddressDTO);
 

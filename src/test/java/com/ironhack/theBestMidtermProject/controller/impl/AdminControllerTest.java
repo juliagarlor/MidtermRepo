@@ -47,9 +47,9 @@ class AdminControllerTest {
     @Test
     void createAdmin_validValues_Admin() throws Exception {
         assertEquals(0, adminRepository.findAll().size());
-        NameDTO nameDTO = transformer.ensambleNameDTO("Lopez", "Cris", null, Salutation.Ms);
+        NameDTO nameDTO = transformer.assembleNameDTO("Lopez", "Cris", null, Salutation.Ms);
         String password = "ensaladilla";
-        AdminDTO adminDTO = transformer.ensambleAdminDTO(nameDTO, 20, password);
+        AdminDTO adminDTO = transformer.assembleAdminDTO(nameDTO, 20, password);
 
         String body = objectMapper.writeValueAsString(adminDTO);
         System.out.println(body);
@@ -66,9 +66,9 @@ class AdminControllerTest {
     @Test
     void createAdmin_invalidValues_Admin() throws Exception {
         assertEquals(0, adminRepository.findAll().size());
-        NameDTO nameDTO = transformer.ensambleNameDTO("Lopez", "Cris", null, Salutation.Ms);
+        NameDTO nameDTO = transformer.assembleNameDTO("Lopez", "Cris", null, Salutation.Ms);
         String password = "ensaladilla";
-        AdminDTO adminDTO = transformer.ensambleAdminDTO(nameDTO, 17, password);
+        AdminDTO adminDTO = transformer.assembleAdminDTO(nameDTO, 17, password);
 
         String body = objectMapper.writeValueAsString(adminDTO);
         MvcResult result = mockMvc.perform(

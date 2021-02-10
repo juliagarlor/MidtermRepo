@@ -45,15 +45,15 @@ class CreditCardControllerTest {
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
-        NameDTO name = transformer.ensambleNameDTO("Rodriguez", "Cayetano", "Jesús", Salutation.Mr);
-        AddressDTO primaryAddress = transformer.ensambleAddressDTO(1, "Castilla", "Madrid", "España");
-        AccountHolderDTO primaryOwner = transformer.ensambleAccountHolderDTO(name,18, "contraseña",
+        NameDTO name = transformer.assembleNameDTO("Rodriguez", "Cayetano", "Jesús", Salutation.Mr);
+        AddressDTO primaryAddress = transformer.assembleAddressDTO(1, "Castilla", "Madrid", "España");
+        AccountHolderDTO primaryOwner = transformer.assembleAccountHolderDTO(name,18, "contraseña",
                 LocalDateTime.of(2002, 5, 20, 18, 40, 00), primaryAddress, null);
         accountHolderService.createAccountHolder(primaryOwner);
 
-        NameDTO name2 = transformer.ensambleNameDTO("Rodriguez", "María", "Jesús", Salutation.Mrs);
-        AddressDTO primaryAddress2 = transformer.ensambleAddressDTO(1, "Castilla", "Madrid", "España");
-        AccountHolderDTO secondaryOwner = transformer.ensambleAccountHolderDTO(name2, 40, "contraseña2",
+        NameDTO name2 = transformer.assembleNameDTO("Rodriguez", "María", "Jesús", Salutation.Mrs);
+        AddressDTO primaryAddress2 = transformer.assembleAddressDTO(1, "Castilla", "Madrid", "España");
+        AccountHolderDTO secondaryOwner = transformer.assembleAccountHolderDTO(name2, 40, "contraseña2",
                 LocalDateTime.of(1980, 5, 20, 18, 40, 00), primaryAddress2, null);
         accountHolderService.createAccountHolder(secondaryOwner);
     }
@@ -71,7 +71,7 @@ class CreditCardControllerTest {
         BigDecimal balance = new BigDecimal("1000");
         long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
         BigDecimal monthlyMaintenanceFee = new BigDecimal("6");
-        CreditAcDTO creditAcDTO = transformer.ensambleCreditAcDTO(balance, secondaryOwnerId, null, monthlyMaintenanceFee, null);
+        CreditAcDTO creditAcDTO = transformer.assembleCreditAcDTO(balance, secondaryOwnerId, null, monthlyMaintenanceFee, null);
 
         String body = objectMapper.writeValueAsString(creditAcDTO);
         System.out.println(body);
@@ -97,7 +97,7 @@ class CreditCardControllerTest {
         long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
         BigDecimal monthlyMaintenanceFee = new BigDecimal("6");
         BigDecimal creditLimit = new BigDecimal("50");
-        CreditAcDTO creditAcDTO = transformer.ensambleCreditAcDTO(balance, secondaryOwnerId, creditLimit, monthlyMaintenanceFee, null);
+        CreditAcDTO creditAcDTO = transformer.assembleCreditAcDTO(balance, secondaryOwnerId, creditLimit, monthlyMaintenanceFee, null);
 
         String body = objectMapper.writeValueAsString(creditAcDTO);
         System.out.println(body);
