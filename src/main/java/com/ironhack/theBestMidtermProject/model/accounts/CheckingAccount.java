@@ -24,12 +24,12 @@ public class CheckingAccount extends Account{
     public CheckingAccount() {
     }
 
-//    Constructor with all parameters but secondaryOwner
-    public CheckingAccount(Money balance, AccountHolder primaryOwner, String secretKey, Status status) {
-        super(balance, primaryOwner);
-        this.secretKey = secretKey;
-        this.status = status;
-    }
+////    Constructor with all parameters but secondaryOwner
+//    public CheckingAccount(Money balance, AccountHolder primaryOwner, String secretKey, Status status) {
+//        super(balance, primaryOwner);
+//        this.secretKey = secretKey;
+//        this.status = status;
+//    }
 
 //    Constructor with all parameters
     public CheckingAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, String secretKey, Status status) {
@@ -38,10 +38,6 @@ public class CheckingAccount extends Account{
         this.status = status;
     }
 
-    @Override
-    public boolean checkPassword(String password) {
-        return secretKey.equals(password);
-    }
 
 //    Getters and Setters:
     public String getSecretKey() {

@@ -11,9 +11,12 @@ import com.ironhack.theBestMidtermProject.utils.dtos.*;
 import com.ironhack.theBestMidtermProject.utils.enums.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
+import org.springframework.security.core.*;
+import org.springframework.security.core.annotation.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.*;
+import java.security.*;
 import java.time.*;
 import java.util.*;
 
@@ -28,8 +31,9 @@ public class AccountHolderController implements IAccountHolderController {
 
     @GetMapping("/balance/{accountId}")
     @ResponseStatus(HttpStatus.OK)
-    public Money checkBalance(@PathVariable long accountId){
-        return iAccountHolderService.checkBalance(accountId);
+    public Money checkBalance(@PathVariable long accountId, @AuthenticationPrincipal Principal principal){
+        String userName = principal.getName();
+        return iAccountHolderService.checkBalance(accountId, userName);
     }
 
     @PostMapping("/register/accountHolder")

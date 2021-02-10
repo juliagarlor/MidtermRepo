@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 public interface IAccountHolderService {
-    Money checkBalance(long accountId);
+    Money checkBalance(long accountId, String userName);
     AccountHolder createAccountHolder(AccountHolderDTO accountHolderDTO);
 //    Money transferAmount(Name name, long targetId, long emisorId, Money amount);
 }

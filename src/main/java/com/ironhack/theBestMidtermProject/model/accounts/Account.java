@@ -11,7 +11,7 @@ import java.util.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Account {
+public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,11 +43,11 @@ public abstract class Account {
     public Account() {
     }
 
-//    Constructor all parameters but secondaryOwner
-    public Account(Money balance, AccountHolder primaryOwner) {
-        this.balance = balance;
-        this.primaryOwner = primaryOwner;
-    }
+////    Constructor all parameters but secondaryOwner
+//    public Account(Money balance, AccountHolder primaryOwner) {
+//        this.balance = balance;
+//        this.primaryOwner = primaryOwner;
+//    }
 
 //    Constructor with all parameters
     public Account(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
@@ -57,7 +57,7 @@ public abstract class Account {
     }
 
     //    Peculiar methods
-    public abstract boolean checkPassword(String password);
+//    public abstract boolean checkPassword(String password);
 
 //    Getters and Setters
     public Long getId() {

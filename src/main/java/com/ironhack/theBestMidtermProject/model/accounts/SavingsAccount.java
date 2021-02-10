@@ -7,6 +7,7 @@ import com.ironhack.theBestMidtermProject.utils.enums.*;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.*;
+import java.time.*;
 import java.util.*;
 
 @Entity
@@ -27,21 +28,22 @@ public class SavingsAccount extends Account{
 
 //    and a default interestRate of 0.0025, and a maximum of 0.5
     private BigDecimal interestRate = new BigDecimal("0.0025");
+    private LocalDate lastInterestRateApplied;
 
 //    todo: igual que en credit card
 //    Empty constructor
     public SavingsAccount() {
     }
 
-//    Constructor with all parameters but secondary owner
-    public SavingsAccount(Money balance, AccountHolder primaryOwner, String secretKey, Status status, Money minimumBalance,
-                          BigDecimal interestRate) {
-        super(balance, primaryOwner);
-        this.secretKey = secretKey;
-        this.status = status;
-        this.minimumBalance = minimumBalance;
-        this.interestRate = interestRate;
-    }
+////    Constructor with all parameters but secondary owner
+//    public SavingsAccount(Money balance, AccountHolder primaryOwner, String secretKey, Status status, Money minimumBalance,
+//                          BigDecimal interestRate) {
+//        super(balance, primaryOwner);
+//        this.secretKey = secretKey;
+//        this.status = status;
+//        this.minimumBalance = minimumBalance;
+//        this.interestRate = interestRate;
+//    }
 
     //    Constructor with all parameters
     public SavingsAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner, String secretKey,
@@ -53,10 +55,6 @@ public class SavingsAccount extends Account{
         this.interestRate = interestRate;
     }
 
-    @Override
-    public boolean checkPassword(String password) {
-        return secretKey.equals(password);
-    }
 
     //    Getters and Setters
     public String getSecretKey() {
@@ -89,5 +87,13 @@ public class SavingsAccount extends Account{
 
     public void setInterestRate(BigDecimal interestRate) {
         this.interestRate = interestRate;
+    }
+
+    public LocalDate getLastInterestRateApplied() {
+        return lastInterestRateApplied;
+    }
+
+    public void setLastInterestRateApplied(LocalDate lastInterestRateApplied) {
+        this.lastInterestRateApplied = lastInterestRateApplied;
     }
 }

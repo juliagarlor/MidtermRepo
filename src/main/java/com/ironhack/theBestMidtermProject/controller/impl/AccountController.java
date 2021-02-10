@@ -22,16 +22,4 @@ public class AccountController implements IAccountController {
     public Account createCheckAccount(@PathVariable long userId, @RequestBody @Valid CheckingAcDTO checkingAcDTO){
         return iAccountService.createCheckAccount(userId, checkingAcDTO);
     }
-
-    @PatchMapping("/increaseBalance/{accountId}")
-    @ResponseStatus(HttpStatus.OK)
-    public Account addAmount(@PathVariable long accountId, @RequestBody Money amount){
-        return iAccountService.addAmount(accountId, amount);
-    }
-
-    @PatchMapping("/decreaseBalance/{accountId}")
-    @ResponseStatus(HttpStatus.OK)
-    public Account subtractAmount(@PathVariable long accountId, @RequestBody Money amount){
-        return iAccountService.subtractAmount(accountId, amount);
-    }
 }

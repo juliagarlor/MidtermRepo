@@ -9,6 +9,4 @@ import javax.validation.*;
 
 public interface IAccountService {
     Account createCheckAccount(long userId, CheckingAcDTO checkingAcDTO);
-    Account addAmount(long accountId, Money amount);
-    Account subtractAmount(long accountId, Money amount);
 }

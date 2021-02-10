@@ -6,6 +6,7 @@ import com.ironhack.theBestMidtermProject.utils.classes.*;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.*;
+import java.time.*;
 import java.util.*;
 
 @Entity
@@ -28,20 +29,21 @@ public class CreditCardAccount extends Account{
             @AttributeOverride(name = "amount", column = @Column(name = "credit_limit"))
     })
     private Money creditLimit = new Money(new BigDecimal("100"));
+    private LocalDate lastInterestRateApplied;
 
 //    Empty constructor
     public CreditCardAccount() {
     }
 //TODO: supongo que no vamos a instanciar objetos a no ser que sea por los dtos, así que las combinaciones de constructores los voy a poner alli
 
-//    constructor in which we introduce all parameters but secondary owner
-    public CreditCardAccount(Money balance, AccountHolder primaryOwner,
-                             Money monthlyMaintenanceFee, BigDecimal interestRate, Money creditLimit) {
-        super(balance, primaryOwner);
-        this.monthlyMaintenanceFee = monthlyMaintenanceFee;
-        this.interestRate = interestRate;
-        this.creditLimit = creditLimit;
-    }
+////    constructor in which we introduce all parameters but secondary owner
+//    public CreditCardAccount(Money balance, AccountHolder primaryOwner,
+//                             Money monthlyMaintenanceFee, BigDecimal interestRate, Money creditLimit) {
+//        super(balance, primaryOwner);
+//        this.monthlyMaintenanceFee = monthlyMaintenanceFee;
+//        this.interestRate = interestRate;
+//        this.creditLimit = creditLimit;
+//    }
 
 //    Constructor with all parameters
     public CreditCardAccount(Money balance, AccountHolder primaryOwner, AccountHolder secondaryOwner,
@@ -50,12 +52,6 @@ public class CreditCardAccount extends Account{
         this.monthlyMaintenanceFee = monthlyMaintenanceFee;
         this.interestRate = interestRate;
         this.creditLimit = creditLimit;
-    }
-
-    @Override
-    public boolean checkPassword(String password) {
-//        Since a credit card account does not have a password:
-        return false;
     }
 
 //    Getters and Setters
@@ -82,5 +78,13 @@ public class CreditCardAccount extends Account{
 
     public void setCreditLimit(Money creditLimit) {
         this.creditLimit = creditLimit;
+    }
+
+    public LocalDate getLastInterestRateApplied() {
+        return lastInterestRateApplied;
+    }
+
+    public void setLastInterestRateApplied(LocalDate lastInterestRateApplied) {
+        this.lastInterestRateApplied = lastInterestRateApplied;
     }
 }
