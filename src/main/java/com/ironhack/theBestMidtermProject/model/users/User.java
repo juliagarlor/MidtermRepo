@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.*;
 import com.ironhack.theBestMidtermProject.model.accounts.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.sun.istack.*;
+import org.springframework.security.crypto.bcrypt.*;
+import org.springframework.security.crypto.password.*;
 
 import javax.persistence.*;
 import java.util.*;
@@ -31,6 +33,9 @@ public class User {
     @JsonIgnore
     protected Set<Role> roles;
 
+    @Transient
+    protected PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
 //    Empty constructor
     public User() {
     }
@@ -38,7 +43,7 @@ public class User {
 //    Constructor with all parameters
     public User(Name name, String password, int age, Set<Role> roles) {
         this.name = name;
-        this.password = password;
+        this.password = passwordEncoder.encode(password);
         this.age = age;
         this.roles = roles;
     }

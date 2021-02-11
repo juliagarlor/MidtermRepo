@@ -27,20 +27,20 @@ public class AccountHolderService implements IAccountHolderService {
 
     private Transformer transformer = new Transformer();
 
-    public Money checkBalance(long accountId, String userName) {
+    public Money checkBalance(long accountId, Long userId) {
         Optional<Account> account = accountRepository.findById(accountId);
         if (account.isPresent()){
             Account output = account.get();
 //            Checking if the logged id is either the primaryOwner, the secondaryOwner or an admin
-            String primaryOwnerId = String.valueOf(output.getPrimaryOwner().getId());
-            if (!userName.equals(primaryOwnerId)){
+            Long primaryOwnerId = output.getPrimaryOwner().getId();
+            if (userId != primaryOwnerId){
 
-                String secondaryOwnerId = String.valueOf(output.getSecondaryOwner().getId());
-                Optional<User> admin = userRepository.findById(Long.parseLong(userName));
+                Long secondaryOwnerId = output.getSecondaryOwner().getId();
+                Optional<User> admin = userRepository.findById(userId);
 //                Checking if this is actually an admin
                 boolean isAdmin = admin.get().getRoles().stream().anyMatch(x ->x.getName().equals("ADMIN"));
 
-                if (userName.equals(secondaryOwnerId) || isAdmin){
+                if (userId == secondaryOwnerId || isAdmin){
                     return output.getBalance();
                 }else {
                     throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to check this data");

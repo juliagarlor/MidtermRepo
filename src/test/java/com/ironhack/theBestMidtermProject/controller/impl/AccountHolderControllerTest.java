@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.*;
 import com.ironhack.theBestMidtermProject.model.accounts.*;
 import com.ironhack.theBestMidtermProject.repository.accounts.*;
 import com.ironhack.theBestMidtermProject.repository.users.*;
+import com.ironhack.theBestMidtermProject.security.*;
 import com.ironhack.theBestMidtermProject.service.impl.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.ironhack.theBestMidtermProject.utils.dtos.*;
@@ -20,6 +21,7 @@ import java.math.*;
 import java.time.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -49,7 +51,7 @@ class AccountHolderControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
 
 //        Create an accountHolder
         NameDTO name = transformer.assembleNameDTO("Rosalía", "La", null, Salutation.Ms);
@@ -69,24 +71,21 @@ class AccountHolderControllerTest {
 
     @AfterEach
     void tearDown() {
-        accountHolderRepository.deleteAll();
+        savingsAccountRepository.deleteAll();
         roleRepository.deleteAll();
+        accountHolderRepository.deleteAll();
     }
 
     @Test
     void checkBalance_validAccountHolder_Balance() throws Exception {
-//        String testId = String.valueOf(accountHolderRepository.findAll().get(0).getId());
-//        org.springframework.security.core.userdetails.User user = new User(testId, "contraseña",
-//                AuthorityUtils.createAuthorityList("ACCOUNT_HOLDER"));
-//        TestingAuthenticationToken testingAuthenticationToken = new TestingAuthenticationToken(user,null);
-//
-//        MvcResult result = mockMvc.perform(
-//                get("/balance/" + savingsAccountRepository.findAll().get(0).getId()).with(user(user)))
-//                .andExpect(status().isOk()).andReturn();
-//
-//        assertTrue(result.getResponse().getContentAsString().contains("1000"));
-////        assertEquals(1, roleRepository.findAll().size());
-////        assertEquals(1, accountHolderRepository.findAll().size());
+
+        CustomUserDetails user = new CustomUserDetails(accountHolderRepository.findAll().get(0));
+
+        MvcResult result = mockMvc.perform(
+                get("/balance/" + savingsAccountRepository.findAll().get(0).getId()).with(user(user)))
+                .andExpect(status().isOk()).andReturn();
+
+        assertTrue(result.getResponse().getContentAsString().contains("1000"));
     }
 
     @Test

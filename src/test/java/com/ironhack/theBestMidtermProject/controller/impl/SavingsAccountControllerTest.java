@@ -1,6 +1,7 @@
 package com.ironhack.theBestMidtermProject.controller.impl;
 
 import com.fasterxml.jackson.databind.*;
+import com.ironhack.theBestMidtermProject.model.accounts.*;
 import com.ironhack.theBestMidtermProject.repository.accounts.*;
 import com.ironhack.theBestMidtermProject.repository.users.*;
 import com.ironhack.theBestMidtermProject.service.impl.*;
@@ -19,6 +20,7 @@ import java.math.*;
 import java.time.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -113,5 +115,94 @@ class SavingsAccountControllerTest {
         System.out.println(result.getResolvedException());
         assertTrue(result.getResolvedException().toString().contains("The minimum balance for this account must be higher than 100."));
         assertEquals(0, savingsAccountRepository.findAll().size());
+    }
+
+
+    void createCreditAccount() throws Exception {
+        BigDecimal balance = new BigDecimal("1000");
+        long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
+        BigDecimal monthlyMaintenanceFee = new BigDecimal("6");
+        CreditAcDTO creditAcDTO = transformer.assembleCreditAcDTO(balance, secondaryOwnerId, null, monthlyMaintenanceFee, null);
+
+        String body = objectMapper.writeValueAsString(creditAcDTO);
+        System.out.println(body);
+        mockMvc.perform(
+                post("/new/credit-account/" + accountHolderRepository.findAll().get(0).getId())
+                        .content(body).contentType(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void addAmount_validValues_Account() throws Exception {
+        createCreditAccount();
+
+        Money amount = new Money(new BigDecimal("20"));
+        SavingsAccount test = savingsAccountRepository.findAll().get(0);
+
+        String body = objectMapper.writeValueAsString(amount);
+        System.out.println(body);
+        MvcResult result = mockMvc.perform(
+                patch("/admin/credit-card/" + test.getId() + "/increaseBalance")
+                        .content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertEquals(new BigDecimal("1020.00"), savingsAccountRepository.findAll().get(0).getBalance().getAmount());
+    }
+
+    @Test
+    void addAmount_negativeValues_BadRequest() throws Exception {
+        createCreditAccount();
+
+        Money amount = new Money(new BigDecimal("-20"));
+        SavingsAccount test = savingsAccountRepository.findAll().get(0);
+
+        String body = objectMapper.writeValueAsString(amount);
+        System.out.println(body);
+        MvcResult result = mockMvc.perform(
+                patch("/admin/credit-card/" + test.getId() + "/increaseBalance")
+                        .content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        assertTrue(result.getResolvedException().toString().contains("Please, introduce a positive amount"));
+//        Make sure the amount has been added to the test account
+        assertEquals(new BigDecimal("1000.00"), savingsAccountRepository.findAll().get(0).getBalance().getAmount());
+    }
+
+    @Test
+    void subtractAmount_amountSmallerThanBalance_Account() throws Exception {
+        createCreditAccount();
+
+        Money amount = new Money(new BigDecimal("20"));
+        SavingsAccount test = savingsAccountRepository.findAll().get(0);
+
+        String body = objectMapper.writeValueAsString(amount);
+        System.out.println(body);
+        MvcResult result = mockMvc.perform(
+                patch("/admin/credit-card/" + test.getId() + "/decreaseBalance")
+                        .content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        assertEquals(new BigDecimal("980.00"), savingsAccountRepository.findAll().get(0).getBalance().getAmount());
+    }
+
+    @Test
+    void subtractAmount_amountBiggerThanBalance_NotAcceptable() throws Exception {
+        createCreditAccount();
+
+        Money amount = new Money(new BigDecimal("1020"));
+        SavingsAccount test = savingsAccountRepository.findAll().get(0);
+
+        String body = objectMapper.writeValueAsString(amount);
+        System.out.println(body);
+        MvcResult result = mockMvc.perform(
+                patch("/admin/credit-card/" + test.getId() + "/decreaseBalance")
+                        .content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotAcceptable())
+                .andReturn();
+
+        assertTrue(result.getResolvedException().toString().contains("As broke as Donald Trump"));
+        assertEquals(new BigDecimal("1000.00"), savingsAccountRepository.findAll().get(0).getBalance().getAmount());
     }
 }

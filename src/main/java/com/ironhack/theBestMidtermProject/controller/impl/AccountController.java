@@ -3,6 +3,7 @@ package com.ironhack.theBestMidtermProject.controller.impl;
 import com.ironhack.theBestMidtermProject.controller.interfaces.*;
 import com.ironhack.theBestMidtermProject.model.*;
 import com.ironhack.theBestMidtermProject.model.accounts.*;
+import com.ironhack.theBestMidtermProject.security.*;
 import com.ironhack.theBestMidtermProject.service.interfaces.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.ironhack.theBestMidtermProject.utils.dtos.*;
@@ -28,8 +29,15 @@ public class AccountController implements IAccountController {
 
     @PostMapping("/transfer")
     @ResponseStatus(HttpStatus.CREATED)
-    public Transactions transfer(@AuthenticationPrincipal Principal principal, @RequestBody @Valid TransactionsDTO transactionsDTO){
-        long emisorId = Long.parseLong(principal.getName());
+    public Transactions transfer(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid TransactionsDTO transactionsDTO){
+        long emisorId = Long.parseLong(customUserDetails.getUsername());
         return iAccountService.transfer(emisorId, transactionsDTO);
+    }
+
+    @PostMapping("/transfer/{hashedKey}/{accountSecretKey}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Transactions transferWithThirdParty(@PathVariable String hashedKey, @PathVariable String accountSecretKey, @AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid TransactionsDTO transactionsDTO){
+        long emisorId = Long.parseLong(customUserDetails.getUsername());
+        return iAccountService.transferWithThirdParty(hashedKey,  accountSecretKey, emisorId, transactionsDTO);
     }
 }

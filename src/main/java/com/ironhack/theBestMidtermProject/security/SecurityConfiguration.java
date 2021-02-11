@@ -30,10 +30,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
                 .userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder);
 
-//                .inMemoryAuthentication()
-//                .withUser("admin").password(passwordEncoder.encode("123456")).roles("ADMIN", "USER")
-//                .and()
-//                .withUser("user").password(passwordEncoder.encode("123456")).roles("USER");
     }
 
     @Override

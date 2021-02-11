@@ -47,7 +47,12 @@ public class FraudChecker {
 //        Searching for a list of transactions in the last second, good luck
         List<BigDecimal> transactionsOfLastSecond = transactionRepository.transactionsInLastSecond(emisorId);
 
-        if (transactionsOfLastSecond.size() > 2){
+//        if there is more than two operations in the last second, we will consider it fraud, but since this last
+//        transaction has not been saved in the repository yet, we should add it to the list size of the last transactions.
+//        So initially, the comparison should be: transactionsOfLastSecond.size() > 2, but the right part is actually
+//        transactionsOfLastSecond.size() + 1, so:
+
+        if (transactionsOfLastSecond.size() > 1){
 //            Wow, are you Flash? Because your money is running away at the speed of light
             return true;
         }else {

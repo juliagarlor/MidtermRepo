@@ -15,7 +15,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.server.*;
 
-import java.math.*;
 import java.time.*;
 import java.util.*;
 
@@ -24,6 +23,9 @@ public class AccountService implements IAccountService {
 
     @Autowired
     private AccountHolderRepository accountHolderRepository;
+
+    @Autowired
+    private ThirdPartyRepository thirdPartyRepository;
 
     @Autowired
     private StudentCheckingAccountRepository studentAccountRepository;
@@ -65,13 +67,26 @@ public class AccountService implements IAccountService {
 
     public Transactions transfer(long emisorId, TransactionsDTO transactionsDTO){
 
-//      Check if both emisor and receptor accounts exists:
+//      Check if both emisor and receptor accounts exists or not:
         Optional<Account> emisorAccountOp = accountRepository.findById(transactionsDTO.getEmisor());
         Optional<Account> receptorAccountOp = accountRepository.findById(transactionsDTO.getReceptor());
 
-        if(emisorAccountOp.isPresent() && receptorAccountOp.isPresent() && receptorAccountOp.get() != emisorAccountOp.get()){
+        if((emisorAccountOp.isPresent() || receptorAccountOp.isPresent()) && receptorAccountOp.get() != emisorAccountOp.get()){
+
             Account emisorAccount = emisorAccountOp.get();
             Account receptorAccount = receptorAccountOp.get();
+
+//            We can not transfer money to a credit card account, so lets check that none of them are:
+            Class emisorAccountClass = emisorAccount.getClass();
+            Class receptorAccountClass = receptorAccount.getClass();
+
+            if (emisorAccountClass.equals(CreditCardAccount.class) || receptorAccountClass.equals(CreditCardAccount.class)){
+                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Credit cards should not be used for transferences.");
+            }
+
+//            Then casting to their respective classes:
+            emisorAccountClass.cast(emisorAccount);
+            receptorAccountClass.cast(receptorAccount);
 
 //            We suppose that the one logging is the emisor
             if (emisorAccount.getPrimaryOwner().getId() == emisorId){
@@ -81,21 +96,90 @@ public class AccountService implements IAccountService {
                 Transactions transactions = new Transactions(emisorAccount, receptorAccount, amount, moment);
 
                 if (fraudChecker.checkFraudInADay(transactions) || fraudChecker.checkFraudInLastSecond(transactions)){
+                    emisorAccount.setStatus(Status.FROZEN);
                     throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "You may need money for a ticket," +
                             " but it is not going to come from this bank. Good luck with the police :)");
                 }else {
+//                    We will assume this is not a transaction with a third party, so:
+//                    Decreasing balance from emisor:
+                    emisorAccount.setBalance(new Money(emisorAccount.getBalance().decreaseAmount(amount)));
+                    accountRepository.save(emisorAccount);
 
-//                    TODO: HAZ ALGO POR AQUI
+//                    Increasing balance from receptor:
+                    receptorAccount.setBalance(new Money(receptorAccount.getBalance().increaseAmount(amount)));
+                    accountRepository.save(receptorAccount);
+
+//                    Saving and returning the transaction:
                     return transactionRepository.save(transactions);
                 }
 
             }else {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please, transfer from your own account.");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please, do this operations from your own account.");
             }
         }else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The account identifiers must be valid and different.");
         }
+    }
 
+    public Transactions transferWithThirdParty(String hashedKey, String accountSecretKey, long thirdPartyId,
+                                               TransactionsDTO transactionsDTO) {
+//        Checking whether the hashedKey is correct for this thirdParty
+        boolean passing = thirdPartyRepository.findById(thirdPartyId).get().getHashedKey().equals(hashedKey);
 
+        if (passing){
+            Optional<Account> emisorAccountOp = accountRepository.findById(transactionsDTO.getEmisor());
+            Optional<Account> receptorAccountOp = accountRepository.findById(transactionsDTO.getReceptor());
+
+//            One of those Ops must be null: either because the third party has not written its account id or because it
+//            is not in our accountRepository. The problem would be if both ops are null
+            if (emisorAccountOp.isEmpty() && receptorAccountOp.isEmpty()){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please introduce a valid account identifier.");
+            }
+
+            Account emisorAccount = emisorAccountOp.get();
+            Account receptorAccount = receptorAccountOp.get();
+
+//            We can not transfer money to a credit card account, so lets check that none of them are:
+            Class emisorAccountClass = emisorAccount.getClass();
+            Class receptorAccountClass = receptorAccount.getClass();
+
+            if (emisorAccountClass.equals(CreditCardAccount.class) || receptorAccountClass.equals(CreditCardAccount.class)){
+                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Credit cards should not be used for transferences.");
+            }
+
+//            Then casting to their respective classes:
+            emisorAccountClass.cast(emisorAccount);
+            receptorAccountClass.cast(receptorAccount);
+
+            //            Now we can form the real transaction:
+            Money amount = new Money(transactionsDTO.getAmount());
+            LocalDateTime moment = transactionsDTO.getMoment();
+            Transactions transactions = new Transactions(emisorAccount, receptorAccount, amount, moment);
+
+//            We can only check for fraud if the emisor is not the third party, so:
+            if (emisorAccount.getId() == null){
+//                Case: third party is the emisor:
+//                Increasing balance from receptor:
+                receptorAccount.setBalance(new Money(receptorAccount.getBalance().increaseAmount(amount)));
+                accountRepository.save(receptorAccount);
+            }else {
+//                Case: third party is the receptor:
+//                Check for fraud:
+                if (fraudChecker.checkFraudInADay(transactions) || fraudChecker.checkFraudInLastSecond(transactions)){
+                    emisorAccount.setStatus(Status.FROZEN);
+                    throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "You may need money for a ticket," +
+                            " but it is not going to come from this bank. Good luck with the police :)");
+                }else {
+//                    Decreasing balance from emisor:
+                    emisorAccount.setBalance(new Money(emisorAccount.getBalance().decreaseAmount(amount)));
+                    accountRepository.save(emisorAccount);
+                }
+            }
+//                    Saving and returning the transaction:
+            return transactionRepository.save(transactions);
+
+        }else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The hashed key is not correct.");
+        }
     }
 }
