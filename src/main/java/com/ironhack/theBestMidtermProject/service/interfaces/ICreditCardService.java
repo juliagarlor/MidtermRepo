@@ -10,5 +10,5 @@ public interface ICreditCardService {
     CreditCardAccount createCreditAccount(long userId, CreditAcDTO creditAcDTO);
     CreditCardAccount addAmount(long accountId, Money amount);
     CreditCardAccount subtractAmount(long accountId, Money amount);
-    void applyInterest(long accountId);
+    Money applyInterest(long accountId);
 }

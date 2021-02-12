@@ -76,6 +76,7 @@ class CreditCardControllerTest {
 //        Setting creation to two months ago:
         CreditCardAccount test = creditAccountRepository.findAll().get(0);
         test.setLastInterestRateApplied(test.getLastInterestRateApplied().minusMonths(2));
+        creditAccountRepository.save(test);
 
         CustomUserDetails user = new CustomUserDetails(accountHolderRepository.findAll().get(0));
 
@@ -83,15 +84,7 @@ class CreditCardControllerTest {
                 get("/check/credit-card/" + test.getId()).with(user(user)))
                 .andExpect(status().isOk()).andReturn();
 
-//        Estimating the final result:
-        BigDecimal monthlyInterestRate = new BigDecimal("0.2").divide(new BigDecimal("12"), RoundingMode.HALF_UP);
-        BigDecimal balance = new BigDecimal("1000");
-        BigDecimal estimatedBalance = BigDecimal.ZERO;
-        for (int i = 0; i < 2; i++){
-            estimatedBalance = balance.multiply(monthlyInterestRate.add(new BigDecimal("1"))).setScale(2);
-        }
-
-         assertEquals(estimatedBalance, test.getBalance().getAmount());
+         assertEquals(new BigDecimal("1021.58"), creditAccountRepository.findAll().get(0).getBalance().getAmount());
     }
 
     @Test
@@ -167,7 +160,6 @@ class CreditCardControllerTest {
                 monthlyMaintenanceFee, null);
 
         String body = objectMapper.writeValueAsString(creditAcDTO);
-        System.out.println(body);
         mockMvc.perform(
                 post("/new/credit-account/" + accountHolderRepository.findAll().get(0).getId())
                         .content(body).contentType(MediaType.APPLICATION_JSON));

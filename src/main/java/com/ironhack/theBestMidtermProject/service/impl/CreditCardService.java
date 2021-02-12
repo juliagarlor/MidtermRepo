@@ -49,8 +49,10 @@ public class CreditCardService implements ICreditCardService {
                     }
                 }
             }
-            applyInterest(accountId);
-            return account.get();
+            CreditCardAccount output = account.get();
+            Money newBalance = applyInterest(accountId);
+            output.setBalance(newBalance);
+            return creditAccountRepository.save(output);
         }else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The account number is not correct. " +
                     "Please introduce a valid identifier");
@@ -69,13 +71,13 @@ public class CreditCardService implements ICreditCardService {
 
             Money creditLimit;
             if (creditAcDTO.getCreditLimit() == null){
-                creditLimit = new Money(new BigDecimal("100"));
+                creditLimit = new Money(new BigDecimal("100.0000"));
             } else {
                 creditLimit = new Money(creditAcDTO.getCreditLimit());
             }
             BigDecimal interestRate;
             if (creditAcDTO.getInterestRate() == null){
-                interestRate =  new BigDecimal("0.2");
+                interestRate =  new BigDecimal("0.2000");
             } else {
                 interestRate = creditAcDTO.getInterestRate();
             }
@@ -140,29 +142,35 @@ public class CreditCardService implements ICreditCardService {
         }
     }
 
-    public void applyInterest(long accountId){
+    public Money applyInterest(long accountId){
         Optional<CreditCardAccount> account = creditAccountRepository.findById(accountId);
 
         if (account.isPresent()){
             CreditCardAccount checked = account.get();
-//            if more than one year has passed since the last appliance:
+//            We will apply both interestRate and MonthlyMaintenanceFee using LastInterestRateApplied
+//            if more than one month has passed since the last appliance:
             int monthsToApply = Period.between(checked.getLastInterestRateApplied(), LocalDate.now()).getMonths();
 
-            if ( monthsToApply > 1){
+            if ( monthsToApply >= 1){
 //                The interest rate is applied monthly, so we should divide it in 12:
-                BigDecimal interestRateToApply = checked.getInterestRate().divide(new BigDecimal("12"), RoundingMode.HALF_UP);
+                BigDecimal interestRateToApply = checked.getInterestRate().divide(new BigDecimal("12"), 4, RoundingMode.HALF_UP);
 
+                Money newBalance = new Money(new BigDecimal("0"));
 //                Just in case we have not applied it since more than one year ago:
                 for (int i = 0; i < monthsToApply; i++){
                     BigDecimal increment = interestRateToApply.multiply(checked.getBalance().getAmount());
-                    Money newBalance = new Money(checked.getBalance().increaseAmount(increment));
+//                    Applying interestRate:
+                    newBalance = new Money(checked.getBalance().increaseAmount(increment));
+//                    Applying monthlyMaintenanceFee:
+                    newBalance = new Money(newBalance.decreaseAmount(checked.getMonthlyMaintenanceFee()));
                     checked.setBalance(newBalance);
                 }
-                creditAccountRepository.save(checked);
+                return newBalance;
             }
         }else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The account number is not correct. " +
                     "Please introduce a valid identifier");
         }
+        return null;
     }
 }
