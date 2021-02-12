@@ -36,17 +36,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic();
         http.csrf().disable().authorizeRequests()
-//                .mvcMatchers("/hello-world").authenticated()
-//                .mvcMatchers("/goodbye-world").hasRole("ADMIN")
-//                .mvcMatchers("/say-hello").authenticated()
-//                .mvcMatchers("/getPost/**").authenticated()
-//                .mvcMatchers("/addPost").hasAnyRole("ADMIN","CONTRIBUTOR")
-//                .mvcMatchers("/addAuthor").hasRole("ADMIN")
-//                .mvcMatchers("/updatePost/**").hasAnyRole("ADMIN", "CONTRIBUTOR")
-//                .mvcMatchers("/updateAuthor/**").hasAnyRole("ADMIN", "CONTRIBUTOR")
-//                .mvcMatchers("/deletePost/**").hasRole("ADMIN")
-//                .mvcMatchers("/deleteAuthor/**").hasRole("ADMIN")
+                .mvcMatchers("/register/third-party").hasRole("ADMIN")
+                .mvcMatchers("/transfer").hasRole("ACCOUNT_HOLDER")
+                .mvcMatchers("/transfer/**").hasRole("THIRD_PARTY")
+                .mvcMatchers("/balance/").hasAnyRole("ACCOUNT_HOLDER", "ADMIN")
+                .mvcMatchers("/check/**").hasAnyRole("ACCOUNT_HOLDER", "ADMIN")
+                .mvcMatchers("/admin/**").hasRole("ADMIN")
+                .mvcMatchers("/new/**").hasRole("ADMIN")
                 .anyRequest().permitAll();
-
     }
 }

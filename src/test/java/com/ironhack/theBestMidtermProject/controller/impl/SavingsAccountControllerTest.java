@@ -41,12 +41,15 @@ class SavingsAccountControllerTest {
     private SavingsAccountRepository savingsAccountRepository;
 
     @Autowired
+    private AdminRepository adminRepository;
+
+    @Autowired
     private AccountHolderService accountHolderService;
 
     private Transformer transformer = new Transformer();
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
 
         NameDTO name = transformer.assembleNameDTO("Rodriguez", "Cayetano", "Jesús", Salutation.Mr);
@@ -60,12 +63,35 @@ class SavingsAccountControllerTest {
         AccountHolderDTO secondaryOwner = transformer.assembleAccountHolderDTO(name2, 40, "contraseña2",
                 LocalDateTime.of(1980, 5, 20, 18, 40, 00), primaryAddress2, null);
         accountHolderService.createAccountHolder(secondaryOwner);
+
+//        Create an admin
+        AdminDTO adminDTO = transformer.assembleAdminDTO(
+                transformer.assembleNameDTO("Sanchez", "Victoria", null, Salutation.Ms), 20,
+                "contraseña3");
+        String body = objectMapper.writeValueAsString(adminDTO);
+        mockMvc.perform(post("/register/administrator").content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
     }
 
     @AfterEach
     void tearDown() {
         savingsAccountRepository.deleteAll();
         accountHolderRepository.deleteAll();
+    }
+
+    void createSavingsAccount() throws Exception {
+        BigDecimal balance = new BigDecimal("900");
+        long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
+        SavingsAcDTO savingsAcDTO = transformer.assembleSavingsDTO(balance, null, "contraseña",
+                secondaryOwnerId, null);
+
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
+        String body = objectMapper.writeValueAsString(savingsAcDTO);
+        mockMvc.perform(
+                post("/new/savings-account/" + accountHolderRepository.findAll().get(0).getId()).with(user(user))
+                        .content(body).contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
@@ -113,7 +139,6 @@ class SavingsAccountControllerTest {
 
     @Test
     void createSavingsAccount_validValues_SavingsAccount() throws Exception {
-        assertEquals(0, savingsAccountRepository.findAll().size());
 
         BigDecimal balance = new BigDecimal("1000");
         long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
@@ -123,10 +148,11 @@ class SavingsAccountControllerTest {
         SavingsAcDTO savingsAcDTO = transformer.assembleSavingsDTO(balance, minimumBalance, "algunoTieneBarco",
                 secondaryOwnerId, interestRate);
 
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
         String body = objectMapper.writeValueAsString(savingsAcDTO);
-        System.out.println(body);
         MvcResult result = mockMvc.perform(
-                post("/new/savings-account/" + accountHolderRepository.findAll().get(0).getId())
+                post("/new/savings-account/" + accountHolderRepository.findAll().get(0).getId()).with(user(user))
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -136,8 +162,6 @@ class SavingsAccountControllerTest {
 //        Make sure that it has been also linked to the secondary owner
         assertEquals(savingsAccountRepository.findAll().get(0).getId(),
                 accountHolderRepository.findAll().get(1).getSecondaryAccounts().get(0).getId());
-//        Make sure that this new account has been stored in the repository
-        assertEquals(1, savingsAccountRepository.findAll().size());
     }
 
     @Test
@@ -149,30 +173,17 @@ class SavingsAccountControllerTest {
         BigDecimal interestRate = new BigDecimal("0.4");
         SavingsAcDTO savingsAcDTO = transformer.assembleSavingsDTO(balance, minimumBalance, "siempreTresBotonesDesabrochados", secondaryOwnerId, interestRate);
 
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
         String body = objectMapper.writeValueAsString(savingsAcDTO);
-        System.out.println(body);
         MvcResult result = mockMvc.perform(
-                post("/new/savings-account/" + accountHolderRepository.findAll().get(0).getId())
+                post("/new/savings-account/" + accountHolderRepository.findAll().get(0).getId()).with(user(user))
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-        System.out.println(result.getResolvedException());
         assertTrue(result.getResolvedException().toString().contains("The minimum balance for this account must be higher than 100."));
         assertEquals(0, savingsAccountRepository.findAll().size());
-    }
-
-
-    void createSavingsAccount() throws Exception {
-        BigDecimal balance = new BigDecimal("900");
-        long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
-        SavingsAcDTO savingsAcDTO = transformer.assembleSavingsDTO(balance, null, "contraseña",
-                secondaryOwnerId, null);
-
-        String body = objectMapper.writeValueAsString(savingsAcDTO);
-        mockMvc.perform(
-                post("/new/savings-account/" + accountHolderRepository.findAll().get(0).getId())
-                        .content(body).contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
@@ -182,9 +193,11 @@ class SavingsAccountControllerTest {
         Money amount = new Money(new BigDecimal("20"));
         SavingsAccount test = savingsAccountRepository.findAll().get(0);
 
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
         String body = objectMapper.writeValueAsString(amount);
         MvcResult result = mockMvc.perform(
-                patch("/admin/savings-account/" + test.getId() + "/increaseBalance")
+                patch("/admin/savings-account/" + test.getId() + "/increaseBalance").with(user(user))
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -199,9 +212,11 @@ class SavingsAccountControllerTest {
         Money amount = new Money(new BigDecimal("-20"));
         SavingsAccount test = savingsAccountRepository.findAll().get(0);
 
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
         String body = objectMapper.writeValueAsString(amount);
         MvcResult result = mockMvc.perform(
-                patch("/admin/credit-card/" + test.getId() + "/increaseBalance")
+                patch("/admin/credit-card/" + test.getId() + "/increaseBalance").with(user(user))
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
@@ -218,9 +233,11 @@ class SavingsAccountControllerTest {
         Money amount = new Money(new BigDecimal("20"));
         SavingsAccount test = savingsAccountRepository.findAll().get(0);
 
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
         String body = objectMapper.writeValueAsString(amount);
         MvcResult result = mockMvc.perform(
-                patch("/admin/savings-account/" + test.getId() + "/decreaseBalance")
+                patch("/admin/savings-account/" + test.getId() + "/decreaseBalance").with(user(user))
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -235,9 +252,11 @@ class SavingsAccountControllerTest {
         Money amount = new Money(new BigDecimal("1020"));
         SavingsAccount test = savingsAccountRepository.findAll().get(0);
 
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
         String body = objectMapper.writeValueAsString(amount);
         MvcResult result = mockMvc.perform(
-                patch("/admin/savings-account/" + test.getId() + "/decreaseBalance")
+                patch("/admin/savings-account/" + test.getId() + "/decreaseBalance").with(user(user))
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotAcceptable())
                 .andReturn();

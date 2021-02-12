@@ -41,12 +41,15 @@ class CreditCardControllerTest {
     private CreditCardAccountRepository creditAccountRepository;
 
     @Autowired
+    private AdminRepository adminRepository;
+
+    @Autowired
     private AccountHolderService accountHolderService;
 
     private Transformer transformer = new Transformer();
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
 
         NameDTO name = transformer.assembleNameDTO("Rodriguez", "Cayetano", "Jesús", Salutation.Mr);
@@ -60,6 +63,15 @@ class CreditCardControllerTest {
         AccountHolderDTO secondaryOwner = transformer.assembleAccountHolderDTO(name2, 40, "contraseña2",
                 LocalDateTime.of(1980, 5, 20, 18, 40, 00), primaryAddress2, null);
         accountHolderService.createAccountHolder(secondaryOwner);
+
+//        Create an admin
+        AdminDTO adminDTO = transformer.assembleAdminDTO(
+                transformer.assembleNameDTO("Sanchez", "Victoria", null, Salutation.Ms), 20,
+                "contraseña3");
+        String body = objectMapper.writeValueAsString(adminDTO);
+        mockMvc.perform(post("/register/administrator").content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
     }
 
     @AfterEach
@@ -75,9 +87,11 @@ class CreditCardControllerTest {
         CreditAcDTO creditAcDTO = transformer.assembleCreditAcDTO(balance, secondaryOwnerId, null,
                 monthlyMaintenanceFee, null);
 
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
         String body = objectMapper.writeValueAsString(creditAcDTO);
         mockMvc.perform(
-                post("/new/credit-account/" + accountHolderRepository.findAll().get(0).getId())
+                post("/new/credit-account/" + accountHolderRepository.findAll().get(0).getId()).with(user(user))
                         .content(body).contentType(MediaType.APPLICATION_JSON));
     }
 
@@ -127,10 +141,11 @@ class CreditCardControllerTest {
         BigDecimal monthlyMaintenanceFee = new BigDecimal("6");
         CreditAcDTO creditAcDTO = transformer.assembleCreditAcDTO(balance, secondaryOwnerId, null, monthlyMaintenanceFee, null);
 
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
         String body = objectMapper.writeValueAsString(creditAcDTO);
-        System.out.println(body);
         MvcResult result = mockMvc.perform(
-                post("/new/credit-account/" + accountHolderRepository.findAll().get(0).getId())
+                post("/new/credit-account/" + accountHolderRepository.findAll().get(0).getId()).with(user(user))
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -153,10 +168,11 @@ class CreditCardControllerTest {
         BigDecimal creditLimit = new BigDecimal("50");
         CreditAcDTO creditAcDTO = transformer.assembleCreditAcDTO(balance, secondaryOwnerId, creditLimit, monthlyMaintenanceFee, null);
 
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
         String body = objectMapper.writeValueAsString(creditAcDTO);
-        System.out.println(body);
         MvcResult result = mockMvc.perform(
-                post("/new/credit-account/" + accountHolderRepository.findAll().get(0).getId())
+                post("/new/credit-account/" + accountHolderRepository.findAll().get(0).getId()).with(user(user))
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
@@ -172,10 +188,11 @@ class CreditCardControllerTest {
         Money amount = new Money(new BigDecimal("20"));
         CreditCardAccount test = creditAccountRepository.findAll().get(0);
 
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
         String body = objectMapper.writeValueAsString(amount);
-        System.out.println(body);
         MvcResult result = mockMvc.perform(
-                patch("/admin/credit-card/" + test.getId() + "/increaseBalance")
+                patch("/admin/credit-card/" + test.getId() + "/increaseBalance").with(user(user))
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -190,10 +207,11 @@ class CreditCardControllerTest {
         Money amount = new Money(new BigDecimal("-20"));
         CreditCardAccount test = creditAccountRepository.findAll().get(0);
 
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
         String body = objectMapper.writeValueAsString(amount);
-        System.out.println(body);
         MvcResult result = mockMvc.perform(
-                patch("/admin/credit-card/" + test.getId() + "/increaseBalance")
+                patch("/admin/credit-card/" + test.getId() + "/increaseBalance").with(user(user))
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
@@ -210,10 +228,11 @@ class CreditCardControllerTest {
         Money amount = new Money(new BigDecimal("20"));
         CreditCardAccount test = creditAccountRepository.findAll().get(0);
 
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
         String body = objectMapper.writeValueAsString(amount);
-        System.out.println(body);
         MvcResult result = mockMvc.perform(
-                patch("/admin/credit-card/" + test.getId() + "/decreaseBalance")
+                patch("/admin/credit-card/" + test.getId() + "/decreaseBalance").with(user(user))
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -228,10 +247,11 @@ class CreditCardControllerTest {
         Money amount = new Money(new BigDecimal("1020"));
         CreditCardAccount test = creditAccountRepository.findAll().get(0);
 
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
         String body = objectMapper.writeValueAsString(amount);
-        System.out.println(body);
         MvcResult result = mockMvc.perform(
-                patch("/admin/credit-card/" + test.getId() + "/decreaseBalance")
+                patch("/admin/credit-card/" + test.getId() + "/decreaseBalance").with(user(user))
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotAcceptable())
                 .andReturn();

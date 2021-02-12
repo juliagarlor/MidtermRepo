@@ -61,6 +61,9 @@ class AccountControllerTest {
     @Autowired
     private ThirdPartyRepository thirdPartyRepository;
 
+    @Autowired
+    private AdminRepository adminRepository;
+
     private Transformer transformer = new Transformer();
 
     @BeforeEach
@@ -80,6 +83,15 @@ class AccountControllerTest {
         AccountHolderDTO secondaryOwner = transformer.assembleAccountHolderDTO(name2, 40, "contraseña2",
                 LocalDateTime.of(1980, 5, 20, 18, 40, 00), primaryAddress2, null);
         accountHolderService.createAccountHolder(secondaryOwner);
+
+//        An admin
+        AdminDTO adminDTO = transformer.assembleAdminDTO(
+                transformer.assembleNameDTO("Sanchez", "Victoria", null, Salutation.Ms), 20,
+                "contraseña3");
+        String body = objectMapper.writeValueAsString(adminDTO);
+        mockMvc.perform(post("/register/administrator").content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
 
 //        And a test checkingAccount for the add and subtractBalance method
         Money balance = new Money(new BigDecimal("1000"));
@@ -104,7 +116,6 @@ class AccountControllerTest {
                 transformer.assembleNameDTO("Perez", "Pablo", null, Salutation.Mr),
                 40, "hashKey", "laFincaEnSegovia");
         thirdPartyController.createThirdParty(test);
-
     }
 
     @AfterEach
@@ -121,6 +132,8 @@ class AccountControllerTest {
     void createCheckAccount_validValues_CheckingAccount() throws Exception {
         assertEquals(2, checkingAccountRepository.findAll().size());
 
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
         BigDecimal balance = new BigDecimal("1000");
         Long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
         CheckingAcDTO checkingAcDTO = transformer.assembleCheckingAcDTO(balance, "menudoPelazo", secondaryOwnerId);
@@ -128,12 +141,10 @@ class AccountControllerTest {
         String body = objectMapper.writeValueAsString(checkingAcDTO);
         System.out.println(body);
         MvcResult result = mockMvc.perform(
-                post("/new/checking-account/" + accountHolderRepository.findAll().get(0).getId())
+                post("/new/checking-account/" + accountHolderRepository.findAll().get(0).getId()).with(user(user))
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn();
-
-        System.out.println(result.getResponse().getContentAsString());
 
 //        Make sure that the newly created account has been linked to Cayetano
         assertTrue(result.getResponse().getContentAsString().contains("Cayetano"));
@@ -144,6 +155,7 @@ class AccountControllerTest {
     void createCheckAccount_validValues_StudentAccount() throws Exception {
         assertEquals(2, checkingAccountRepository.findAll().size());
 
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
 //        Reset the age of Cayetano to be young, as he would wish
         AccountHolder primaryOwner = accountHolderRepository.findAll().get(0);
         primaryOwner.setAge(18);
@@ -156,26 +168,28 @@ class AccountControllerTest {
         String body = objectMapper.writeValueAsString(checkingAcDTO);
         System.out.println(body);
         MvcResult result = mockMvc.perform(
-                post("/new/checking-account/" + accountHolderRepository.findAll().get(0).getId())
+                post("/new/checking-account/" + primaryOwner.getId()).with(user(user))
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn();
 
 //        Make sure that the newly created account has been linked to Cayetano
         assertTrue(result.getResponse().getContentAsString().contains("Cayetano"));
-        System.out.println(studentAccountRepository.findAll().size());
         assertEquals(3, accountRepository.findAll().size());
     }
 
     @Test
     void createCheckAccount_invalidValues_Exception() throws Exception {
+
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
         BigDecimal balance = new BigDecimal("1000");
         Long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
         CheckingAcDTO checkingAcDTO = transformer.assembleCheckingAcDTO(balance, "uno", secondaryOwnerId);
 
         String body = objectMapper.writeValueAsString(checkingAcDTO);
         MvcResult result = mockMvc.perform(
-                post("/new/checking-account/" + accountHolderRepository.findAll().get(0).getId())
+                post("/new/checking-account/" + accountHolderRepository.findAll().get(0).getId()).with(user(user))
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();

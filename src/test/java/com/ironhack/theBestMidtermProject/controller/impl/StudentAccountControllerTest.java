@@ -41,6 +41,9 @@ class StudentAccountControllerTest {
     private StudentCheckingAccountRepository studentCheckingAccountRepository;
 
     @Autowired
+    private AdminRepository adminRepository;
+
+    @Autowired
     private AccountHolderService accountHolderService;
 
     private Transformer transformer = new Transformer();
@@ -66,11 +69,22 @@ class StudentAccountControllerTest {
         BigDecimal monthlyMaintenanceFee = new BigDecimal("6");
         CheckingAcDTO checkingAcDTO = transformer.assembleCheckingAcDTO(balance, "mocatriz", secondaryOwnerId);
 
+//        Creating an admin
+        AdminDTO adminDTO = transformer.assembleAdminDTO(
+                transformer.assembleNameDTO("Sanchez", "Victoria", null, Salutation.Ms), 20,
+                "contraseña3");
+        String body = objectMapper.writeValueAsString(adminDTO);
+        mockMvc.perform(post("/register/administrator").content(body).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
 //        Cayetano is going to open his first account (and since he is under 24, he will receive a student account):
-        String body = objectMapper.writeValueAsString(checkingAcDTO);
+        String body2 = objectMapper.writeValueAsString(checkingAcDTO);
         mockMvc.perform(
-                post("/new/checking-account/" + accountHolderRepository.findAll().get(0).getId())
-                        .content(body).contentType(MediaType.APPLICATION_JSON));
+                post("/new/checking-account/" + accountHolderRepository.findAll().get(0).getId()).with(user(user))
+                        .content(body2).contentType(MediaType.APPLICATION_JSON));
     }
 
     @AfterEach
@@ -111,10 +125,11 @@ class StudentAccountControllerTest {
         Money amount = new Money(new BigDecimal("20"));
         StudentCheckingAccount test = studentCheckingAccountRepository.findAll().get(0);
 
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
         String body = objectMapper.writeValueAsString(amount);
-        System.out.println(body);
         MvcResult result = mockMvc.perform(
-                patch("/admin/student-account/" + test.getId() + "/increaseBalance")
+                patch("/admin/student-account/" + test.getId() + "/increaseBalance").with(user(user))
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -128,10 +143,11 @@ class StudentAccountControllerTest {
         Money amount = new Money(new BigDecimal("20"));
         StudentCheckingAccount test = studentCheckingAccountRepository.findAll().get(0);
 
+        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
+
         String body = objectMapper.writeValueAsString(amount);
-        System.out.println(body);
         MvcResult result = mockMvc.perform(
-                patch("/admin/student-account/" + test.getId() + "/decreaseBalance")
+                patch("/admin/student-account/" + test.getId() + "/decreaseBalance").with(user(user))
                         .content(body).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();

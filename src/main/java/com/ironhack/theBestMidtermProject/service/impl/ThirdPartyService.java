@@ -27,7 +27,7 @@ public class ThirdPartyService implements IThirdPartyService {
 
         ThirdParty newThirdParty = new ThirdParty(name, password, age, roles, hashedKey);
 
-        roles.add(new Role("USER", newThirdParty));
+        roles.add(new Role("THIRD_PARTY", newThirdParty));
         newThirdParty.setRoles(roles);
         return thirdPartyRepository.save(newThirdParty);
     }

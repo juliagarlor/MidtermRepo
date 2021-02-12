@@ -118,7 +118,6 @@ class AccountHolderControllerTest {
                 primaryAddressDTO, mailingAddressDTO);
 
         String body = objectMapper.writeValueAsString(accountHolderDTO);
-        System.out.println(body);
         MvcResult result = mockMvc.perform(
                 post("/register/accountHolder")
                         .content(body).contentType(MediaType.APPLICATION_JSON))

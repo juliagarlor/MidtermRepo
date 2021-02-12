@@ -74,7 +74,7 @@ public class AccountHolderService implements IAccountHolderService {
 
         AccountHolder newAccountHolder = new AccountHolder(name, password, age, roles, dateOfBirth, primaryAddress, mailingAddress);
 
-        roles.add(new Role("USER", newAccountHolder));
+        roles.add(new Role("ACCOUNT_HOLDER", newAccountHolder));
         newAccountHolder.setRoles(roles);
         return accountHolderRepository.save(newAccountHolder);
     }
