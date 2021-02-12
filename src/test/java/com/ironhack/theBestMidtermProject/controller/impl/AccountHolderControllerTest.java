@@ -89,6 +89,24 @@ class AccountHolderControllerTest {
     }
 
     @Test
+    void checkBalance_invalidAccountHolder_Exception() throws Exception {
+
+        NameDTO name = transformer.assembleNameDTO("Ginebras", "Las", null, Salutation.Ms);
+        AddressDTO primaryAddress = transformer.assembleAddressDTO(1, "Castilla", "Barcelona", "España");
+        AccountHolderDTO primaryOwner = transformer.assembleAccountHolderDTO(name,25, "señoras",
+                LocalDateTime.of(2002, 5, 20, 18, 40, 00), primaryAddress, null);
+        accountHolderService.createAccountHolder(primaryOwner);
+
+        CustomUserDetails user = new CustomUserDetails(accountHolderRepository.findAll().get(1));
+
+        MvcResult result = mockMvc.perform(
+                get("/balance/" + savingsAccountRepository.findAll().get(0).getId()).with(user(user)))
+                .andExpect(status().isUnauthorized()).andReturn();
+
+        assertTrue(result.getResolvedException().toString().contains("You are not authorized to check this data"));
+    }
+
+    @Test
     void createAccountHolder_validDTO_AccountHolder() throws Exception {
         assertEquals(1, accountHolderRepository.findAll().size());
         NameDTO nameDTO = transformer.assembleNameDTO("Lopez", "Cris", null, Salutation.Ms);

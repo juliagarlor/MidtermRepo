@@ -12,6 +12,8 @@ import com.ironhack.theBestMidtermProject.utils.dtos.*;
 import com.ironhack.theBestMidtermProject.utils.enums.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
+import org.springframework.security.crypto.bcrypt.*;
+import org.springframework.security.crypto.password.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.server.*;
 
@@ -41,6 +43,7 @@ public class AccountService implements IAccountService {
 
     @Autowired
     private FraudChecker fraudChecker;
+
 
     public Account createCheckAccount(long userId, CheckingAcDTO checkingAcDTO){
         Optional<AccountHolder> accountHolder = accountHolderRepository.findById(userId);
@@ -88,13 +91,16 @@ public class AccountService implements IAccountService {
             emisorAccountClass.cast(emisorAccount);
             receptorAccountClass.cast(receptorAccount);
 
-
-
 //            We suppose that the one logging is the emisor
             if (emisorAccount.getPrimaryOwner().getId() == emisorId){
                 Money amount = new Money(transactionsDTO.getAmount());
 
-//            Checking if the emisor has enough funds:
+//                Checking if the emisor is FROZEN
+                if (emisorAccount.getStatus() == Status.FROZEN){
+                    throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "I don't think so");
+                }
+
+//                Checking if the emisor has enough funds:
                 if (emisorAccount.getBalance().getAmount().compareTo(amount.getAmount()) < 0){
                     throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "The emisor account does not have enough funds");
                 }
@@ -154,22 +160,11 @@ public class AccountService implements IAccountService {
                 emisorAccount = null;
                 receptorAccount = receptorAccountOp.get();
 //            We can not transfer money to a credit card account, so lets check that none of them are:
-                Class receptorAccountClass = receptorAccount.getClass();
-
-                if (receptorAccountClass.equals(CreditCardAccount.class)){
-                    throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Credit cards should not be used for transferences.");
-                }
-//            Then casting to their respective classes:
-                receptorAccountClass.cast(receptorAccount);
+                castToOtherThanCreditAndCheckSecretKey(receptorAccount, accountSecretKey);
             }else {
                 emisorAccount = emisorAccountOp.get();
                 receptorAccount = null;
-                Class emisorAccountClass = emisorAccount.getClass();
-
-                if (emisorAccountClass.equals(CreditCardAccount.class)){
-                    throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Credit cards should not be used for transferences.");
-                }
-                emisorAccountClass.cast(emisorAccount);
+                castToOtherThanCreditAndCheckSecretKey(emisorAccount, accountSecretKey);
             }
 
 //            Now we can form the real transaction:
@@ -205,6 +200,35 @@ public class AccountService implements IAccountService {
 
         }else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The hashed key is not correct.");
+        }
+    }
+
+    public void castToOtherThanCreditAndCheckSecretKey(Account account, String secretKey){
+        Class accountClass = account.getClass();
+
+        if (accountClass.equals(CreditCardAccount.class)){
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Credit cards should not be used for transferences.");
+        }
+
+//            Then casting to their respective classes:
+        if (CheckingAccount.class.equals(accountClass)) {
+            CheckingAccount.class.cast(account);
+
+            if (!((CheckingAccount) account).getSecretKey().equals(secretKey)){
+                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Incorrect account secretKey.");
+            }
+        } else if (StudentCheckingAccount.class.equals(accountClass)){
+            StudentCheckingAccount.class.cast(account);
+
+            if (!((StudentCheckingAccount) account).getSecretKey().equals(secretKey)){
+                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Incorrect account secretKey.");
+            }
+        } else if (SavingsAccount.class.equals(accountClass)){
+            SavingsAccount.class.cast(account);
+
+            if (!((SavingsAccount) account).getSecretKey().equals(secretKey)){
+                throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Incorrect account secretKey.");
+            }
         }
     }
 }

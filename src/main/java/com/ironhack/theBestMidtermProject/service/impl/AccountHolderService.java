@@ -32,19 +32,27 @@ public class AccountHolderService implements IAccountHolderService {
         if (account.isPresent()){
             Account output = account.get();
 //            Checking if the logged id is either the primaryOwner, the secondaryOwner or an admin
+
+            Optional<User> admin = userRepository.findById(userId);
+            boolean isAdmin = admin.get().getRoles().stream().anyMatch(x ->x.getName().equals("ADMIN"));
+
             Long primaryOwnerId = output.getPrimaryOwner().getId();
-            if (userId != primaryOwnerId){
 
+            if (isAdmin){
+                return output.getBalance();
+            }
+//            if the logging id is not the primaryOwners and secondaryOwner is not null
+            else if (!userId.equals(primaryOwnerId) && output.getSecondaryOwner() != null){
                 Long secondaryOwnerId = output.getSecondaryOwner().getId();
-                Optional<User> admin = userRepository.findById(userId);
-//                Checking if this is actually an admin
-                boolean isAdmin = admin.get().getRoles().stream().anyMatch(x ->x.getName().equals("ADMIN"));
-
-                if (userId == secondaryOwnerId || isAdmin){
+                if (userId.equals(secondaryOwnerId)){
                     return output.getBalance();
                 }else {
                     throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to check this data");
                 }
+            }
+//            if the logging id is not the primaryOwner and the secondary id is null
+            else if (!userId.equals(primaryOwnerId)){
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to check this data");
             }
             return account.get().getBalance();
         }else {
