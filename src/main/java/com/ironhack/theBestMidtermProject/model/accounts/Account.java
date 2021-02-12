@@ -35,8 +35,10 @@ public class Account {
     protected AccountHolder secondaryOwner;
 
     @OneToMany(mappedBy = "emisor")
+    @JsonIgnore
     protected List<Transactions> sentTransactions;
     @OneToMany(mappedBy = "receptor")
+    @JsonIgnore
     protected List<Transactions> receivedTransactions;
 
 //    and the penalty fee is always 40

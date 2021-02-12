@@ -146,7 +146,7 @@ public class SavingsAccountService implements ISavingsAccountService {
 //            if more than one year has passed since the last appliance:
             int yearsToApply = Period.between(checked.getLastInterestRateApplied(), LocalDate.now()).getYears();
 
-            if ( yearsToApply > 1){
+            if ( yearsToApply >= 1){
 //                Just in case we have not applied it since more than one year ago:
 
                 for (int i = 0; i < yearsToApply; i++){

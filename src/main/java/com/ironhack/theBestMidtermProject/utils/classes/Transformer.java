@@ -72,7 +72,7 @@ public class Transformer {
         return output;
     }
 
-    public CheckingAcDTO assembleCheckingAcDTO(BigDecimal balance, String secretKey, long secondaryOwnerId){
+    public CheckingAcDTO assembleCheckingAcDTO(BigDecimal balance, String secretKey, Long secondaryOwnerId){
         CheckingAcDTO output = new CheckingAcDTO();
         output.setBalance(balance);
         output.setSecretKey(secretKey);
@@ -80,7 +80,7 @@ public class Transformer {
         return output;
     }
 
-    public CreditAcDTO assembleCreditAcDTO(BigDecimal balance, long secondaryOwnerId, BigDecimal creditLimit,
+    public CreditAcDTO assembleCreditAcDTO(BigDecimal balance, Long secondaryOwnerId, BigDecimal creditLimit,
                                            BigDecimal monthlyMaintenanceFee, BigDecimal interestRate){
         CreditAcDTO output = new CreditAcDTO();
         output.setBalance(balance);
@@ -92,13 +92,22 @@ public class Transformer {
     }
 
     public SavingsAcDTO assembleSavingsDTO(BigDecimal balance, BigDecimal minimumBalance, String secretKey,
-                                           long secondaryOwnerId, BigDecimal interestRate){
+                                           Long secondaryOwnerId, BigDecimal interestRate){
         SavingsAcDTO output = new SavingsAcDTO();
         output.setBalance(balance);
         output.setMinimumBalance(minimumBalance);
         output.setSecretKey(secretKey);
         output.setSecondaryOwnerId(secondaryOwnerId);
         output.setInterestRate(interestRate);
+        return output;
+    }
+
+    public TransactionsDTO assembleTransactionsDTO(Long emisor, Long receptor,BigDecimal amount, LocalDateTime moment){
+        TransactionsDTO output = new TransactionsDTO();
+        output.setEmisor(emisor);
+        output.setReceptor(receptor);
+        output.setAmount(amount);
+        output.setMoment(moment);
         return output;
     }
 }

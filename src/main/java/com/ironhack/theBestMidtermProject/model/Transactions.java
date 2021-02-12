@@ -1,5 +1,8 @@
 package com.ironhack.theBestMidtermProject.model;
 
+import com.fasterxml.jackson.databind.annotation.*;
+import com.fasterxml.jackson.datatype.jsr310.deser.*;
+import com.fasterxml.jackson.datatype.jsr310.ser.*;
 import com.ironhack.theBestMidtermProject.model.accounts.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 
@@ -12,7 +15,7 @@ import java.time.*;
 public class Transactions {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @ManyToOne
     @JoinColumn(name = "emisor_id")
     private Account emisor;
@@ -25,6 +28,8 @@ public class Transactions {
             @AttributeOverride(name = "currency", column = @Column(name = "currency"))
     })
     private Money amount;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime moment;
 
 //    Empty constructor
@@ -40,11 +45,11 @@ public class Transactions {
     }
 
 //    Getters y Setters
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

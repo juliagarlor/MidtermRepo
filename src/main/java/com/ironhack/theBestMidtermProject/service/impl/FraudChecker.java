@@ -15,12 +15,20 @@ public class FraudChecker {
     private TransactionRepository transactionRepository;
 
     public boolean checkFraudInADay(Transactions transactions){
+        System.out.println("Entra al fraudChecker");
         long emisorId = transactions.getEmisorId().getId();
 
-//        Sum of transactions today (since I have not save this one in the repository yet, I need to add it here)
-        BigDecimal transactionsToday = transactionRepository.transactionsToday(emisorId).add(transactions.getAmount().getAmount());
+        System.out.println("Moment :" + transactions.getMoment().toString());
+//        Sum of transactions today (since I have not save this one in the repository yet, I need to add it)
+        BigDecimal transactionsToday = transactionRepository.transactionsToday(emisorId);
 
-//        Searching for maximum in previous days
+//        if the emisor do not have previous transactions, the upper will return null and will give problems, so:
+        if (transactionsToday == null){
+            transactionsToday = new BigDecimal("1");
+        }else {
+            transactionsToday = transactionsToday.add(transactions.getAmount().getAmount());
+        }
+
         List<BigDecimal> previousTransactions = transactionRepository.transactionsPerDay(emisorId);
 
         BigDecimal max = new BigDecimal("0");
@@ -45,7 +53,7 @@ public class FraudChecker {
 
         long emisorId = transactions.getEmisorId().getId();
 //        Searching for a list of transactions in the last second, good luck
-        List<BigDecimal> transactionsOfLastSecond = transactionRepository.transactionsInLastSecond(emisorId);
+        List<Object[]> transactionsOfLastSecond = transactionRepository.transactionsInLastSecond(emisorId);
 
 //        if there is more than two operations in the last second, we will consider it fraud, but since this last
 //        transaction has not been saved in the repository yet, we should add it to the list size of the last transactions.
