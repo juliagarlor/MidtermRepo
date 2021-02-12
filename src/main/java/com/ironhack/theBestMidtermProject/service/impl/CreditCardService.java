@@ -29,6 +29,34 @@ public class CreditCardService implements ICreditCardService {
     @Autowired
     private CreditCardAccountRepository creditAccountRepository;
 
+    @Override
+    public CreditCardAccount checkAccount(long accountId, String userId) {
+        Optional<CreditCardAccount> account = creditAccountRepository.findById(accountId);
+
+//        We assume that the client authentication is correct, because otherwise the system will advise you
+        if (account.isPresent()){
+            long clientId = Long.parseLong(userId);
+
+            User client = userRepository.findById(clientId).get();
+            boolean isAdmin = client.getRoles().stream().anyMatch(x ->x.getName().equals("ADMIN"));
+
+            if (!isAdmin) {
+                Optional<AccountHolder> clientConfirmation = accountHolderRepository.findByIdAndPrimaryAccountsId(clientId, accountId);
+                if (!clientConfirmation.isPresent()) {
+                    clientConfirmation = accountHolderRepository.findByIdAndSecondaryAccountsId(clientId, accountId);
+                    if (!clientConfirmation.isPresent()) {
+                        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to see this data");
+                    }
+                }
+            }
+            applyInterest(accountId);
+            return account.get();
+        }else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The account number is not correct. " +
+                    "Please introduce a valid identifier");
+        }
+    }
+
     public CreditCardAccount createCreditAccount(long userId, CreditAcDTO creditAcDTO) {
 //        Find account owner whose account will be created
         Optional<AccountHolder> accountHolder = accountHolderRepository.findById(userId);
@@ -62,7 +90,6 @@ public class CreditCardService implements ICreditCardService {
         }
     }
 
-    @Override
     public CreditCardAccount addAmount(long accountId, Money amount) {
         Optional<CreditCardAccount> account = creditAccountRepository.findById(accountId);
 
@@ -84,35 +111,6 @@ public class CreditCardService implements ICreditCardService {
         }
     }
 
-    @Override
-    public CreditCardAccount checkAccount(long accountId, String userId) {
-        Optional<CreditCardAccount> account = creditAccountRepository.findById(accountId);
-
-//        We assume that the client authentication is correct, because otherwise the system will advise you
-        if (account.isPresent()){
-            long clientId = Long.parseLong(userId);
-
-            User client = userRepository.findById(clientId).get();
-            boolean isAdmin = client.getRoles().stream().anyMatch(x ->x.getName().equals("ADMIN"));
-
-            if (!isAdmin) {
-                Optional<AccountHolder> clientConfirmation = accountHolderRepository.findByIdAndPrimaryAccountsId(clientId, accountId);
-                if (!clientConfirmation.isPresent()) {
-                    clientConfirmation = accountHolderRepository.findByIdAndSecondaryAccountsId(clientId, accountId);
-                    if (!clientConfirmation.isPresent()) {
-                        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to see this data");
-                    }
-                }
-            }
-            applyInterest(accountId);
-            return account.get();
-        }else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The account number is not correct. " +
-                    "Please introduce a valid identifier");
-        }
-    }
-
-    @Override
     public CreditCardAccount subtractAmount(long accountId, Money amount) {
         Optional<CreditCardAccount> account = creditAccountRepository.findById(accountId);
 

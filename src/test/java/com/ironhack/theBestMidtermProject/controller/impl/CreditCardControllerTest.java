@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.*;
 import com.ironhack.theBestMidtermProject.model.accounts.*;
 import com.ironhack.theBestMidtermProject.repository.accounts.*;
 import com.ironhack.theBestMidtermProject.repository.users.*;
+import com.ironhack.theBestMidtermProject.security.*;
 import com.ironhack.theBestMidtermProject.service.impl.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.ironhack.theBestMidtermProject.utils.dtos.*;
@@ -20,8 +21,9 @@ import java.math.*;
 import java.time.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -45,7 +47,7 @@ class CreditCardControllerTest {
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
 
         NameDTO name = transformer.assembleNameDTO("Rodriguez", "Cayetano", "Jesús", Salutation.Mr);
         AddressDTO primaryAddress = transformer.assembleAddressDTO(1, "Castilla", "Madrid", "España");
@@ -64,6 +66,50 @@ class CreditCardControllerTest {
     void tearDown() {
         creditAccountRepository.deleteAll();
         accountHolderRepository.deleteAll();
+    }
+
+    @Test
+    void checkAccount_validLogin_Balance() throws Exception {
+//        Creating an account
+        createCreditAccount();
+
+//        Setting creation to two months ago:
+        CreditCardAccount test = creditAccountRepository.findAll().get(0);
+        test.setLastInterestRateApplied(test.getLastInterestRateApplied().minusMonths(2));
+
+        CustomUserDetails user = new CustomUserDetails(accountHolderRepository.findAll().get(0));
+
+        MvcResult result = mockMvc.perform(
+                get("/check/credit-card/" + test.getId()).with(user(user)))
+                .andExpect(status().isOk()).andReturn();
+
+//        Estimating the final result:
+        BigDecimal monthlyInterestRate = new BigDecimal("0.2").divide(new BigDecimal("12"), RoundingMode.HALF_UP);
+        BigDecimal balance = new BigDecimal("1000");
+        BigDecimal estimatedBalance = BigDecimal.ZERO;
+        for (int i = 0; i < 2; i++){
+            estimatedBalance = balance.multiply(monthlyInterestRate.add(new BigDecimal("1"))).setScale(2);
+        }
+
+         assertEquals(estimatedBalance, test.getBalance().getAmount());
+    }
+
+    @Test
+    void checkAccount_invalidLogin_Balance() throws Exception {
+//        Creating an account
+        createCreditAccount();
+
+//        Setting the secondaryOwner to null:
+        CreditCardAccount test = creditAccountRepository.findAll().get(0);
+        test.setSecondaryOwner(null);
+        creditAccountRepository.save(test);
+
+        CustomUserDetails user = new CustomUserDetails(accountHolderRepository.findAll().get(1));
+
+        MvcResult result = mockMvc.perform(
+                get("/check/credit-card/" + test.getId()).with(user(user)))
+                .andExpect(status().isUnauthorized()).andReturn();
+        assertTrue(result.getResolvedException().toString().contains("You are not authorized to see this data"));
     }
 
     @Test
@@ -117,7 +163,8 @@ class CreditCardControllerTest {
         BigDecimal balance = new BigDecimal("1000");
         long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
         BigDecimal monthlyMaintenanceFee = new BigDecimal("6");
-        CreditAcDTO creditAcDTO = transformer.assembleCreditAcDTO(balance, secondaryOwnerId, null, monthlyMaintenanceFee, null);
+        CreditAcDTO creditAcDTO = transformer.assembleCreditAcDTO(balance, secondaryOwnerId, null,
+                monthlyMaintenanceFee, null);
 
         String body = objectMapper.writeValueAsString(creditAcDTO);
         System.out.println(body);
@@ -200,4 +247,6 @@ class CreditCardControllerTest {
         assertTrue(result.getResolvedException().toString().contains("As broke as Donald Trump"));
         assertEquals(new BigDecimal("1000.00"), creditAccountRepository.findAll().get(0).getBalance().getAmount());
     }
+
+
 }
