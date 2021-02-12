@@ -1,6 +1,7 @@
 package com.ironhack.theBestMidtermProject.controller.impl;
 
 import com.ironhack.theBestMidtermProject.model.accounts.*;
+import com.ironhack.theBestMidtermProject.security.*;
 import com.ironhack.theBestMidtermProject.service.interfaces.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 import org.springframework.beans.factory.annotation.*;
@@ -17,8 +18,8 @@ public class StudentAccountController {
 
     @GetMapping("/check/student-account/{accountId}")
     @ResponseStatus(HttpStatus.OK)
-    public StudentCheckingAccount checkAccount(@PathVariable long accountId, @AuthenticationPrincipal Authentication authentication){
-        String userId = authentication.getName();
+    public StudentCheckingAccount checkAccount(@PathVariable long accountId, @AuthenticationPrincipal CustomUserDetails customUserDetails){
+        String userId = customUserDetails.getUsername();
         return iStudentAccountService.checkAccount(accountId, userId);
     }
 

@@ -68,6 +68,19 @@ class CreditCardControllerTest {
         accountHolderRepository.deleteAll();
     }
 
+    void createCreditAccount() throws Exception {
+        BigDecimal balance = new BigDecimal("1000");
+        long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
+        BigDecimal monthlyMaintenanceFee = new BigDecimal("6");
+        CreditAcDTO creditAcDTO = transformer.assembleCreditAcDTO(balance, secondaryOwnerId, null,
+                monthlyMaintenanceFee, null);
+
+        String body = objectMapper.writeValueAsString(creditAcDTO);
+        mockMvc.perform(
+                post("/new/credit-account/" + accountHolderRepository.findAll().get(0).getId())
+                        .content(body).contentType(MediaType.APPLICATION_JSON));
+    }
+
     @Test
     void checkAccount_validLogin_Balance() throws Exception {
 //        Creating an account
@@ -150,19 +163,6 @@ class CreditCardControllerTest {
 
         assertTrue(result.getResolvedException().toString().contains("The minimum credit limit is 100"));
         assertEquals(0, creditAccountRepository.findAll().size());
-    }
-
-    void createCreditAccount() throws Exception {
-        BigDecimal balance = new BigDecimal("1000");
-        long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
-        BigDecimal monthlyMaintenanceFee = new BigDecimal("6");
-        CreditAcDTO creditAcDTO = transformer.assembleCreditAcDTO(balance, secondaryOwnerId, null,
-                monthlyMaintenanceFee, null);
-
-        String body = objectMapper.writeValueAsString(creditAcDTO);
-        mockMvc.perform(
-                post("/new/credit-account/" + accountHolderRepository.findAll().get(0).getId())
-                        .content(body).contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test

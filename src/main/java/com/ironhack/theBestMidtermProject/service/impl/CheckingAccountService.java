@@ -26,7 +26,7 @@ public class CheckingAccountService implements ICheckingAccountService {
     @Autowired
     private CheckingAccountRepository checkingAccountRepository;
 
-    @Override
+
     public CheckingAccount checkAccount(long accountId, String userId) {
         Optional<CheckingAccount> account = checkingAccountRepository.findById(accountId);
 
@@ -53,7 +53,6 @@ public class CheckingAccountService implements ICheckingAccountService {
         }
     }
 
-    @Override
     public CheckingAccount addAmount(long accountId, Money amount) {
         Optional<CheckingAccount> account = checkingAccountRepository.findById(accountId);
 
@@ -75,7 +74,6 @@ public class CheckingAccountService implements ICheckingAccountService {
         }
     }
 
-    @Override
     public CheckingAccount subtractAmount(long accountId, Money amount) {
         Optional<CheckingAccount> account = checkingAccountRepository.findById(accountId);
 

@@ -13,8 +13,10 @@ import java.util.*;
 public class CheckingAccount extends Account{
 
     private String secretKey;
+    @Transient
 //    checkingAccounts have a minimum balance of 250:
     private final Money MINIMUM_BALANCE = new Money(new BigDecimal("250"));
+    @Transient
 //    and a monthly maintenance fee of 12:
     private final Money MONTHLY_MAINTENANCE_FEE = new Money(new BigDecimal("12"));
 

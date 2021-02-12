@@ -29,14 +29,17 @@ public class AccountController implements IAccountController {
 
     @PostMapping("/transfer")
     @ResponseStatus(HttpStatus.CREATED)
-    public Transactions transfer(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid TransactionsDTO transactionsDTO){
+    public Transactions transfer(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                 @RequestBody @Valid TransactionsDTO transactionsDTO){
         long emisorId = Long.parseLong(customUserDetails.getUsername());
         return iAccountService.transfer(emisorId, transactionsDTO);
     }
 
     @PostMapping("/transfer/{hashedKey}/{accountSecretKey}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Transactions transferWithThirdParty(@PathVariable String hashedKey, @PathVariable String accountSecretKey, @AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody @Valid TransactionsDTO transactionsDTO){
+    public Transactions transferWithThirdParty(@PathVariable String hashedKey, @PathVariable String accountSecretKey,
+                                               @AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                               @RequestBody @Valid TransactionsDTO transactionsDTO){
         long emisorId = Long.parseLong(customUserDetails.getUsername());
         return iAccountService.transferWithThirdParty(hashedKey,  accountSecretKey, emisorId, transactionsDTO);
     }
