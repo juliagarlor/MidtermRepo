@@ -2,6 +2,7 @@ package com.ironhack.theBestMidtermProject.controller.impl;
 
 import com.ironhack.theBestMidtermProject.controller.interfaces.*;
 import com.ironhack.theBestMidtermProject.model.accounts.*;
+import com.ironhack.theBestMidtermProject.security.*;
 import com.ironhack.theBestMidtermProject.service.interfaces.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.ironhack.theBestMidtermProject.utils.dtos.*;
@@ -21,8 +22,8 @@ public class SavingsAccountController implements ISavingsAccountController {
 
     @GetMapping("/check/savings-account/{accountId}")
     @ResponseStatus(HttpStatus.OK)
-    public SavingsAccount checkAccount(@PathVariable long accountId, @AuthenticationPrincipal Authentication authentication){
-        String userId = authentication.getName();
+    public SavingsAccount checkAccount(@PathVariable long accountId, @AuthenticationPrincipal CustomUserDetails customUserDetails){
+        String userId = customUserDetails.getUsername();
         return iSavingsAccountService.checkAccount(accountId, userId);
     }
 

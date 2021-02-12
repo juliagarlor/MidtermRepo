@@ -42,7 +42,8 @@ public class Account {
     protected List<Transactions> receivedTransactions;
 
 //    and the penalty fee is always 40
-    protected final Money PENALTY_FEE = new Money(new BigDecimal("40"));
+    @Transient
+    protected Money penaltyFee = new Money(new BigDecimal("40"));
 
 //    Empty constructor
     public Account() {
@@ -113,7 +114,7 @@ public class Account {
         this.receivedTransactions = receivedTransactions;
     }
 
-    public Money getPENALTY_FEE() {
-        return PENALTY_FEE;
+    public Money getPenaltyFee() {
+        return penaltyFee;
     }
 }

@@ -35,10 +35,17 @@ public class SavingsAccountService implements ISavingsAccountService {
 
             AccountHolder primaryOwner = accountHolder.get();
             Money balance = new Money(savingsAcDTO.getBalance());
-            Money minimumBalance = new Money(savingsAcDTO.getMinimumBalance());
+
+            Money minimumBalance = (savingsAcDTO.getMinimumBalance() == null) ?
+                    new Money(new BigDecimal("1000"))
+                    : new Money(savingsAcDTO.getMinimumBalance());
+
             String secretKey = savingsAcDTO.getSecretKey();
             Optional<AccountHolder> secondaryOwner = accountHolderRepository.findById(savingsAcDTO.getSecondaryOwnerId());
-            BigDecimal interestRate = savingsAcDTO.getInterestRate();
+
+            BigDecimal interestRate = (savingsAcDTO.getInterestRate() == null)?
+                    new BigDecimal("0.0025")
+                    : savingsAcDTO.getInterestRate();
 
 //            If we do not have a secondary owner, its variable will be set to null
             SavingsAccount newAccount = new SavingsAccount(balance, Status.ACTIVE, primaryOwner, secondaryOwner.get(), secretKey,
@@ -127,7 +134,7 @@ public class SavingsAccountService implements ISavingsAccountService {
 
 //            If the new balance is below minimum_balance, the penalty fee must be subtracted
             if (newBalance.getAmount().compareTo(output.getMinimumBalance().getAmount()) < 0){
-                newBalance = new Money(newBalance.decreaseAmount(output.getPENALTY_FEE()));
+                newBalance = new Money(newBalance.decreaseAmount(output.getPenaltyFee()));
             }
 
             output.setBalance(newBalance);
@@ -161,4 +168,5 @@ public class SavingsAccountService implements ISavingsAccountService {
                     "Please introduce a valid identifier");
         }
     }
+
 }

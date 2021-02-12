@@ -22,10 +22,10 @@ public class SavingsAccount extends Account{
             @AttributeOverride(name = "amount", column = @Column(name = "minimum_balance")),
             @AttributeOverride(name = "currency", column = @Column(name = "currency"))
     })
-    private Money minimumBalance = new Money(new BigDecimal("1000"));
+    private Money minimumBalance;
 
 //    and a default interestRate of 0.0025, and a maximum of 0.5
-    private BigDecimal interestRate = new BigDecimal("0.0025");
+    private BigDecimal interestRate;
     private LocalDate lastInterestRateApplied;
 
 //    Empty constructor

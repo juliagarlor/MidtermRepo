@@ -100,7 +100,7 @@ public class CheckingAccountService implements ICheckingAccountService {
 
 //            If the new balance is below minimum_balance, the penalty fee must be subtracted
             if (newBalance.getAmount().compareTo(output.getMINIMUM_BALANCE().getAmount()) < 0){
-                newBalance = new Money(newBalance.decreaseAmount(output.getPENALTY_FEE()));
+                newBalance = new Money(newBalance.decreaseAmount(output.getPenaltyFee()));
             }
 
             output.setBalance(newBalance);
