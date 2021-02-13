@@ -5,10 +5,11 @@ import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.ironhack.theBestMidtermProject.utils.enums.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
 import java.math.*;
 import java.time.*;
-import java.util.*;
+
+//Savings accounts have a secret key, a minimum balance, an interest rate, and the date of the last application of the
+// interest rate
 
 @Entity
 @PrimaryKeyJoinColumn(name = "id")
@@ -16,7 +17,7 @@ public class SavingsAccount extends Account{
 
     private String secretKey;
 
-//    SavingsAccounts have a default minimum balance of 1000, and the minimum of this value is 100
+//    The default minimum balance is 1000, and will be managed on the service
     @Embedded
     @AttributeOverrides(value ={
             @AttributeOverride(name = "amount", column = @Column(name = "minimum_balance")),
@@ -24,7 +25,7 @@ public class SavingsAccount extends Account{
     })
     private Money minimumBalance;
 
-//    and a default interestRate of 0.0025, and a maximum of 0.5
+//    and the default interestRate is 0.0025
     private BigDecimal interestRate;
     private LocalDate lastInterestRateApplied;
 
@@ -42,7 +43,7 @@ public class SavingsAccount extends Account{
         this.lastInterestRateApplied = lastInterestRateApplied;
     }
 
-    //    Getters and Setters
+//    Getters and Setters
     public String getSecretKey() {
         return secretKey;
     }

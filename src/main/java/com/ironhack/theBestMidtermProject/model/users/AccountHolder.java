@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.databind.annotation.*;
 import com.fasterxml.jackson.datatype.jsr310.deser.*;
 import com.fasterxml.jackson.datatype.jsr310.ser.*;
-import com.ironhack.theBestMidtermProject.model.*;
 import com.ironhack.theBestMidtermProject.model.accounts.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 import org.hibernate.annotations.*;
@@ -14,14 +13,19 @@ import javax.persistence.Entity;
 import java.time.*;
 import java.util.*;
 
+//An account holder has a date of birth, a primary address and an optional mailingAddress if needed, a list of primary
+// accounts (this user is the primary owner) and another list of secondary accounts (in which it is the secondary owner)
+
 @Entity
 @PrimaryKeyJoinColumn(name = "id")
 public class AccountHolder extends User{
 
+//    Deserializing and serializing LocalDates so we have no problem with JSON format
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dateOfBirth;
 
+//    Address is an embedded object whose class can be found in utils -> classes
     @Embedded
     @AttributeOverrides(value = {
             @AttributeOverride(name = "number", column = @Column(name = "primary_address_number", columnDefinition = "varchar(60)")),
@@ -40,6 +44,8 @@ public class AccountHolder extends User{
 
     })
     private Address mailingAddress;
+
+//    Objects of these two lists will be searched in EAGER mode
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "primaryOwner")
     @JsonIgnore
@@ -53,14 +59,6 @@ public class AccountHolder extends User{
     public AccountHolder() {
     }
 
-//    Constructor without mailingAddress
-    public AccountHolder(Name name, String password, int age, Set<Role> roles, LocalDateTime dateOfBirth,
-                         Address primaryAddress) {
-        super(name, password, age, roles);
-        this.dateOfBirth = dateOfBirth;
-        this.primaryAddress = primaryAddress;
-    }
-
 //    Constructor with all parameters
     public AccountHolder(Name name, String password, int age, Set<Role> roles, LocalDateTime dateOfBirth,
                          Address primaryAddress, Address mailingAddress) {
@@ -68,17 +66,6 @@ public class AccountHolder extends User{
         this.dateOfBirth = dateOfBirth;
         this.primaryAddress = primaryAddress;
         this.mailingAddress = mailingAddress;
-    }
-
-//    Adding new accounts:
-    public Account addPrimaryAccount(Account account){
-        primaryAccounts.add(account);
-        return account;
-    }
-
-    public Account addSecondaryAccount(Account account){
-        secondaryAccounts.add(account);
-        return account;
     }
 
 //    Getters and Setters

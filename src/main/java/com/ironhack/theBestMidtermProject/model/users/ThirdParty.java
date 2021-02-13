@@ -1,15 +1,17 @@
 package com.ironhack.theBestMidtermProject.model.users;
 
 import com.ironhack.theBestMidtermProject.utils.classes.*;
-import com.sun.istack.*;
 
 import javax.persistence.*;
 import java.util.*;
 
+//Third party represent a user from a different bank, so it will not have accounts in our own bank, but can act as an
+// account holder in order to perform transactions. Third parties have a hashed key besides of their login password.
+
 @Entity
 @PrimaryKeyJoinColumn(name = "id")
 public class ThirdParty extends User{
-//    Besides of the userPassword, ThirdParty will have a hashedKey
+
     private String hashedKey;
 
 //    Empty constructor
@@ -24,7 +26,6 @@ public class ThirdParty extends User{
 
 
 //    Getters and Setters
-
     public String getHashedKey() {
         return hashedKey;
     }

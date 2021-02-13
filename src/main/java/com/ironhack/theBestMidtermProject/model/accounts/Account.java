@@ -10,6 +10,10 @@ import javax.persistence.*;
 import java.math.*;
 import java.util.*;
 
+//Account will be the parent class of Checking, CreditCard, Savings and Student Account. It has an auto generated and
+// distinctive id, a balance, an status (FROZEN or ACTIVE), a primary owner, an optional secondary owner, a penalty fee,
+//and two list of send and received transactions depending on whether this account is the emisor or the receptor in the operation
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Account {
@@ -23,6 +27,7 @@ public class Account {
             @AttributeOverride(name = "currency", column = @Column(name = "currency"))
     })
     protected Money balance;
+//    The definition of the status enum is inside utils -> enums
     @Enumerated(EnumType.STRING)
     protected Status status;
 
@@ -41,15 +46,17 @@ public class Account {
     @JsonIgnore
     protected List<Transactions> receivedTransactions;
 
-//    and the penalty fee is always 40
+//    The penalty fee is always 40. Since it is always the same, we will not need it as a redundant information in our
+//    tables, so we add the @Transient annotation.
     @Transient
-    protected Money penaltyFee = new Money(new BigDecimal("40"));
+    protected final Money PENALTY_FEE = new Money(new BigDecimal("40"));
 
 //    Empty constructor
     public Account() {
     }
 
-//    Constructor with all parameters
+//    Constructor with all parameters. We will create the accounts using DTOs, so the different combinations of
+//    parameters will be managed by them
     public Account(Money balance, Status status, AccountHolder primaryOwner, AccountHolder secondaryOwner) {
         this.balance = balance;
         this.status = status;
@@ -114,7 +121,7 @@ public class Account {
         this.receivedTransactions = receivedTransactions;
     }
 
-    public Money getPenaltyFee() {
-        return penaltyFee;
+    public Money getPENALTY_FEE() {
+        return PENALTY_FEE;
     }
 }

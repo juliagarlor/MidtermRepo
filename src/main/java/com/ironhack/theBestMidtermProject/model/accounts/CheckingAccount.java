@@ -6,7 +6,8 @@ import com.ironhack.theBestMidtermProject.utils.enums.*;
 
 import javax.persistence.*;
 import java.math.*;
-import java.util.*;
+
+//Checking account has a secret key and two constants: MINIMUM_BALANCE and MONTHLY_MAINTENANCE_FEE
 
 @Entity
 @PrimaryKeyJoinColumn(name = "id")
@@ -14,10 +15,10 @@ public class CheckingAccount extends Account{
 
     private String secretKey;
     @Transient
-//    checkingAccounts have a minimum balance of 250:
+//    Minimum balance set at 250:
     private final Money MINIMUM_BALANCE = new Money(new BigDecimal("250"));
     @Transient
-//    and a monthly maintenance fee of 12:
+//    And monthly maintenance fee at 12:
     private final Money MONTHLY_MAINTENANCE_FEE = new Money(new BigDecimal("12"));
 
 //    Empty constructor
@@ -25,12 +26,13 @@ public class CheckingAccount extends Account{
     }
 
 //    Constructor with all parameters
-    public CheckingAccount(Money balance, Status status, AccountHolder primaryOwner, AccountHolder secondaryOwner, String secretKey) {
+    public CheckingAccount(Money balance, Status status, AccountHolder primaryOwner, AccountHolder secondaryOwner,
+                           String secretKey) {
         super(balance, status, primaryOwner, secondaryOwner);
         this.secretKey = secretKey;
     }
 
-    //    Getters and Setters:
+//    Getters and Setters:
     public String getSecretKey() {
         return secretKey;
     }

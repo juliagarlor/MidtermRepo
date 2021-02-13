@@ -5,6 +5,8 @@ import com.ironhack.theBestMidtermProject.utils.classes.*;
 import javax.persistence.*;
 import java.util.*;
 
+//An admin is pretty much a pure user, it will manage the creation of accounts but do not have any of its own
+
 @Entity
 @PrimaryKeyJoinColumn(name = "id")
 public class Admin extends User{

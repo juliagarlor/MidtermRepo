@@ -5,10 +5,11 @@ import com.ironhack.theBestMidtermProject.utils.classes.*;
 import com.ironhack.theBestMidtermProject.utils.enums.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
 import java.math.*;
 import java.time.*;
-import java.util.*;
+
+//Credit card accounts have a monthly maintenance fee, an interest rate than will be applied monthly, a credit limit and
+// the date of the last application of the interest and the maintenance fee.
 
 @Entity
 @PrimaryKeyJoinColumn(name = "id")
@@ -21,15 +22,16 @@ public class CreditCardAccount extends Account{
     })
     private Money monthlyMaintenanceFee;
 
-//    CreditCardAccounts have a default interest rate of 0.2, and a minimum of 0.1
-    private BigDecimal interestRate = new BigDecimal("0.2");
+//    The default interest rate is 0.2, and will be managed in the service when creating a new account, as well as the
+//    credit limit
+    private BigDecimal interestRate;
 
-//    and a default credit limit of 100 with a maximum limit of 100000:
+//    Credit limit has a default value of 100
     @Embedded
     @AttributeOverrides(value ={
             @AttributeOverride(name = "amount", column = @Column(name = "credit_limit"))
     })
-    private Money creditLimit = new Money(new BigDecimal("100"));
+    private Money creditLimit;
     private LocalDate lastInterestRateApplied;
 
 //    Empty constructor
@@ -38,7 +40,8 @@ public class CreditCardAccount extends Account{
 
 //    Constructor with all parameters
     public CreditCardAccount(Money balance, Status status, AccountHolder primaryOwner, AccountHolder secondaryOwner,
-                             Money monthlyMaintenanceFee, BigDecimal interestRate, Money creditLimit, LocalDate lastInterestRateApplied) {
+                             Money monthlyMaintenanceFee, BigDecimal interestRate, Money creditLimit,
+                             LocalDate lastInterestRateApplied) {
         super(balance, status, primaryOwner, secondaryOwner);
         this.monthlyMaintenanceFee = monthlyMaintenanceFee;
         this.interestRate = interestRate;
