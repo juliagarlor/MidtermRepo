@@ -4,7 +4,7 @@ Welcome to the best bank application of this world and probably from the whole g
 
 From now on, you are going to be introduced to the fascinating structure and internal working of this project, so, please, have a nice cup of café con leche in the Plaza Mayor and put your feet up while you read the next Literature Nobel Prize.
 
-##Models
+## Models
 
 In this part, we are going to focus on the main actors for this application: people...
 
@@ -32,7 +32,7 @@ As in real life, every user, account and transaction is unique to us, so a speci
 
 Each of these classes has its reflex in the "repository package", which will allow us to store and ask for data from our database.
 
-##Controller
+## Controller
 
 The "controller" package, which you can find in the same directory as model, contains all the functions accessible to the different users. It will answer to your question of: "What can I do?".
 
@@ -49,18 +49,18 @@ It contains two directories: impl with the proper RestControllers, and interface
 
 Who would say that interfaces contains the interfaces from these controllers? What a twist in plot!
 
-##Service
+## Service
 
 The "service" package contains all the logic behind the controllers' method, so it is very alike, but longer and with a lot of restrictions and checks. It contains several levels of security and filters that will not allow thieves and hackers even to breathe. Every class is well commented if you want to know more.
 
-##Security
+## Security
 
 Lastly but not least, "security" package is our bodyguard, who will tell who can do what, who will encript, desencript and encript again your data, just in case. It contains two classes:
 
 * CustomUserDetails: that will allow you to log in perfectly authenticated.
 * SecurityConfiguration: that will allow certain routes to certain people.
 
-##Let's get started
+## Let's get started
 
 First, download Mysql Workbench and Postman and register on both if you do not have done it already. Now, please go to the file "application.properties" in src/main/resources, and change the fields "username" and "password" to your own mysql username and password. This will allow the database to be automatically created.
 
@@ -107,6 +107,6 @@ All the testing is inside the path src/test/java. Since the controllers call the
 * StudentAccountControllerTest
 * ThirdPartyControllerTest
 
-##All yours
+## All yours
 
 Any feedback for improvement is welcome. Meanwhile, I hope you have fun with this project, but remember that life is too short to waste it with testing.
