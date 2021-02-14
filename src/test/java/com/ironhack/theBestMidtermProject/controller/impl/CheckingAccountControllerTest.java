@@ -90,6 +90,7 @@ class CheckingAccountControllerTest {
     void tearDown() {
         checkingAccountRepository.deleteAll();
         accountHolderRepository.deleteAll();
+        adminRepository.deleteAll();
     }
 
     @Test

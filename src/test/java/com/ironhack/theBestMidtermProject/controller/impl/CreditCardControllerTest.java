@@ -78,6 +78,7 @@ class CreditCardControllerTest {
     void tearDown() {
         creditAccountRepository.deleteAll();
         accountHolderRepository.deleteAll();
+        adminRepository.deleteAll();
     }
 
     void createCreditAccount() throws Exception {

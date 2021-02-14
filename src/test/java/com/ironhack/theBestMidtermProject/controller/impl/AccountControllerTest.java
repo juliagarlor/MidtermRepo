@@ -126,6 +126,7 @@ class AccountControllerTest {
         studentAccountRepository.deleteAll();
         accountHolderRepository.deleteAll();
         thirdPartyRepository.deleteAll();
+        adminRepository.deleteAll();
     }
 
     @Test

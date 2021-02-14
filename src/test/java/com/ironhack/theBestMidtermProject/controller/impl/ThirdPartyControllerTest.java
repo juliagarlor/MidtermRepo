@@ -55,6 +55,7 @@ class ThirdPartyControllerTest {
     void tearDown() {
         thirdPartyRepository.deleteAll();
         roleRepository.deleteAll();
+        adminRepository.deleteAll();
     }
 
     @Test

@@ -91,6 +91,7 @@ class StudentAccountControllerTest {
     void tearDown() {
         studentCheckingAccountRepository.deleteAll();
         accountHolderRepository.deleteAll();
+        adminRepository.deleteAll();
     }
 
     @Test

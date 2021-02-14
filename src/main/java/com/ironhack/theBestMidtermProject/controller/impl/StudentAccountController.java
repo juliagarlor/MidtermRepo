@@ -18,7 +18,8 @@ public class StudentAccountController {
 
     @GetMapping("/check/student-account/{accountId}")
     @ResponseStatus(HttpStatus.OK)
-    public StudentCheckingAccount checkAccount(@PathVariable long accountId, @AuthenticationPrincipal CustomUserDetails customUserDetails){
+    public StudentCheckingAccount checkAccount(@PathVariable long accountId,
+                                               @AuthenticationPrincipal CustomUserDetails customUserDetails){
         String userId = customUserDetails.getUsername();
         return iStudentAccountService.checkAccount(accountId, userId);
     }

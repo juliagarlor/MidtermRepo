@@ -10,5 +10,4 @@ import java.util.*;
 public interface IAccountHolderService {
     Money checkBalance(long accountId, Long userId);
     AccountHolder createAccountHolder(AccountHolderDTO accountHolderDTO);
-//    Money transferAmount(Name name, long targetId, long emisorId, Money amount);
 }

@@ -134,7 +134,7 @@ public class SavingsAccountService implements ISavingsAccountService {
 
 //            If the new balance is below minimum_balance, the penalty fee must be subtracted
             if (newBalance.getAmount().compareTo(output.getMinimumBalance().getAmount()) < 0){
-                newBalance = new Money(newBalance.decreaseAmount(output.getPenaltyFee()));
+                newBalance = new Money(newBalance.decreaseAmount(output.getPENALTY_FEE()));
             }
 
             output.setBalance(newBalance);

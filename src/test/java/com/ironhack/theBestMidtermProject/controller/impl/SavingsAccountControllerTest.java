@@ -78,6 +78,7 @@ class SavingsAccountControllerTest {
     void tearDown() {
         savingsAccountRepository.deleteAll();
         accountHolderRepository.deleteAll();
+        adminRepository.deleteAll();
     }
 
     void createSavingsAccount() throws Exception {
