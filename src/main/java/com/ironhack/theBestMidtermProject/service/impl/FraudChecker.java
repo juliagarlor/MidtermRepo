@@ -15,10 +15,9 @@ public class FraudChecker {
     private TransactionRepository transactionRepository;
 
     public boolean checkFraudInADay(Transactions transactions){
-        System.out.println("Entra al fraudChecker");
+//        Let's look for the transactions from this emisor
         long emisorId = transactions.getEmisorId().getId();
 
-        System.out.println("Moment :" + transactions.getMoment().toString());
 //        Sum of transactions today (since I have not save this one in the repository yet, I need to add it)
         BigDecimal transactionsToday = transactionRepository.transactionsToday(emisorId);
 

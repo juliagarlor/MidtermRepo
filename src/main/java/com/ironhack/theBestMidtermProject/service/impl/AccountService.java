@@ -12,13 +12,13 @@ import com.ironhack.theBestMidtermProject.utils.dtos.*;
 import com.ironhack.theBestMidtermProject.utils.enums.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
-import org.springframework.security.crypto.bcrypt.*;
-import org.springframework.security.crypto.password.*;
 import org.springframework.stereotype.*;
 import org.springframework.web.server.*;
 
 import java.time.*;
 import java.util.*;
+
+//Sorry for the long class :)
 
 @Service
 public class AccountService implements IAccountService {
@@ -36,6 +36,9 @@ public class AccountService implements IAccountService {
     private CheckingAccountRepository checkingAccountRepository;
 
     @Autowired
+    private SavingsAccountRepository savingsAccountRepository;
+
+    @Autowired
     private AccountRepository accountRepository;
 
     @Autowired
@@ -45,20 +48,29 @@ public class AccountService implements IAccountService {
     private FraudChecker fraudChecker;
 
 
-    public Account createCheckAccount(long userId, CheckingAcDTO checkingAcDTO){
+    public Account createCheckAccount(Long userId, CheckingAcDTO checkingAcDTO){
+
+//        Looking for the accountHolder
         Optional<AccountHolder> accountHolder = accountHolderRepository.findById(userId);
+
         if (accountHolder.isPresent()){
 
+//            If this account holder is present in our database, it will be considered as the first owner of the new
+//            account. Taking every other necessary parameter from the DTO
             AccountHolder primaryOwner = accountHolder.get();
             Money balance = new Money(checkingAcDTO.getBalance());
             String secretKey = checkingAcDTO.getSecretKey();
+//            Looking for the secondary owner. If it is not inside our database, or the DTO value is simply set to null,
+//            the new account will not have a secondary owner
             Optional<AccountHolder> secondaryOwner = accountHolderRepository.findById(checkingAcDTO.getSecondaryOwner());
 
             if(primaryOwner.getAge() < 24){
-                StudentCheckingAccount newAccount = new StudentCheckingAccount(balance, Status.ACTIVE, primaryOwner, secondaryOwner.get(),
-                         secretKey);
+//                if the primary owner is under 24, we will create an student account
+                StudentCheckingAccount newAccount = new StudentCheckingAccount(balance, Status.ACTIVE, primaryOwner,
+                        secondaryOwner.get(), secretKey);
                 return studentAccountRepository.save(newAccount);
             }else {
+//                else, we will return a checking account
                 CheckingAccount newAccount = new CheckingAccount(balance, Status.ACTIVE, primaryOwner, secondaryOwner.get(), secretKey);
                 return checkingAccountRepository.save(newAccount);
             }
@@ -68,7 +80,7 @@ public class AccountService implements IAccountService {
         }
     }
 
-    public Transactions transfer(long emisorId, TransactionsDTO transactionsDTO){
+    public Transactions transfer(Long emisorId, TransactionsDTO transactionsDTO){
 
 //      Check if both emisor and receptor accounts exists or not:
         Optional<Account> emisorAccountOp = accountRepository.findById(transactionsDTO.getEmisor());
@@ -76,6 +88,8 @@ public class AccountService implements IAccountService {
 
         if((emisorAccountOp.isPresent() && receptorAccountOp.isPresent()) && receptorAccountOp.get() != emisorAccountOp.get()){
 
+//            if emisor and receptor accounts are both registered in our database and both are different, we store them
+//            in two variables:
             Account emisorAccount = emisorAccountOp.get();
             Account receptorAccount = receptorAccountOp.get();
 
@@ -91,7 +105,7 @@ public class AccountService implements IAccountService {
             emisorAccountClass.cast(emisorAccount);
             receptorAccountClass.cast(receptorAccount);
 
-//            We suppose that the one logging is the emisor
+//            We suppose that the one logging in is the emisor
             if (emisorAccount.getPrimaryOwner().getId() == emisorId){
                 Money amount = new Money(transactionsDTO.getAmount());
 
@@ -106,17 +120,19 @@ public class AccountService implements IAccountService {
                 }
 
                 LocalDateTime moment = transactionsDTO.getMoment();
-
+//                And forming the transactions
                 Transactions transactions = new Transactions(emisorAccount, receptorAccount, amount, moment);
 
+//                Checking for fraud
                 if (fraudChecker.checkFraudInADay(transactions) || fraudChecker.checkFraudInLastSecond(transactions)){
                     emisorAccount.setStatus(Status.FROZEN);
                     throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "You may need money for a ticket," +
                             " but it is not going to come from this bank. Good luck with the police :)");
                 }else {
-//                    We will assume this is not a transaction with a third party, so:
 //                    Decreasing balance from emisor:
                     emisorAccount.setBalance(new Money(emisorAccount.getBalance().decreaseAmount(amount)));
+//                    Checking if the emisor has gone under minimumBalance:
+                    checkUnderMinimum(emisorAccount);
                     accountRepository.save(emisorAccount);
 
 //                    Increasing balance from receptor:
@@ -134,7 +150,7 @@ public class AccountService implements IAccountService {
         }
     }
 
-    public Transactions transferWithThirdParty(String hashedKey, String accountSecretKey, long thirdPartyId,
+    public Transactions transferWithThirdParty(String hashedKey, String accountSecretKey, Long thirdPartyId,
                                                TransactionsDTO transactionsDTO) {
 //        Checking whether the hashedKey is correct for this thirdParty
         boolean passing = thirdPartyRepository.findById(thirdPartyId).get().getHashedKey().equals(hashedKey);
@@ -144,6 +160,7 @@ public class AccountService implements IAccountService {
             Optional<Account> emisorAccountOp = Optional.empty();
             Optional<Account> receptorAccountOp = Optional.empty();
 
+//            Updating depending on whether the third party is the emisor or the receptor (the one in null)
             if (transactionsDTO.getEmisor() == null){
                 receptorAccountOp = accountRepository.findById(transactionsDTO.getReceptor());
             }else {
@@ -192,6 +209,8 @@ public class AccountService implements IAccountService {
                 }else {
 //                    Decreasing balance from emisor:
                     emisorAccount.setBalance(new Money(emisorAccount.getBalance().decreaseAmount(amount)));
+//                    checking under minimum balance:
+                    checkUnderMinimum(emisorAccount);
                     accountRepository.save(emisorAccount);
                 }
             }
@@ -200,6 +219,28 @@ public class AccountService implements IAccountService {
 
         }else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "The hashed key is not correct.");
+        }
+    }
+
+    public void checkUnderMinimum(Account account){
+//        only checking and savings accounts have minimumBalance
+        Class accountClass = account.getClass();
+
+        if (CheckingAccount.class.equals(accountClass)){
+//            if it's a checking account, we cast it so we can take out the minimumBalance:
+            CheckingAccount.class.cast(account);
+            if (((CheckingAccount) account).getMINIMUM_BALANCE().getAmount().compareTo(account.getBalance().getAmount()) > 0){
+//                if minimum balance is bigger than the current balance, subtract the penalty fee. I am so sorry for this:
+                account.setBalance(new Money(account.getBalance().decreaseAmount(account.getPENALTY_FEE())));
+                checkingAccountRepository.save((CheckingAccount) account);
+            }
+        } else if(SavingsAccount.class.equals(accountClass)){
+//            We do the same as above:
+            SavingsAccount.class.cast(account);
+            if (((SavingsAccount) account).getMinimumBalance().getAmount().compareTo(account.getBalance().getAmount()) > 0){
+                account.setBalance(new Money(account.getBalance().decreaseAmount(account.getPENALTY_FEE())));
+                savingsAccountRepository.save((SavingsAccount) account);
+            }
         }
     }
 

@@ -19,6 +19,8 @@ public class ThirdPartyService implements IThirdPartyService {
     private Transformer transformer = new Transformer();
 
     public ThirdParty createThirdParty(ThirdPartyDTO thirdPartyDTO){
+
+//        Simple: take from the DTO and set into the new third party
         Name name = transformer.assembleName(thirdPartyDTO.getNameDTO());
         int age = thirdPartyDTO.getAge();
         String password = thirdPartyDTO.getPassword();

@@ -24,7 +24,7 @@ public class CheckingAccountController implements ICheckingAccountController {
     @GetMapping("/check/checking-account/{accountId}")
     @ResponseStatus(HttpStatus.OK)
     public CheckingAccount checkAccount(@PathVariable Long accountId, @AuthenticationPrincipal CustomUserDetails customUserDetails){
-        String userId = customUserDetails.getUsername();
+        Long userId = Long.parseLong(customUserDetails.getUsername());
         return iCheckingAccountService.checkAccount(accountId, userId);
     }
 

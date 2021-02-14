@@ -29,10 +29,15 @@ public class SavingsAccountService implements ISavingsAccountService {
     @Autowired
     private SavingsAccountRepository savingsAccountRepository;
 
-    public SavingsAccount createSavingsAccount(long userId, SavingsAcDTO savingsAcDTO) {
-        Optional<AccountHolder> accountHolder = accountHolderRepository.findById(userId);
-        if (accountHolder.isPresent()){
+    @Autowired
+    private IAccountService iAccountService;
 
+    public SavingsAccount createSavingsAccount(Long userId, SavingsAcDTO savingsAcDTO) {
+        Optional<AccountHolder> accountHolder = accountHolderRepository.findById(userId);
+
+        if (accountHolder.isPresent()){
+//            If the user is a registered account holder, store it as the primary owner and extract the rest of the
+//            parameters from the DTO
             AccountHolder primaryOwner = accountHolder.get();
             Money balance = new Money(savingsAcDTO.getBalance());
 
@@ -47,7 +52,7 @@ public class SavingsAccountService implements ISavingsAccountService {
                     new BigDecimal("0.0025")
                     : savingsAcDTO.getInterestRate();
 
-//            If we do not have a secondary owner, its variable will be set to null
+//            Create the new account, save it and return it
             SavingsAccount newAccount = new SavingsAccount(balance, Status.ACTIVE, primaryOwner, secondaryOwner.get(), secretKey,
                     minimumBalance, interestRate, LocalDate.now());
             return savingsAccountRepository.save(newAccount);
@@ -56,29 +61,28 @@ public class SavingsAccountService implements ISavingsAccountService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The first owner identifier is not correct. " +
                     "Please introduce a valid identifier");
         }
-
     }
 
     @Override
-    public SavingsAccount checkAccount(long accountId, String userId) {
+    public SavingsAccount checkAccount(Long accountId, Long userId) {
         Optional<SavingsAccount> account = savingsAccountRepository.findById(accountId);
 
-//        We assume that the client authentication is correct, because otherwise the system will advise you
         if (account.isPresent()){
-            long clientId = Long.parseLong(userId);
 
-            User client = userRepository.findById(clientId).get();
+//            Check if the logging in user is an admin, the primary or secondary owner of this account
+            User client = userRepository.findById(userId).get();
             boolean isAdmin = client.getRoles().stream().anyMatch(x ->x.getName().equals("ADMIN"));
 
             if (!isAdmin) {
-                Optional<AccountHolder> clientConfirmation = accountHolderRepository.findByIdAndPrimaryAccountsId(clientId, accountId);
+                Optional<AccountHolder> clientConfirmation = accountHolderRepository.findByIdAndPrimaryAccountsId(userId, accountId);
                 if (!clientConfirmation.isPresent()) {
-                    clientConfirmation = accountHolderRepository.findByIdAndSecondaryAccountsId(clientId, accountId);
+                    clientConfirmation = accountHolderRepository.findByIdAndSecondaryAccountsId(userId, accountId);
                     if (!clientConfirmation.isPresent()) {
                         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to see this data");
                     }
                 }
             }
+//            if everything ok, check if interest should be applied and return
             applyInterest(accountId);
             return account.get();
         }else {
@@ -88,7 +92,7 @@ public class SavingsAccountService implements ISavingsAccountService {
     }
 
     @Override
-    public SavingsAccount addAmount(long accountId, Money amount) {
+    public SavingsAccount addAmount(Long accountId, Money amount) {
         Optional<SavingsAccount> account = savingsAccountRepository.findById(accountId);
 
         if (amount.getAmount().signum() < 0){
@@ -110,7 +114,7 @@ public class SavingsAccountService implements ISavingsAccountService {
     }
 
     @Override
-    public SavingsAccount subtractAmount(long accountId, Money amount) {
+    public SavingsAccount subtractAmount(Long accountId, Money amount) {
         Optional<SavingsAccount> account = savingsAccountRepository.findById(accountId);
 
         if (amount.getAmount().signum() < 0){
@@ -130,14 +134,10 @@ public class SavingsAccountService implements ISavingsAccountService {
 //            Decreasing this account's balance. This method will return a BigDecimal, so we should store it
 //            in a new Money variable in order to pass it to setBalance
 
-            Money newBalance = new Money(output.getBalance().decreaseAmount(amount));
+            output.setBalance(new Money(output.getBalance().decreaseAmount(amount)));
 
 //            If the new balance is below minimum_balance, the penalty fee must be subtracted
-            if (newBalance.getAmount().compareTo(output.getMinimumBalance().getAmount()) < 0){
-                newBalance = new Money(newBalance.decreaseAmount(output.getPENALTY_FEE()));
-            }
-
-            output.setBalance(newBalance);
+            iAccountService.checkUnderMinimum(output);
             return savingsAccountRepository.save(output);
         }else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The account number is not correct. " +
@@ -145,7 +145,7 @@ public class SavingsAccountService implements ISavingsAccountService {
         }
     }
 
-    public void applyInterest(long accountId){
+    public void applyInterest(Long accountId){
         Optional<SavingsAccount> account = savingsAccountRepository.findById(accountId);
 
         if (account.isPresent()){

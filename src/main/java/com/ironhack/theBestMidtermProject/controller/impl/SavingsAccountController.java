@@ -26,7 +26,7 @@ public class SavingsAccountController implements ISavingsAccountController {
     @GetMapping("/check/savings-account/{accountId}")
     @ResponseStatus(HttpStatus.OK)
     public SavingsAccount checkAccount(@PathVariable Long accountId, @AuthenticationPrincipal CustomUserDetails customUserDetails){
-        String userId = customUserDetails.getUsername();
+        Long userId = Long.parseLong(customUserDetails.getUsername());
         return iSavingsAccountService.checkAccount(accountId, userId);
     }
 

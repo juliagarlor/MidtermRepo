@@ -24,7 +24,7 @@ public class StudentAccountController implements IStudentAccountController {
     @ResponseStatus(HttpStatus.OK)
     public StudentCheckingAccount checkAccount(@PathVariable Long accountId,
                                                @AuthenticationPrincipal CustomUserDetails customUserDetails){
-        String userId = customUserDetails.getUsername();
+        Long userId = Long.parseLong(customUserDetails.getUsername());
         return iStudentAccountService.checkAccount(accountId, userId);
     }
 

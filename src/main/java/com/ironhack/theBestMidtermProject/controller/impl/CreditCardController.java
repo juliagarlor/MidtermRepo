@@ -26,7 +26,7 @@ public class CreditCardController implements ICreditCardController {
     @GetMapping("/check/credit-card/{accountId}")
     @ResponseStatus(HttpStatus.OK)
     public CreditCardAccount checkAccount(@PathVariable Long accountId, @AuthenticationPrincipal CustomUserDetails customUserDetails){
-        String userId = customUserDetails.getUsername();
+        Long userId = Long.parseLong(customUserDetails.getUsername());
         return iCreditCardService.checkAccount(accountId, userId);
     }
 

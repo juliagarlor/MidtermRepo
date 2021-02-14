@@ -29,26 +29,25 @@ public class CreditCardService implements ICreditCardService {
     @Autowired
     private CreditCardAccountRepository creditAccountRepository;
 
-    @Override
-    public CreditCardAccount checkAccount(long accountId, String userId) {
+    public CreditCardAccount checkAccount(Long accountId, Long userId) {
         Optional<CreditCardAccount> account = creditAccountRepository.findById(accountId);
 
-//        We assume that the client authentication is correct, because otherwise the system will advise you
         if (account.isPresent()){
-            long clientId = Long.parseLong(userId);
 
-            User client = userRepository.findById(clientId).get();
+            User client = userRepository.findById(userId).get();
+//            Checking whether is an admin, the primary or the secondary owner of the account
             boolean isAdmin = client.getRoles().stream().anyMatch(x ->x.getName().equals("ADMIN"));
 
             if (!isAdmin) {
-                Optional<AccountHolder> clientConfirmation = accountHolderRepository.findByIdAndPrimaryAccountsId(clientId, accountId);
+                Optional<AccountHolder> clientConfirmation = accountHolderRepository.findByIdAndPrimaryAccountsId(userId, accountId);
                 if (!clientConfirmation.isPresent()) {
-                    clientConfirmation = accountHolderRepository.findByIdAndSecondaryAccountsId(clientId, accountId);
+                    clientConfirmation = accountHolderRepository.findByIdAndSecondaryAccountsId(userId, accountId);
                     if (!clientConfirmation.isPresent()) {
                         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to see this data");
                     }
                 }
             }
+//            If everything is ok, check for interests, apply if necessary and save
             CreditCardAccount output = account.get();
             Money newBalance = applyInterest(accountId);
             output.setBalance(newBalance);
@@ -59,30 +58,26 @@ public class CreditCardService implements ICreditCardService {
         }
     }
 
-    public CreditCardAccount createCreditAccount(long userId, CreditAcDTO creditAcDTO) {
-//        Find account owner whose account will be created
+    public CreditCardAccount createCreditAccount(Long userId, CreditAcDTO creditAcDTO) {
+
         Optional<AccountHolder> accountHolder = accountHolderRepository.findById(userId);
-//        if exists
+
         if (accountHolder.isPresent()){
+//            if the user is a registered account holder, save it as the primary owner, and get everything from the DTO
             AccountHolder primaryOwner = accountHolder.get();
             Money balance = new Money(creditAcDTO.getBalance());
             Money monthlyMaintenanceFee = new Money(creditAcDTO.getMonthlyMaintenanceFee());
             Optional<AccountHolder> secondaryOwner = accountHolderRepository.findById(creditAcDTO.getSecondaryOwnerId());
 
-            Money creditLimit;
-            if (creditAcDTO.getCreditLimit() == null){
-                creditLimit = new Money(new BigDecimal("100.0000"));
-            } else {
-                creditLimit = new Money(creditAcDTO.getCreditLimit());
-            }
-            BigDecimal interestRate;
-            if (creditAcDTO.getInterestRate() == null){
-                interestRate =  new BigDecimal("0.2000");
-            } else {
-                interestRate = creditAcDTO.getInterestRate();
-            }
+            Money creditLimit = (creditAcDTO.getCreditLimit() == null) ?
+                    new Money(new BigDecimal("100.0000")) :
+                    new Money(creditAcDTO.getCreditLimit());
 
-//            If we do not have a secondary owner, its variable will be set to null
+            BigDecimal interestRate = (creditAcDTO.getInterestRate() == null) ?
+                    new BigDecimal("0.2000") :
+                    creditAcDTO.getInterestRate();
+
+//            And construct the new account, save it and return
             CreditCardAccount newAccount = new CreditCardAccount(balance, Status.ACTIVE, primaryOwner, secondaryOwner.get(),
                     monthlyMaintenanceFee, interestRate, creditLimit, LocalDate.now());
             return creditAccountRepository.save(newAccount);
@@ -92,7 +87,7 @@ public class CreditCardService implements ICreditCardService {
         }
     }
 
-    public CreditCardAccount addAmount(long accountId, Money amount) {
+    public CreditCardAccount addAmount(Long accountId, Money amount) {
         Optional<CreditCardAccount> account = creditAccountRepository.findById(accountId);
 
         if (amount.getAmount().signum() < 0){
@@ -113,7 +108,7 @@ public class CreditCardService implements ICreditCardService {
         }
     }
 
-    public CreditCardAccount subtractAmount(long accountId, Money amount) {
+    public CreditCardAccount subtractAmount(Long accountId, Money amount) {
         Optional<CreditCardAccount> account = creditAccountRepository.findById(accountId);
 
         if (amount.getAmount().signum() < 0){
@@ -142,7 +137,7 @@ public class CreditCardService implements ICreditCardService {
         }
     }
 
-    public Money applyInterest(long accountId){
+    public Money applyInterest(Long accountId){
         Optional<CreditCardAccount> account = creditAccountRepository.findById(accountId);
 
         if (account.isPresent()){

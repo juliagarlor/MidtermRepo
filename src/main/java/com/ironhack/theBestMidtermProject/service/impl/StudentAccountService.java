@@ -8,9 +8,7 @@ import com.ironhack.theBestMidtermProject.service.interfaces.*;
 import com.ironhack.theBestMidtermProject.utils.classes.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
-import org.springframework.security.core.*;
 import org.springframework.stereotype.*;
-import org.springframework.web.client.*;
 import org.springframework.web.server.*;
 
 import java.math.*;
@@ -28,26 +26,25 @@ public class StudentAccountService implements IStudentAccountService {
     @Autowired
     private StudentCheckingAccountRepository studentCheckingAccountRepository;
 
-    @Override
-    public StudentCheckingAccount checkAccount(long accountId, String userId) {
+    public StudentCheckingAccount checkAccount(Long accountId, Long userId) {
         Optional<StudentCheckingAccount> account = studentCheckingAccountRepository.findById(accountId);
 
-//        We assume that the client authentication is correct, because otherwise the system will advise you
         if (account.isPresent()){
-            long clientId = Long.parseLong(userId);
-
-            User client = userRepository.findById(clientId).get();
+//            If the account is in our database, check whether the logging in user is an admin, the primary or the
+//            secondary owner of the account
+            User client = userRepository.findById(userId).get();
             boolean isAdmin = client.getRoles().stream().anyMatch(x ->x.getName().equals("ADMIN"));
 
             if (!isAdmin) {
-                Optional<AccountHolder> clientConfirmation = accountHolderRepository.findByIdAndPrimaryAccountsId(clientId, accountId);
+                Optional<AccountHolder> clientConfirmation = accountHolderRepository.findByIdAndPrimaryAccountsId(userId, accountId);
                 if (!clientConfirmation.isPresent()) {
-                    clientConfirmation = accountHolderRepository.findByIdAndSecondaryAccountsId(clientId, accountId);
+                    clientConfirmation = accountHolderRepository.findByIdAndSecondaryAccountsId(userId, accountId);
                     if (!clientConfirmation.isPresent()) {
                         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to see this data");
                     }
                 }
             }
+//            if everything is ok, return the account
             return account.get();
         }else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The account number is not correct. " +
@@ -55,8 +52,7 @@ public class StudentAccountService implements IStudentAccountService {
         }
     }
 
-    @Override
-    public StudentCheckingAccount addAmount(long accountId, Money amount) {
+    public StudentCheckingAccount addAmount(Long accountId, Money amount) {
         Optional<StudentCheckingAccount> account = studentCheckingAccountRepository.findById(accountId);
 
         if (amount.getAmount().signum() < 0){
@@ -77,8 +73,7 @@ public class StudentAccountService implements IStudentAccountService {
         }
     }
 
-    @Override
-    public StudentCheckingAccount subtractAmount(long accountId, Money amount) {
+    public StudentCheckingAccount subtractAmount(Long accountId, Money amount) {
         Optional<StudentCheckingAccount> account = studentCheckingAccountRepository.findById(accountId);
 
         if (amount.getAmount().signum() < 0){

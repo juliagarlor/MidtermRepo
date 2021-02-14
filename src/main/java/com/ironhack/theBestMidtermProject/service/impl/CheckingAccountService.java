@@ -26,26 +26,32 @@ public class CheckingAccountService implements ICheckingAccountService {
     @Autowired
     private CheckingAccountRepository checkingAccountRepository;
 
+    @Autowired
+    private IAccountService iAccountService;
 
-    public CheckingAccount checkAccount(long accountId, String userId) {
+    public CheckingAccount checkAccount(Long accountId, Long userId) {
+//        Looking for the account
         Optional<CheckingAccount> account = checkingAccountRepository.findById(accountId);
 
-//        We assume that the client authentication is correct, because otherwise the system will advise you
         if (account.isPresent()){
-            long clientId = Long.parseLong(userId);
-
-            User client = userRepository.findById(clientId).get();
+//            The client must exist in our database, because otherwise, the unauthorized response status will appear while logging
+            User client = userRepository.findById(userId).get();
             boolean isAdmin = client.getRoles().stream().anyMatch(x ->x.getName().equals("ADMIN"));
 
             if (!isAdmin) {
-                Optional<AccountHolder> clientConfirmation = accountHolderRepository.findByIdAndPrimaryAccountsId(clientId, accountId);
+//                if the user is not an admin, check whether it is the primary owner (the userId must be in the repository,
+//                and the accountId must be inside its primaryAccounts list)
+                Optional<AccountHolder> clientConfirmation = accountHolderRepository.findByIdAndPrimaryAccountsId(userId, accountId);
                 if (!clientConfirmation.isPresent()) {
-                    clientConfirmation = accountHolderRepository.findByIdAndSecondaryAccountsId(clientId, accountId);
+//                    if not the primary owner, try with the secondary
+                    clientConfirmation = accountHolderRepository.findByIdAndSecondaryAccountsId(userId, accountId);
                     if (!clientConfirmation.isPresent()) {
+//                        if none of them, I am sorry
                         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to see this data");
                     }
                 }
             }
+//            else, return the account
             return account.get();
         }else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The account number is not correct. " +
@@ -53,9 +59,11 @@ public class CheckingAccountService implements ICheckingAccountService {
         }
     }
 
-    public CheckingAccount addAmount(long accountId, Money amount) {
+    public CheckingAccount addAmount(Long accountId, Money amount) {
+//        Looking for the account
         Optional<CheckingAccount> account = checkingAccountRepository.findById(accountId);
 
+//        You can not continue if the transference amount is negative
         if (amount.getAmount().signum() < 0){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please, introduce a positive amount");
         }
@@ -63,8 +71,7 @@ public class CheckingAccountService implements ICheckingAccountService {
         if (account.isPresent()){
             CheckingAccount output = account.get();
 
-//            Increasing this account's balance. This method will return a BigDecimal, so we should store it
-//            in a new Money variable in order to pass it to setBalance
+//            Increasing this account's balance
             Money newBalance = new Money(output.getBalance().increaseAmount(amount));
             output.setBalance(newBalance);
             return checkingAccountRepository.save(output);
@@ -74,7 +81,7 @@ public class CheckingAccountService implements ICheckingAccountService {
         }
     }
 
-    public CheckingAccount subtractAmount(long accountId, Money amount) {
+    public CheckingAccount subtractAmount(Long accountId, Money amount) {
         Optional<CheckingAccount> account = checkingAccountRepository.findById(accountId);
 
         if (amount.getAmount().signum() < 0){
@@ -94,14 +101,11 @@ public class CheckingAccountService implements ICheckingAccountService {
 //            Decreasing this account's balance. This method will return a BigDecimal, so we should store it
 //            in a new Money variable in order to pass it to setBalance
 
-            Money newBalance = new Money(output.getBalance().decreaseAmount(amount));
+            output.setBalance(new Money(output.getBalance().decreaseAmount(amount)));
 
 //            If the new balance is below minimum_balance, the penalty fee must be subtracted
-            if (newBalance.getAmount().compareTo(output.getMINIMUM_BALANCE().getAmount()) < 0){
-                newBalance = new Money(newBalance.decreaseAmount(output.getPENALTY_FEE()));
-            }
+            iAccountService.checkUnderMinimum(output);
 
-            output.setBalance(newBalance);
             return checkingAccountRepository.save(output);
         }else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "The account number is not correct. " +
