@@ -60,13 +60,19 @@ Lastly but not least, "security" package is our bodyguard, who will tell who can
 * CustomUserDetails: that will allow you to log in perfectly authenticated.
 * SecurityConfiguration: that will allow certain routes to certain people.
 
+## Utils
+The utils package includes all the necessary and accessory classes that could not be included inside model, controllers or service. It is divided in three packages:
+* classes: contains embeddable classes used by the models: Address, Money and Name. Besides, it includes a Transformer to assemble DTOs and classes with special optional parameters, and a PasswordUtil class if needed.
+* dtos: contains the dtos of models and embeddable classes
+* enums: contains Salutation and Status, that can only present the values defined inside them.
+
 ## Let's get started
 
-First, download Mysql Workbench and Postman and register on both if you do not have done it already. Now, please go to the file "application.properties" in src/main/resources, and change the fields "username" and "password" to your own mysql username and password. This will allow the database to be automatically created.
+First, download Mysql Workbench and Postman and register on both if you do not have done it already. Now, please go to the file "application.properties" in src/main/resources, and change the fields "username" and "password" to your own mysql username and password. This will allow the database to be automatically created. If you do not feel like populating tables from zero, you can use the "superdbQueries.sql" available in the package static inside resources.
 
 Then, open the Intellij terminal and type: mvn spring-boot:run
 
-Let it run, let it run, let it run. Once it stays quiet, open postman, and you can try any of the following routes:
+Let it run, let it run, let it run. Once it stays quiet, open postman and try any of the following routes:
 
 | HTTP verb | Route | Description | Authorization needed | This route is available for the role: |
 | --- | --- | --- | --- | --- |

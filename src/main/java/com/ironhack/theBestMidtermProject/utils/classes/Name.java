@@ -16,7 +16,7 @@ public class Name {
     public Name() {
     }
 
-    //    Constructor without middle name
+//    Constructor without middle name
     public Name(String lastName, String firstName, Salutation salutation) {
         this.lastName = lastName;
         this.firstName = firstName;
@@ -32,7 +32,6 @@ public class Name {
     }
 
 //    Getters and Setters
-
     public String getLastName() {
         return lastName;
     }
