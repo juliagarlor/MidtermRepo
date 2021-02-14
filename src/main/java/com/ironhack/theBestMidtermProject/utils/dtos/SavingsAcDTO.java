@@ -1,12 +1,11 @@
 package com.ironhack.theBestMidtermProject.utils.dtos;
 
-import com.ironhack.theBestMidtermProject.model.users.*;
-import com.ironhack.theBestMidtermProject.utils.classes.*;
 import javax.validation.constraints.*;
 import java.math.*;
-import java.util.*;
 
 public class SavingsAcDTO {
+
+//    We do not allow red numbers from the very beginning
     @DecimalMin(value = "0", message = "A new account can not be opened with a negative balance")
     private BigDecimal balance;
     @DecimalMax(value = "1000", message = "The maximum balance for this account must be lower than 1000.")
@@ -15,6 +14,8 @@ public class SavingsAcDTO {
     @NotNull(message = "This account must have a secret key")
     @Size(min = 7, message = "The secret key must have at least 7 digits.")
     private String secretKey;
+
+//    This will be optional, so can be set to null:
     private Long secondaryOwnerId;
     @DecimalMax(value = "0.5", message = "The interest rate can not be higher than 0.5")
     @DecimalMin(value = "0", message = "The interest rate must be a positive value.")

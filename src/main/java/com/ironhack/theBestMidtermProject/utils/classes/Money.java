@@ -5,6 +5,8 @@ import java.math.RoundingMode;
 import java.math.BigDecimal;
 import java.util.Currency;
 
+/*Money class will make you hate life. It has a Currency object and an amount*/
+
 @Embeddable
 public class Money {
 

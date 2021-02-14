@@ -1,15 +1,7 @@
 package com.ironhack.theBestMidtermProject.utils.dtos;
 
-import com.fasterxml.jackson.databind.annotation.*;
-import com.fasterxml.jackson.databind.deser.std.*;
-import com.fasterxml.jackson.databind.ser.std.*;
-import com.fasterxml.jackson.datatype.jsr310.deser.*;
-import com.fasterxml.jackson.datatype.jsr310.ser.*;
-import com.ironhack.theBestMidtermProject.model.users.*;
-
 import javax.validation.constraints.*;
 import java.math.*;
-import java.util.*;
 
 public class CreditAcDTO {
 
@@ -18,6 +10,8 @@ public class CreditAcDTO {
     private BigDecimal creditLimit;
     @DecimalMin(value = "0", message = "A new account must have a positive balance")
     private BigDecimal balance;
+
+//    Secondary owner will be optional, so it can be null
     private Long secondaryOwnerId;
     @DecimalMin(value = "0", message = "The maintenance fee must be positive")
     private BigDecimal monthlyMaintenanceFee;
@@ -26,7 +20,6 @@ public class CreditAcDTO {
     private BigDecimal interestRate;
 
 //    Getters and Setters
-
     public BigDecimal getCreditLimit() {
         return creditLimit;
     }

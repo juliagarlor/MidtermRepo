@@ -1,11 +1,12 @@
 package com.ironhack.theBestMidtermProject.utils.classes;
 
-import com.ironhack.theBestMidtermProject.model.*;
 import com.ironhack.theBestMidtermProject.utils.dtos.*;
 import com.ironhack.theBestMidtermProject.utils.enums.*;
 
 import java.math.*;
 import java.time.*;
+
+/*transformer will be helpful when assembling objects without constructors*/
 
 public class Transformer {
 

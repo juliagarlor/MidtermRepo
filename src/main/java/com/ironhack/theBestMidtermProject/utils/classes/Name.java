@@ -4,6 +4,8 @@ import com.ironhack.theBestMidtermProject.utils.enums.*;
 
 import javax.persistence.*;
 
+/*A name has a last name, a first name, optionally a middle name (mandatory if you have royal blood), and a salutation.*/
+
 @Embeddable
 public class Name {
 
@@ -14,13 +16,6 @@ public class Name {
     private Salutation salutation;
 
     public Name() {
-    }
-
-//    Constructor without middle name
-    public Name(String lastName, String firstName, Salutation salutation) {
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.salutation = salutation;
     }
 
 //    Constructor with all parameters

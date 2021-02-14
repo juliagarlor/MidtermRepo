@@ -1,8 +1,8 @@
 package com.ironhack.theBestMidtermProject.utils.classes;
 
-import com.sun.istack.*;
-
 import javax.persistence.*;
+
+//Address class has a number(of the building), a street, a city, and a country.
 
 @Embeddable
 public class Address {
@@ -12,10 +12,11 @@ public class Address {
     private String city;
     private String country;
 
+//    Empty constructor
     public Address() {
     }
 
-    //    Constructor
+//    Constructor with all parameters
     public Address(int number, String street, String city, String country) {
         this.number = number;
         this.street = street;

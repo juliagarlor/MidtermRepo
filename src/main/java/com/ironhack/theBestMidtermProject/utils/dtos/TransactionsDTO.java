@@ -10,19 +10,22 @@ import java.time.*;
 
 public class TransactionsDTO {
 
+//    Transactions can be sent and received from third parties, so their account numbers are null for us. We will manage
+//    that in the service
     @Min(value = 0, message = "Accounts identifiers can not be negative numbers")
     private Long emisor;
     @Min(value = 0, message = "Accounts identifiers can not be negative numbers")
     private Long receptor;
     @DecimalMin(value = "0", message = "Please, introduce a positive quantity.")
     private BigDecimal amount;
+
+//    This is not back to the future, we will not allow transactions coming from there
     @PastOrPresent
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime moment;
 
 //    Getters and Setters
-
     public Long getEmisor() {
         return emisor;
     }

@@ -8,6 +8,9 @@ import org.springframework.security.core.userdetails.*;
 
 import java.util.*;
 
+/*CustomUserDetails is used for the login of users. Its only parameter is an object from the User class. It uses its id
+and its password for the authentication, and will be authorized or not depending on the role of this user*/
+
 public class CustomUserDetails implements UserDetails {
 
     private User user;
