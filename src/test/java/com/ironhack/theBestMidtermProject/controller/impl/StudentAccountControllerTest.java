@@ -2,6 +2,7 @@ package com.ironhack.theBestMidtermProject.controller.impl;
 
 import com.fasterxml.jackson.databind.*;
 import com.ironhack.theBestMidtermProject.model.accounts.*;
+import com.ironhack.theBestMidtermProject.model.users.*;
 import com.ironhack.theBestMidtermProject.repository.accounts.*;
 import com.ironhack.theBestMidtermProject.repository.users.*;
 import com.ironhack.theBestMidtermProject.security.*;
@@ -19,6 +20,7 @@ import org.springframework.web.context.*;
 
 import java.math.*;
 import java.time.*;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -64,27 +66,19 @@ class StudentAccountControllerTest {
                 LocalDateTime.of(1980, 5, 20, 18, 40, 00), primaryAddress2, null);
         accountHolderService.createAccountHolder(secondaryOwner);
 
-        BigDecimal balance = new BigDecimal("1000");
-        long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
-        BigDecimal monthlyMaintenanceFee = new BigDecimal("6");
-        CheckingAcDTO checkingAcDTO = transformer.assembleCheckingAcDTO(balance, "mocatriz", secondaryOwnerId);
-
 //        Creating an admin
-        AdminDTO adminDTO = transformer.assembleAdminDTO(
-                transformer.assembleNameDTO("Sanchez", "Victoria", null, Salutation.Ms), 20,
-                "contraseña3");
-        String body = objectMapper.writeValueAsString(adminDTO);
-        mockMvc.perform(post("/register/administrator").content(body).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
+        Set<Role> roles = new HashSet<>();
+        Admin admin = new Admin(new Name("Sanchez", "Victoria", null, Salutation.Ms),
+                "contraseña3", 20, roles);
+        roles.add(new Role("ADMIN", admin));
+        admin.setRoles(roles);
+        adminRepository.save(admin);
 
-        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
-
-//        Cayetano is going to open his first account (and since he is under 24, he will receive a student account):
-        String body2 = objectMapper.writeValueAsString(checkingAcDTO);
-        mockMvc.perform(
-                post("/new/checking-account/" + accountHolderRepository.findAll().get(0).getId()).with(user(user))
-                        .content(body2).contentType(MediaType.APPLICATION_JSON));
+//        And a studentChecking account for young Cayetano
+        StudentCheckingAccount studentCheckingAccount = new StudentCheckingAccount(new Money(new BigDecimal("1000")),
+                Status.ACTIVE, accountHolderRepository.findAll().get(0), accountHolderRepository.findAll().get(1),
+                "mocatriz");
+        studentCheckingAccountRepository.save(studentCheckingAccount);
     }
 
     @AfterEach
@@ -107,7 +101,7 @@ class StudentAccountControllerTest {
 
     @Test
     void checkAccount_invalidLogin_Exception() throws Exception {
-        //        Changing secondaryOwner to null
+//        Changing secondaryOwner to null
         StudentCheckingAccount test = studentCheckingAccountRepository.findAll().get(0);
         test.setSecondaryOwner(null);
         studentCheckingAccountRepository.save(test);

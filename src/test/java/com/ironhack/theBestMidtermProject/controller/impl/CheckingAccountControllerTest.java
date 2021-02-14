@@ -2,6 +2,7 @@ package com.ironhack.theBestMidtermProject.controller.impl;
 
 import com.fasterxml.jackson.databind.*;
 import com.ironhack.theBestMidtermProject.model.accounts.*;
+import com.ironhack.theBestMidtermProject.model.users.*;
 import com.ironhack.theBestMidtermProject.repository.accounts.*;
 import com.ironhack.theBestMidtermProject.repository.users.*;
 import com.ironhack.theBestMidtermProject.security.*;
@@ -19,6 +20,7 @@ import org.springframework.web.context.*;
 
 import java.math.*;
 import java.time.*;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -52,38 +54,32 @@ class CheckingAccountControllerTest {
     void setUp() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).apply(springSecurity()).build();
 
+//        Creating a primary owner
         NameDTO name = transformer.assembleNameDTO("Rodriguez", "Cayetano", "Jesús", Salutation.Mr);
         AddressDTO primaryAddress = transformer.assembleAddressDTO(1, "Castilla", "Madrid", "España");
         AccountHolderDTO primaryOwner = transformer.assembleAccountHolderDTO(name,25, "contraseña",
                 LocalDateTime.of(1996, 5, 20, 18, 40, 00), primaryAddress, null);
         accountHolderService.createAccountHolder(primaryOwner);
 
+//        Creating a secondary owner
         NameDTO name2 = transformer.assembleNameDTO("Rodriguez", "María", "Jesús", Salutation.Mrs);
         AddressDTO primaryAddress2 = transformer.assembleAddressDTO(1, "Castilla", "Madrid", "España");
         AccountHolderDTO secondaryOwner = transformer.assembleAccountHolderDTO(name2, 40, "contraseña2",
                 LocalDateTime.of(1980, 5, 20, 18, 40, 00), primaryAddress2, null);
         accountHolderService.createAccountHolder(secondaryOwner);
 
-        BigDecimal balance = new BigDecimal("1000");
-        long secondaryOwnerId = accountHolderRepository.findAll().get(1).getId();
-        BigDecimal monthlyMaintenanceFee = new BigDecimal("6");
-        CheckingAcDTO checkingAcDTO = transformer.assembleCheckingAcDTO(balance, "mocatriz", secondaryOwnerId);
-
 //        Creating an admin
-        AdminDTO adminDTO = transformer.assembleAdminDTO(
-                transformer.assembleNameDTO("Sanchez", "Victoria", null, Salutation.Ms), 20,
-                "contraseña3");
-        String body = objectMapper.writeValueAsString(adminDTO);
-        mockMvc.perform(post("/register/administrator").content(body).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
+        Set<Role> roles = new HashSet<>();
+        Admin admin = new Admin(new Name("Sanchez", "Victoria", null, Salutation.Ms),
+                "contraseña3", 20, roles);
+        roles.add(new Role("ADMIN", admin));
+        admin.setRoles(roles);
+        adminRepository.save(admin);
 
-        CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
 //        Cayetano of the future will open an checking account
-        String body2 = objectMapper.writeValueAsString(checkingAcDTO);
-        mockMvc.perform(
-                post("/new/checking-account/" + accountHolderRepository.findAll().get(0).getId()).with(user(user))
-                        .content(body2).contentType(MediaType.APPLICATION_JSON));
+        CheckingAccount checkingAccount = new CheckingAccount(new Money(new BigDecimal("1000")), Status.ACTIVE,
+                accountHolderRepository.findAll().get(0), accountHolderRepository.findAll().get(1), "mocatriz");
+        checkingAccountRepository.save(checkingAccount);
     }
 
     @AfterEach

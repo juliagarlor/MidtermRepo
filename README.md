@@ -113,6 +113,8 @@ All the testing is inside the path src/test/java. Since the controllers call the
 * StudentAccountControllerTest
 * ThirdPartyControllerTest
 
+We have an additional test of the fraud checker inside the package service/impl, at the same level as the controller/impl package containing the controllers tests.
+
 ## All yours
 
 Any feedback for improvement is welcome. Meanwhile, I hope you have fun with this project, but remember that life is too short to waste it with testing.

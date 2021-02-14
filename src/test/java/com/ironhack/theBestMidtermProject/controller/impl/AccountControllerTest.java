@@ -22,6 +22,7 @@ import org.springframework.web.context.*;
 
 import java.math.*;
 import java.time.*;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -85,37 +86,13 @@ class AccountControllerTest {
         accountHolderService.createAccountHolder(secondaryOwner);
 
 //        An admin
-        AdminDTO adminDTO = transformer.assembleAdminDTO(
-                transformer.assembleNameDTO("Sanchez", "Victoria", null, Salutation.Ms), 20,
-                "contraseña3");
-        String body = objectMapper.writeValueAsString(adminDTO);
-        mockMvc.perform(post("/register/administrator").content(body).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
+        Set<Role> roles = new HashSet<>();
+        Admin admin = new Admin(new Name("Sanchez", "Victoria", null, Salutation.Ms),
+                "contraseña3", 20, roles);
+        roles.add(new Role("ADMIN", admin));
+        admin.setRoles(roles);
+        adminRepository.save(admin);
 
-//        And a test checkingAccount for the add and subtractBalance method
-        Money balance = new Money(new BigDecimal("1000"));
-        CheckingAccount checkingAccount = new CheckingAccount(balance, Status.ACTIVE, accountHolderRepository.findAll().get(0),
-                null, "comoLoPasamos");
-        checkingAccountRepository.save(checkingAccount);
-
-//        Another one
-        Money balance2 = new Money(new BigDecimal("1500"));
-        CheckingAccount checkingAccount2 = new CheckingAccount(balance, Status.ACTIVE, accountHolderRepository.findAll().get(1),
-                null, "comoLoPasamos");
-        checkingAccountRepository.save(checkingAccount2);
-
-//        And a transaction in the repository just in case
-        Transactions transactions = new Transactions(checkingAccount2, checkingAccount,
-                new Money(new BigDecimal("50")), LocalDateTime.now());
-
-        transactionRepository.save(transactions);
-
-//        And a third party for the third party tests
-        ThirdPartyDTO test = transformer.assembleThirdPartyDTO(
-                transformer.assembleNameDTO("Perez", "Pablo", null, Salutation.Mr),
-                40, "hashKey", "laFincaEnSegovia");
-        thirdPartyController.createThirdParty(test);
     }
 
     @AfterEach
@@ -131,7 +108,6 @@ class AccountControllerTest {
 
     @Test
     void createCheckAccount_validValues_CheckingAccount() throws Exception {
-        assertEquals(2, checkingAccountRepository.findAll().size());
 
         CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
 
@@ -149,12 +125,11 @@ class AccountControllerTest {
 
 //        Make sure that the newly created account has been linked to Cayetano
         assertTrue(result.getResponse().getContentAsString().contains("Cayetano"));
-        assertEquals(3, accountRepository.findAll().size());
+        assertEquals(1, accountRepository.findAll().size());
     }
 
     @Test
     void createCheckAccount_validValues_StudentAccount() throws Exception {
-        assertEquals(2, checkingAccountRepository.findAll().size());
 
         CustomUserDetails user = new CustomUserDetails(adminRepository.findAll().get(0));
 //        Reset the age of Cayetano to be young, as he would wish
@@ -176,7 +151,7 @@ class AccountControllerTest {
 
 //        Make sure that the newly created account has been linked to Cayetano
         assertTrue(result.getResponse().getContentAsString().contains("Cayetano"));
-        assertEquals(3, accountRepository.findAll().size());
+        assertEquals(1, accountRepository.findAll().size());
     }
 
     @Test
@@ -197,12 +172,37 @@ class AccountControllerTest {
 
 //        Make sure that the newly created account has been linked to Cayetano
         assertTrue(result.getResolvedException().toString().contains("The secret key must have at least 7 digits."));
-//        We have a test account, this should be 1
-        assertEquals(2, accountRepository.findAll().size());
+        assertEquals(0, accountRepository.findAll().size());
+    }
+
+    void setUpForTransfers(){
+//        Two checking accounts to perform transactions
+        Money balance = new Money(new BigDecimal("1000"));
+        CheckingAccount checkingAccount = new CheckingAccount(balance, Status.ACTIVE, accountHolderRepository.findAll().get(0),
+                null, "comoLoPasamos");
+        checkingAccountRepository.save(checkingAccount);
+
+        Money balance2 = new Money(new BigDecimal("1500"));
+        CheckingAccount checkingAccount2 = new CheckingAccount(balance, Status.ACTIVE, accountHolderRepository.findAll().get(1),
+                null, "comoLoPasamos");
+        checkingAccountRepository.save(checkingAccount2);
+
+//        And a transaction in the repository just in case
+        Transactions transactions = new Transactions(checkingAccount2, checkingAccount,
+                new Money(new BigDecimal("50")), LocalDateTime.now());
+        transactionRepository.save(transactions);
+
+//        And a third party for the third party tests
+        ThirdPartyDTO test = transformer.assembleThirdPartyDTO(
+                transformer.assembleNameDTO("Perez", "Pablo", null, Salutation.Mr),
+                40, "hashKey", "laFincaEnSegovia");
+        thirdPartyController.createThirdParty(test);
     }
 
     @Test
     void transfer_validValues_Transactions() throws Exception {
+
+        setUpForTransfers();
 
         CustomUserDetails user = new CustomUserDetails(accountHolderRepository.findAll().get(1));
 
@@ -224,6 +224,9 @@ class AccountControllerTest {
 
     @Test
     void transfer_fraud_Exception() throws Exception {
+
+        setUpForTransfers();
+
 //        Adding a second transaction for this moment, so the next one jumps because of 3 transactions in less than 1 second
         Transactions transactions = new Transactions(checkingAccountRepository.findAll().get(1), checkingAccountRepository.findAll().get(0),
                 new Money(new BigDecimal("50")), LocalDateTime.now());
@@ -252,6 +255,8 @@ class AccountControllerTest {
     @Test
     void transfer_biggerAmountThanBalance_Exception() throws Exception {
 
+        setUpForTransfers();
+
         CustomUserDetails user = new CustomUserDetails(accountHolderRepository.findAll().get(1));
 
         Long emisorId = checkingAccountRepository.findAll().get(1).getId();
@@ -272,6 +277,8 @@ class AccountControllerTest {
 
     @Test
     void transferWithThirdParty_thirdPartyEmisor_transference() throws Exception {
+
+        setUpForTransfers();
 //        Logging with the third party
         CustomUserDetails user = new CustomUserDetails(thirdPartyRepository.findAll().get(0));
 
@@ -297,6 +304,8 @@ class AccountControllerTest {
 
     @Test
     void transferWithThirdParty_thirdPartyReceptor_transference() throws Exception {
+
+        setUpForTransfers();
 //        Logging with the third party
         CustomUserDetails user = new CustomUserDetails(thirdPartyRepository.findAll().get(0));
 

@@ -2,6 +2,7 @@ package com.ironhack.theBestMidtermProject.controller.impl;
 
 import com.fasterxml.jackson.databind.*;
 import com.ironhack.theBestMidtermProject.model.accounts.*;
+import com.ironhack.theBestMidtermProject.model.users.*;
 import com.ironhack.theBestMidtermProject.repository.accounts.*;
 import com.ironhack.theBestMidtermProject.repository.users.*;
 import com.ironhack.theBestMidtermProject.security.*;
@@ -19,6 +20,7 @@ import org.springframework.web.context.*;
 
 import java.math.*;
 import java.time.*;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -65,13 +67,12 @@ class CreditCardControllerTest {
         accountHolderService.createAccountHolder(secondaryOwner);
 
 //        Create an admin
-        AdminDTO adminDTO = transformer.assembleAdminDTO(
-                transformer.assembleNameDTO("Sanchez", "Victoria", null, Salutation.Ms), 20,
-                "contraseña3");
-        String body = objectMapper.writeValueAsString(adminDTO);
-        mockMvc.perform(post("/register/administrator").content(body).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
+        Set<Role> roles = new HashSet<>();
+        Admin admin = new Admin(new Name("Sanchez", "Victoria", null, Salutation.Ms),
+                "contraseña3", 20, roles);
+        roles.add(new Role("ADMIN", admin));
+        admin.setRoles(roles);
+        adminRepository.save(admin);
     }
 
     @AfterEach

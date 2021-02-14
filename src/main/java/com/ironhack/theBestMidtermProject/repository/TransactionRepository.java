@@ -13,7 +13,7 @@ public interface TransactionRepository extends JpaRepository<Transactions, Long>
 
 //    Transferences sent today:
     @Query(value = "SELECT SUM(amount) FROM transactions WHERE emisor_id = :id AND moment >= NOW() - INTERVAL 1 DAY", nativeQuery = true)
-    public BigDecimal transactionsToday(@Param("id") long emisorId);
+    public BigDecimal transactionsToday(@Param("id") Long emisorId);
 
 //    Transferences each previous day:
     @Query(value = "SELECT SUM(amount), DAY(moment) FROM transactions WHERE emisor_id = :id GROUP BY DAY(moment)", nativeQuery = true)
